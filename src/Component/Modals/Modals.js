@@ -7,9 +7,19 @@ import { createApi, getApi, updateApi } from "../../Repository/Repository";
 
 const CreateBanner = ({ show, handleClose, edit, id, fetchApi }) => {
   const [type, setType] = useState("");
-  const [desc, setDesc] = useState("");
+  const [desc, setDesc] = useState('');
   const [image, setImage] = useState("");
+  const [imagePreview, setImagePreview] = useState("");
   const [loading, setLoading] = useState(false);
+  const [response, setResponse] = useState({});
+
+
+  const resetForm = () => {
+    setType("");
+    setDesc("");
+    setImage("");
+    setImagePreview("");
+  };
 
   const fd = new FormData();
   fd.append("type", type);
@@ -27,10 +37,39 @@ const CreateBanner = ({ show, handleClose, edit, id, fetchApi }) => {
       successMsg: "Created",
       additionalFunctions,
     });
+    resetForm();
   };
+
+  const fetchHandler = () => {
+    if (edit && id) {
+      getApi({
+        url: `api/v1/Banner/${id}`,
+        setResponse,
+        setLoading,
+      });
+    }
+  };
+
+  useEffect(() => {
+    fetchHandler();
+  }, [id, edit]);
+
+  useEffect(() => {
+    if (edit && response) {
+      setType(response?.data?.type || "");
+      setDesc(response.data?.desc || "");
+      setImage(response?.data?.image || "");
+      setImagePreview(response?.data?.image || "");
+    }
+  }, [response, edit]);
 
   const updateHandler = (e) => {
     e.preventDefault();
+    const fd = new FormData();
+    fd.append("type", type);
+    fd.append("desc", desc);
+    fd.append("image", image);
+
     updateApi({
       url: `api/v1/Banner/updateBanner/${id}`,
       payload: fd,
@@ -40,7 +79,8 @@ const CreateBanner = ({ show, handleClose, edit, id, fetchApi }) => {
     });
   };
 
-  console.log(id, "ahdahk")
+  console.log(edit, "hadjai")
+
 
 
   return (
@@ -58,6 +98,13 @@ const CreateBanner = ({ show, handleClose, edit, id, fetchApi }) => {
               type="file"
               onChange={(e) => setImage(e.target.files[0])}
             />
+            {imagePreview && (
+              <img
+                src={imagePreview}
+                alt="Selected"
+                style={{ width: "100%", height: '300px', marginTop: "10px" }}
+              />
+            )}
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Type</Form.Label>
@@ -88,13 +135,42 @@ const CreateBanner = ({ show, handleClose, edit, id, fetchApi }) => {
   );
 };
 
-const CreateCategory = ({ show, handleClose, edit, id, fetchApi }) => {
-  const [name, setName] = useState("");
-  const [image, setImage] = useState("");
+const CreateCategory = ({ show, handleClose, edit, id, fetchApi, data }) => {
+
+  const [name, setName] = useState(data?.name || '');
+  const [gender, setGender] = useState(data?.gender || '');
+  const [image, setImage] = useState(data?.image || '');
+  const [imagePreview, setImagePreview] = useState(data?.image || '');
   const [loading, setLoading] = useState(false);
+
+
+
+  // Add useEffect to update state when `data` prop changes
+  useEffect(() => {
+    if (data) {
+      setName(data.name || "");
+      setGender(data.gender || "");
+      setImage(data.image || "");
+      setImagePreview(data.image || "");
+    }
+  }, [data]); // This effect runs whenever the `data` prop changes
+
+
+
+  const resetForm = () => {
+    setName("");
+    setGender("");
+    setImage("");
+    setImagePreview("");
+  };
+
+
+
+
 
   const fd = new FormData();
   fd.append("name", name);
+  fd.append("gender", gender);
   fd.append("image", image);
 
   const additionalFunctions = [handleClose, fetchApi];
@@ -108,7 +184,9 @@ const CreateCategory = ({ show, handleClose, edit, id, fetchApi }) => {
       successMsg: "Created",
       additionalFunctions,
     });
+    resetForm();
   };
+
 
   const updateHandler = (e) => {
     e.preventDefault();
@@ -119,7 +197,9 @@ const CreateCategory = ({ show, handleClose, edit, id, fetchApi }) => {
       successMsg: "Updated",
       additionalFunctions,
     });
+    resetForm();
   };
+
 
   return (
     <Modal show={show} onHide={handleClose} centered>
@@ -137,13 +217,34 @@ const CreateCategory = ({ show, handleClose, edit, id, fetchApi }) => {
               type="file"
               onChange={(e) => setImage(e.target.files[0])}
             />
+            {imagePreview && (
+              <img
+                src={imagePreview}
+                alt="Selected"
+                style={{ width: "100%", height: '', marginTop: "10px" }}
+              />
+            )}
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Name</Form.Label>
             <Form.Control
               type="text"
+              value={name}
               onChange={(e) => setName(e.target.value)}
             />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Gender</Form.Label>
+            <Form.Select
+              value={gender}
+              onChange={(e) => setGender(e.target.value)}
+            >
+              <option value="">Select your preference</option>
+              <option value="men">Men</option>
+              <option value="women">Women</option>
+              <option value="kids">Kids</option>
+              <option value="other">Other</option>
+            </Form.Select>
           </Form.Group>
 
           <button className="submitBtn" type="submit">
@@ -207,18 +308,36 @@ const EditVendorStatus = ({ show, handleClose, id }) => {
   );
 };
 
-const CreateSubCategory = ({ show, handleClose, edit, id, fetchApi }) => {
-  const [name, setName] = useState("");
-  const [image, setImage] = useState("");
-  const [categoryid, setCategoryId] = useState("");
+const CreateSubCategory = ({ show, handleClose, edit, id, fetchApi, data }) => {
+  const [name, setName] = useState(data?.name || '');
+  const [image, setImage] = useState(data?.image || '');
+  const [categoryid, setCategoryId] = useState(data?.categoryId._id || '');
+  const [imagePreview, setImagePreview] = useState(data?.image || '');
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
-  const [categoryName, setCategoryName] = useState(null);
+  const [categoryName, setCategoryName] = useState(data?.categoryId.name || null);
 
+
+
+  // Add useEffect to update state when `data` prop changes
+  useEffect(() => {
+    if (data) {
+      setName(data.name || "");
+      setImage(data.image || "");
+      setImagePreview(data.image || "");
+    }
+  }, [data]); // This effect runs whenever the `data` prop changes
+
+
+  const resetForm = () => {
+    setName("");
+    setImage("");
+    setImagePreview("");
+  };
 
   const fd = new FormData();
   fd.append("name", name);
-  // fd.append("image", image);
+  fd.append("image", image);
   fd.append("categoryId", categoryid);
 
   const additionalFunctions = [handleClose, fetchApi];
@@ -232,6 +351,7 @@ const CreateSubCategory = ({ show, handleClose, edit, id, fetchApi }) => {
       successMsg: "Created",
       additionalFunctions,
     });
+    resetForm();
   };
 
   const updateHandler = (e) => {
@@ -243,6 +363,7 @@ const CreateSubCategory = ({ show, handleClose, edit, id, fetchApi }) => {
       successMsg: "Updated",
       additionalFunctions,
     });
+    resetForm();
   };
 
 
@@ -271,11 +392,18 @@ const CreateSubCategory = ({ show, handleClose, edit, id, fetchApi }) => {
         <Form onSubmit={edit ? updateHandler : createHandler}>
           <Form.Group className="mb-3">
             <Form.Label>Image</Form.Label>
-            <Form.Control type="file" required onChange={(e) => setImage(e.target.files[0])} />
+            <Form.Control type="file"  onChange={(e) => setImage(e.target.files[0])} />
+            {imagePreview && (
+              <img
+                src={imagePreview}
+                alt="Selected"
+                style={{ width: "100%", height: '', marginTop: "10px" }}
+              />
+            )}
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Title</Form.Label>
-            <Form.Control type="text" onChange={(e) => setName(e.target.value)} />
+            <Form.Control type="text" value={name} onChange={(e) => setName(e.target.value)} />
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Category</Form.Label>

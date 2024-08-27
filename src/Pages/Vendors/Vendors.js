@@ -67,7 +67,7 @@ const Vendors = () => {
     `#${index + 1}`,
     i?.fullName,
     i?.phone,
-    <Link to={`/vendor-products/${i.fullName}`}>View</Link>,
+    <Link to={`/vendor-products/${i._id}`}>View</Link>,
     i?.kycStatus,
     i?.status,
     <span className="flexCont">

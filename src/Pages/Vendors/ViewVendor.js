@@ -2,8 +2,56 @@
 import HOC from "../../Layout/HOC";
 import { Form, FloatingLabel, InputGroup } from "react-bootstrap";
 import { Row, Col } from "react-bootstrap";
+import { getApi } from "../../Repository/Repository";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import TableLayout from "../../Component/TableLayout";
+
+
 
 const ViewVendor = () => {
+  const { ids } = useParams();
+  const [response, setResponse] = useState({});
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const fetchHandler = () => {
+    getApi({
+      url: `api/v1/admin/getVenderProfile/${ids}`,
+      setResponse,
+      setLoading,
+    });
+  };
+
+  useEffect(() => {
+    fetchHandler();
+  }, []);
+
+
+  const thead = [
+    "Sno.",
+    "Store Name",
+    "City",
+    "Country",
+    "Email",
+    "",
+  ];  
+
+
+  const tbody = response?.data?.stores?.map((i, index) => [
+    `#${index + 1}`,
+    i?.StoreName,
+    i?.city,
+    i?.country,
+    i?.email,
+    <span className="flexCont">
+      <Link to={`/view-vendor-store/${i._id}`}>
+        <i className="fa-solid fa-eye" />
+      </Link>
+    </span>,
+  ]);
+
+
   return (
     <>
       <section className="sectionCont">
@@ -12,9 +60,7 @@ const ViewVendor = () => {
           <hr />
           <div className="vendor-profile-div">
             <img
-              src={
-                "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&w=3000&auto=format&fit=crop&q=60&ixlib=rb-4.0.3"
-              }
+              src={response?.data?.image}
               alt=""
               className="profile-img"
             />
@@ -24,13 +70,13 @@ const ViewVendor = () => {
             <Col xs={12} md={3}>
               <Form.Group className="mb-3">
                 <Form.Label>Mobile Number</Form.Label>
-                <Form.Control type="text" value={"4578512547"} />
+                <Form.Control type="text" value={response?.data?.phone} />
               </Form.Group>
             </Col>
             <Col xs={12} md={3}>
               <Form.Group className="mb-3">
                 <Form.Label>Category</Form.Label>
-                <Form.Control type="text" value={"Shirts"} />
+                <Form.Control type="text" value={response?.data?.phone} />
               </Form.Group>
             </Col>
 
@@ -44,34 +90,29 @@ const ViewVendor = () => {
             <Col xs={12} md={3}>
               <Form.Group className="mb-3">
                 <Form.Label>Owner's Full Name</Form.Label>
-                <Form.Control type="text" />
-              </Form.Group>
-            </Col>
-            <Col xs={12} md={3}>
-              <Form.Group className="mb-3">
-                <Form.Label>Store Name</Form.Label>
-                <Form.Control type="text" />
-              </Form.Group>
-            </Col>
-            <Col xs={12} md={3}>
-              <Form.Group className="mb-3">
-                <Form.Label>Email Address</Form.Label>
-                <Form.Control type="text" />
-              </Form.Group>
-            </Col>
-
-            <Col xs={12} md={12}>
-              <Form.Group className="mb-3">
-                <Form.Label>Bio of the Restaurant </Form.Label>
-                <FloatingLabel>
-                  <Form.Control as="textarea" style={{ height: "100px" }} />
-                </FloatingLabel>
+                <Form.Control type="text" value={response?.data?.fullName} />
               </Form.Group>
             </Col>
           </Row>
         </Form>
       </section>
+      <section className="sectionCont">
+        <div className="pb-4  w-full flex justify-between items-center">
+          <span
+            className="tracking-widest text-slate-900 font-semibold"
+            style={{ fontSize: "1.5rem" }}
+          >
+            All Store's ({response?.data?.stores?.length || 0})
+          </span>
+          <button className="submitBtn" onClick={() => navigate('/vendors')}>
+            back
+          </button>
+        </div>
+        <TableLayout thead={thead} tbody={tbody} loading={loading} />
+      </section>
 
+
+      {/* 
       <section className="sectionCont mt-3">
         <h3>Working Days</h3>
         <hr />
@@ -268,7 +309,7 @@ const ViewVendor = () => {
           </Col>
      
         </Row>
-      </section>
+      </section> */}
     </>
   );
 };

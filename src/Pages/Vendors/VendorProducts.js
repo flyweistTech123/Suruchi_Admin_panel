@@ -1,36 +1,59 @@
 /** @format */
 
-import React from "react";
-import { Link, useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import HOC from "../../Layout/HOC";
-import data from "../../Constant/constant.json";
+import { getApi, removeApi } from "../../Repository/Repository";
 import TableLayout from "../../Component/TableLayout";
 
 const VendorProducts = () => {
   const { id } = useParams();
+  const [response, setResponse] = useState({});
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+
+  const fetchHandler = () => {
+    getApi({
+      url: `api/v1/admin/getVendorAllProduct/${id}`,
+      setResponse,
+      setLoading,
+    });
+  };
+
+  useEffect(() => {
+    fetchHandler();
+  }, []);
+
   const thead = [
     "Sno.",
     "ID",
     "Image",
     "Product Name",
-    "Reviews",
+    "Category Name",
+    "Subcategory Name",
     "Created at",
     "",
-  ];
+  ];  
 
-  const tbody = data.product.map((i, index) => [
+  const deleteHandler = (id) => {
+    const additionalFunctions = [fetchHandler];
+    removeApi({
+      url: `api/v1/admin/Product/delete/${id}`,
+      successMsg: "Removed !",
+      additionalFunctions,
+    });
+  };
+
+  const tbody = response?.data?.map((i, index) => [
     `#${index + 1}`,
-    "DDNSGS",
-    <img src={i.img} alt="" style={{ maxWidth: "80px" }} />,
-    i.title,
-    <Link to={`/product-review/${i.title}`}>
-      <button className="md:py-2 px-3 md:px-4 py-1 rounded-sm bg-[#000] text-white tracking-wider">
-        View
-      </button>
-    </Link>,
-    i.created_date?.slice(0, 10),
+    i?.ID,
+    <img src={i.productImage} alt="" style={{ maxWidth: "80px" }} />,
+    i.productName,
+    i.categoryId.name,
+    i.subcategoryId.name,
+    i.createdAt?.slice(0, 10),
     <span className="flexCont">
- 
       <Link to={`/product/${i.title}`}>
         <i className="fa-solid fa-eye" />
       </Link>
@@ -45,10 +68,13 @@ const VendorProducts = () => {
             className="tracking-widest text-slate-900 font-semibold"
             style={{ fontSize: "1.5rem" }}
           >
-            All {id} Product's ({data?.product?.length})
+            All Product's ({response?.data?.length || 0})
           </span>
+          <button className="submitBtn" onClick={() => navigate('/vendors')}>
+            back
+          </button>
         </div>
-        <TableLayout thead={thead} tbody={tbody} />
+        <TableLayout thead={thead} tbody={tbody}  loading={loading}/>
       </section>
     </>
   );

@@ -18,6 +18,7 @@ const SubCategory = () => {
   const [limit, setLimit] = useState(10);
   const [search, setSearch] = useState("");
   const [id, setId] = useState("");
+  const [selected, setSelected] = useState(null);
 
   const fetchHandler = useCallback(() => {
     getApi({
@@ -46,7 +47,7 @@ const SubCategory = () => {
 
   const tbody = response?.data?.docs?.map((i, index) => [
     `#${index + 1}`,
-    <img className="profile-pic" src={i?.image} alt="" />,
+    <img src={i.image} alt="" style={{ maxWidth: "80px" }} />,
     i?.name,
     i?.categoryId?.name,
     i?.status,
@@ -56,12 +57,18 @@ const SubCategory = () => {
         onClick={() => {
           setId(i._id);
           setEdit(true);
-          setModalShow(true);
+          handleEditClick(i)
         }}
       ></i>
       <i className="fa-sharp fa-solid fa-trash" onClick={() => deleteHandler(i?._id)} />
     </span>,
   ]);
+
+  const handleEditClick = (data) => {
+    setSelected(data);
+    setModalShow(true);
+  };
+
 
   return (
     <>
@@ -71,6 +78,7 @@ const SubCategory = () => {
         edit={edit}
         id={id}
         fetchApi={fetchHandler}
+        data={selected}
       />
       <section className="sectionCont">
         <div className="pb-4  w-full flex justify-between items-center">

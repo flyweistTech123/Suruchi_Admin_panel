@@ -5,6 +5,7 @@ import HOC from "../../Layout/HOC";
 import TableLayout from "../../Component/TableLayout";
 import { getApi, removeApi } from "../../Repository/Repository";
 import { CreateBanner } from "../../Component/Modals/Modals";
+import { data } from "autoprefixer";
 
 const thead = ["Sno.", "Image", "Type", "Description", ""];
 
@@ -62,6 +63,8 @@ const AdBanner = () => {
         handleClose={() => setShow(false)}
         edit={edit}
         id={id}
+        fetchApi={fetchHandler}
+        data ={response.data}
       />
       <section className="sectionCont">
         <div className="pb-4  w-full flex justify-between items-center">

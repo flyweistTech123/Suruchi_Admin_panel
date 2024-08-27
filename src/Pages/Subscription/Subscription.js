@@ -1,34 +1,72 @@
 /** @format */
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CreateSubscription } from "../../Component/Modals/Modals";
 import TableLayout from "../../Component/TableLayout";
 import HOC from "../../Layout/HOC";
+import { getApi, removeApi, createApi } from "../../Repository/Repository";
 import data from "../../Constant/constant.json";
 import { useNavigate } from "react-router-dom";
 
 const Subscription = () => {
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
+  const [response, setResponse] = useState({ data: [] });
+  const [loading, setLoading] = useState(false);
+  const [id, setId] = useState("");
 
   const thead = [
     "Sno.",
     "Plan",
-    "Price",
-    "Image Count",
-    "Video Count",
+    "Discount",
+    "Monthly",
+    "Quarterly",
+    "HalfYearly",
+    "Yearly",
     "Features",
+    "Count",
     "",
   ];
-  const tbody = data.Subscriptions.map((i, index) => [
+
+  const fetchHandler = () => {
+    getApi({
+      url: "api/v1/admin/Plans/getAllPlans",
+      setResponse,
+      setLoading,
+    });
+  };
+
+  useEffect(() => {
+    fetchHandler();
+  }, []);
+
+  const deleteHandler = (id) => {
+    const additionalFunctions = [fetchHandler];
+    removeApi({
+      url: `api/v1/admin/Plans/delete/${id}`,
+      successMsg: "Removed !",
+      additionalFunctions,
+    });
+  };
+
+
+
+  const tbody = response?.data?.map((i, index) => [
     `#${index + 1}`,
-    i.title,
-    i.price,
-    i.imageCount,
-    i.videoCount,
+    i.name,
+    i.discount,
+    i.monthly,
+    i.quarterly,
+    i.halfYearly,
+    i.yearly,
     <ul>
-      {i.features.map((item) => (
-        <li key={item}> {item} </li>
+      {i.data?.map((item) => (
+        <li key={item}>{item.features}</li>
+      ))}
+    </ul>,
+    <ul>
+      {i.data?.map((item) => (  
+        <li key={item}>{item.count}</li>
       ))}
     </ul>,
     <span className="flexCont">

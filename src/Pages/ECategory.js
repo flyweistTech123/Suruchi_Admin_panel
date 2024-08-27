@@ -17,10 +17,11 @@ const ECategory = () => {
   const [limit, setLimit] = useState(10);
   const [search, setSearch] = useState("");
   const [id, setId] = useState("");
+  const [selected, setSelected] = useState(null);
 
   const fetchHandler = useCallback(() => {
     getApi({
-      url: `api/v1/Category/paginateCategoriesSearch?page=${page}&limit=${limit}&search=${search} `,
+      url: `api/v1/Category/paginateCategoriesSearch?page=${page}&limit=${limit}&search=${search}`,
       setLoading,
       setResponse,
     });
@@ -39,11 +40,14 @@ const ECategory = () => {
     });
   };
 
-  const thead = ["Sno.", "Image", "Title", ""];
+  const thead = ["Sno.", "Image", "Title", "Gender", "status", "Approval Status", ""];
   const tbody = response?.data?.docs?.map((i, index) => [
     `#${index + 1}`,
     <img src={i.image} alt="" style={{ maxWidth: "80px" }} />,
     i?.name,
+    i?.gender,
+    i?.status,
+    i?.approvalStatus,
     <span className="flexCont">
       <i className="fa-solid fa-trash" onClick={() => deleteHandler(i._id)} />
       <i
@@ -51,11 +55,17 @@ const ECategory = () => {
         onClick={() => {
           setId(i._id);
           setEdit(true);
-          setModalShow(true);
+          handleEditClick(i)
         }}
       ></i>
     </span>,
   ]);
+
+
+  const handleEditClick = (data) => {
+    setSelected(data);
+    setModalShow(true);
+  };
 
   return (
     <>
@@ -65,6 +75,7 @@ const ECategory = () => {
         edit={edit}
         id={id}
         fetchApi={fetchHandler}
+        data={selected}
       />
 
       <section className="sectionCont">

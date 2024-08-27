@@ -47,8 +47,9 @@ const Product = () => {
     "ID",
     "Image",
     "Product Name",
-    "Reviews",
-    "Created at",
+    "Category Name",
+    "Subcategory Name",
+    "Created at", 
     "",
   ];
 
@@ -57,17 +58,14 @@ const Product = () => {
     i?.ID,
     <img src={i.productImage} alt="" style={{ maxWidth: "80px" }} />,
     i.productName,
-    <Link to={`/product-review/${i.title}`}>
-      <button className="md:py-2 px-3 md:px-4 py-1 rounded-sm bg-[#000] text-white tracking-wider">
-        View
-      </button>
-    </Link>,
+    i.categoryId.name,
+    i.subcategoryId.name,
     i.createdAt?.slice(0, 10),
     <span className="flexCont">
       <Link to={`/edit-product/${i.title}`}>
         <i className="fa-solid fa-pen-to-square" />
       </Link>
-      <Link to={`/product/${i.title}`}>
+      <Link to={`/product/${i._id}`}>
         <i className="fa-solid fa-eye" />
       </Link>
       <i className="fa-sharp fa-solid fa-trash"  onClick={() => deleteHandler(i._id)}></i>

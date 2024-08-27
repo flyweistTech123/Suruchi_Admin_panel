@@ -20,6 +20,7 @@ import SubCategory from "../Pages/SubCategory";
 import CreateVendor from "../Pages/Vendors/ViewVendor";
 import Vendors from "../Pages/Vendors/Vendors";
 import VendorProducts from "../Pages/Vendors/VendorProducts";
+import VendorStoreDetail from "../Pages/Vendors/VendorStoreDetail";
 import Subscription from "../Pages/Subscription/Subscription";
 import Features from "../Pages/Subscription/Features";
 import BlockedVendor from "../Pages/Vendors/BlockedVendor";
@@ -32,6 +33,7 @@ const routes = [
   { path: "/vendors", element: <Vendors /> },
   { path: "/blokedvendors", element: <BlockedVendor /> },
   { path: "/view-vendor/:ids", element: <CreateVendor /> },
+  { path: "/view-vendor-store/:ids", element: <VendorStoreDetail /> },
   { path: "/Product", element: <Product /> },
   { path: "/create-product", element: <CreateProduct /> },
   { path: "/edit-product/:product", element: <EditProduct /> },
