@@ -3289,3 +3289,13 @@ ol {
   object-position: center;
 
 }
+
+
+
+
+.feature-item{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}

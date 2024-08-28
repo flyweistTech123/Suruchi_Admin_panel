@@ -3,9 +3,8 @@ import HOC from "../../Layout/HOC";
 import { Form, FloatingLabel, InputGroup } from "react-bootstrap";
 import { Row, Col } from "react-bootstrap";
 import { getApi } from "../../Repository/Repository";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import TableLayout from "../../Component/TableLayout";
 
 
 
@@ -53,6 +52,9 @@ const VendorStoreDetail = () => {
 
     return (
         <>
+            <button className="submitBtn" onClick={() => navigate(-1)} style={{marginBottom:"30px"}}>
+                back
+            </button>
             <section className="sectionCont">
                 <Form>
                     <h3>Basic Details</h3>
@@ -101,7 +103,7 @@ const VendorStoreDetail = () => {
                                         <Form.Check
                                             key={day}
                                             type={"checkbox"}
-                                            label={day.charAt(0).toUpperCase() + day.slice(1)} 
+                                            label={day.charAt(0).toUpperCase() + day.slice(1)}
                                             checked={open}
                                             onChange={() => handleCheckboxChange(day)}
                                         />

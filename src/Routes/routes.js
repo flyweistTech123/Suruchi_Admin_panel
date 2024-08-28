@@ -24,11 +24,15 @@ import VendorStoreDetail from "../Pages/Vendors/VendorStoreDetail";
 import Subscription from "../Pages/Subscription/Subscription";
 import Features from "../Pages/Subscription/Features";
 import BlockedVendor from "../Pages/Vendors/BlockedVendor";
+import AdminStore from "../Pages/AdminDetails/AdminStore";
+import CreateAdminStore from "../Pages/AdminDetails/CreateAdminStore";
 
 const routes = [
   { path: "/", element: <Login /> },
   { path: "/dashboard", element: <Dashboard /> },
   { path: "/all-banners", element: <AdBanner /> },
+  { path: "/admin-stores", element: <AdminStore /> },
+  { path: "/edit-admin-stores/:id", element: <CreateAdminStore /> },
   { path: "/Category", element: <ECategory /> },
   { path: "/vendors", element: <Vendors /> },
   { path: "/blokedvendors", element: <BlockedVendor /> },

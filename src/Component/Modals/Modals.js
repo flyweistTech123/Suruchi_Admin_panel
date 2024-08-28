@@ -1,9 +1,11 @@
 /** @format */
 
 import { useEffect, useState } from "react";
-import { Button, FloatingLabel, Form, Modal } from "react-bootstrap";
+import { Button, FloatingLabel, Form, Modal, Row, Col } from "react-bootstrap";
 import { ClipLoader } from "react-spinners";
 import { createApi, getApi, updateApi } from "../../Repository/Repository";
+import { IoCloseSharp } from "react-icons/io5";
+
 
 const CreateBanner = ({ show, handleClose, edit, id, fetchApi }) => {
   const [type, setType] = useState("");
@@ -392,7 +394,7 @@ const CreateSubCategory = ({ show, handleClose, edit, id, fetchApi, data }) => {
         <Form onSubmit={edit ? updateHandler : createHandler}>
           <Form.Group className="mb-3">
             <Form.Label>Image</Form.Label>
-            <Form.Control type="file"  onChange={(e) => setImage(e.target.files[0])} />
+            <Form.Control type="file" onChange={(e) => setImage(e.target.files[0])} />
             {imagePreview && (
               <img
                 src={imagePreview}
@@ -486,41 +488,236 @@ const CreateBrand = ({ show, handleClose }) => {
   );
 };
 
-const CreateSubscription = ({ show, handleClose }) => {
+const CreateSubscription = ({ show, handleClose, edit, id, fetchApi, data }) => {
+  const [subscriptionData, setSubscriptionData] = useState({
+    name: data?.name || '',
+    monthly: data?.monthly || '',
+    quarterly: data?.quarterly || '',
+    halfYearly: data?.halfYearly || '',
+    yearly: data?.yearly || '',
+    data: data?.data || [],
+  });
+
+  useEffect(() => {
+    if (data) {
+      setSubscriptionData({
+        name: data.name || '',
+        monthly: data.monthly || '',
+        quarterly: data.quarterly || '',
+        halfYearly: data.halfYearly || '',
+        yearly: data.yearly || '',
+        data: data.data || [],
+      });
+    }
+  }, [data]);
+
+
+  const [newFeature, setNewFeature] = useState({ features: "", count: 0 });
+  const [loading, setLoading] = useState(false);
+
+  const resetForm = () => {
+    setSubscriptionData({
+      name: "",
+      monthly: "",
+      quarterly: "",
+      halfYearly: "",
+      yearly: "",
+      data: [],
+    });
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setSubscriptionData({ ...subscriptionData, [name]: value });
+  };
+
+  const handleFeatureChange = (index, value) => {
+    const newData = [...subscriptionData.data];
+    newData[index].count = parseInt(value, 10);
+    setSubscriptionData({ ...subscriptionData, data: newData });
+  };
+
+  const handleNewFeatureChange = (e) => {
+    const { name, value } = e.target;
+    setNewFeature({ ...newFeature, [name]: value });
+  };
+
+  const addFeature = () => {
+    if (newFeature.features && newFeature.count >= 0) {
+      setSubscriptionData({
+        ...subscriptionData,
+        data: [...subscriptionData.data, { ...newFeature, count: parseInt(newFeature.count, 10) }],
+      });
+      setNewFeature({ features: "", count: 0 });
+    }
+  };
+
+  const removeFeature = (index) => {
+    setSubscriptionData({
+      ...subscriptionData,
+      data: subscriptionData.data.filter((_, i) => i !== index),
+    });
+  };
+
+  const payload = {
+    name: subscriptionData.name,
+    monthly: parseFloat(subscriptionData.monthly),
+    quarterly: parseFloat(subscriptionData.quarterly),
+    halfYearly: parseFloat(subscriptionData.halfYearly),
+    yearly: parseFloat(subscriptionData.yearly),
+    data: subscriptionData.data.map((item) => ({
+      features: item.features,
+      count: parseInt(item.count, 10),
+    })),
+  };
+
+  const additionalFunctions = [handleClose, fetchApi];
+
+  const createHandler = (e) => {
+    e.preventDefault();
+    createApi({
+      url: "api/v1/admin/Plans/create",
+      payload: payload,
+      setLoading,
+      successMsg: "Created",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
+  const updateHandler = (e) => {
+    e.preventDefault();
+    // Use your update API function with payload
+    updateApi({
+      url: `api/v1/admin/Plans/update/${id}`,
+      payload: payload,
+      setLoading,
+      successMsg: "Updated",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
   return (
     <Modal show={show} onHide={handleClose} centered>
       <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">Create New</Modal.Title>
+        <Modal.Title id="contained-modal-title-vcenter">
+          {edit ? "Edit Subscription" : "Create New Subscription"}
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form>
+        <Form onSubmit={edit ? updateHandler : createHandler}>
           <Form.Group className="mb-3">
-            <Form.Label>Plan</Form.Label>
-            <Form.Control type="text" />
-          </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>Price</Form.Label>
-            <Form.Control type="text" />
-          </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>Image Count</Form.Label>
-            <Form.Control type="number" min={0} />
-          </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>Video Count</Form.Label>
-            <Form.Control type="number" min={0} />
-          </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>Features</Form.Label>
-            <Form.Check type={"checkbox"} label={`Image`} />
-            <Form.Check type={"checkbox"} label={`Video`} />
-            <Form.Check type={"checkbox"} label={`Flash buisness`} />
-            <Form.Check type={"checkbox"} label={`Top in Searches`} />
+            <Form.Label>Plan Name</Form.Label>
+            <Form.Control
+              type="text"
+              name="name"
+              value={subscriptionData.name}
+              onChange={handleChange}
+              placeholder="Enter plan name (e.g., Basic, pro, Premium, Advance)"
+              required
+            />
           </Form.Group>
 
-          <button className="submitBtn" type="submit">
+          <Row>
+            <Col>
+              <Form.Group className="mb-3">
+                <Form.Label>Monthly Price</Form.Label>
+                <Form.Control
+                  type="number"
+                  name="monthly"
+                  value={subscriptionData.monthly}
+                  onChange={handleChange}
+                  placeholder="Enter monthly price"
+                  required
+                />
+              </Form.Group>
+            </Col>
+            <Col>
+              <Form.Group className="mb-3">
+                <Form.Label>Quarterly Price</Form.Label>
+                <Form.Control
+                  type="number"
+                  name="quarterly"
+                  value={subscriptionData.quarterly}
+                  onChange={handleChange}
+                  placeholder="Enter quarterly price"
+                  required
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+
+          <Row>
+            <Col>
+              <Form.Group className="mb-3">
+                <Form.Label>Half-Yearly Price</Form.Label>
+                <Form.Control
+                  type="number"
+                  name="halfYearly"
+                  value={subscriptionData.halfYearly}
+                  onChange={handleChange}
+                  placeholder="Enter half-yearly price"
+                  required
+                />
+              </Form.Group>
+            </Col>
+            <Col>
+              <Form.Group className="mb-3">
+                <Form.Label>Yearly Price</Form.Label>
+                <Form.Control
+                  type="number"
+                  name="yearly"
+                  value={subscriptionData.yearly}
+                  onChange={handleChange}
+                  placeholder="Enter yearly price"
+                  required
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+
+          <h5>Features</h5>
+          {subscriptionData.data.map((feature, index) => (
+            <div key={index} className="feature-item">
+              <span>
+                {feature.features} - {feature.count}
+              </span>
+              <IoCloseSharp onClick={() => removeFeature(index)} style={{ cursor: 'pointer' }} color="red" size={25} />
+            </div>
+          ))}
+          <h6>Add New Feature</h6>
+          <Form.Group className="mb-3">
+            <Form.Label>Feature Name</Form.Label>
+            <Form.Control
+              type="text"
+              name="features"
+              value={newFeature.features}
+              onChange={handleNewFeatureChange}
+              placeholder="Enter feature name"
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Feature Count</Form.Label>
+            <Form.Control
+              type="number"
+              name="count"
+              value={newFeature.count}
+              onChange={handleNewFeatureChange}
+              min={0}
+              placeholder="Enter feature count"
+            />
+
+            <Button variant="secondary" onClick={addFeature} style={{ marginTop: '10px' }}>
+              Add Feature
+            </Button>
+          </Form.Group>
+
+
+          <Button variant="primary" type="submit" className="mt-3">
             Submit
-          </button>
+          </Button>
         </Form>
       </Modal.Body>
     </Modal>
@@ -549,25 +746,128 @@ const CreateFeatures = ({ show, handleClose }) => {
   );
 };
 
-const CreateFaq = ({ show, handleClose }) => {
+const CreateFaq = ({ show, handleClose, edit, id, fetchApi, data }) => {
+  const [question, setQuestion] = useState(data?.question || '');
+  const [answer, setAnswer] = useState(data?.answer || '');
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (data) {
+      setQuestion(data?.question || "");
+      setAnswer(data?.answer || "");
+    }
+  }, [data]);
+
+  const resetForm = () => {
+    setQuestion("");
+    setAnswer("");
+  };
+
+  const fd = {
+    question: question,
+    answer: answer
+  }
+
+  const additionalFunctions = [handleClose, fetchApi];
+
+  const createHandler = (e) => {
+    e.preventDefault();
+    createApi({
+      url: "api/v1/static/faq/createFaq",
+      payload: fd,
+      setLoading,
+      successMsg: "Created",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
+  const updateHandler = (e) => {
+    e.preventDefault();
+    updateApi({
+      url: `api/v1/static/faq/${id}`,
+      payload: fd,
+      setLoading,
+      successMsg: "Updated",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
+
+
+
   return (
     <Modal show={show} onHide={handleClose} centered>
       <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">Create New</Modal.Title>
+        <Modal.Title id="contained-modal-title-vcenter">
+          {" "}
+          {edit ? "Edit FAQs" : " Add New FAQs"}
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form>
+        <Form onSubmit={edit ? updateHandler : createHandler}>
           <Form.Group className="mb-3">
             <Form.Label>Question</Form.Label>
-            <Form.Control type="text" />
+            <Form.Control type="text" value={question}   onChange={(e) => setQuestion(e.target.value)}/>
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Answer</Form.Label>
             <FloatingLabel>
-              <Form.Control as="textarea" style={{ height: "100px" }} />
+              <Form.Control as="textarea" style={{ height: "100px" }} value={answer}   onChange={(e) => setAnswer(e.target.value)}/>
             </FloatingLabel>
           </Form.Group>
 
+          <button className="submitBtn" type="submit">
+            Submit
+          </button>
+        </Form>
+      </Modal.Body>
+    </Modal>
+  );
+};
+
+const CreateAdminStore = ({ show, handleClose,  fetchApi}) => {
+  const [storeName, setStoreName] = useState('');
+  const [loading, setLoading] = useState(false);
+
+
+  const resetForm = () => {
+    setStoreName("");
+  };
+
+  const fd = {
+    StoreName: storeName,
+  }
+
+  const additionalFunctions = [handleClose, fetchApi];
+
+  const createHandler = (e) => {
+    e.preventDefault();
+    createApi({
+      url: "api/v1/Admin/store/addAdminStore",
+      payload: fd,
+      setLoading,
+      successMsg: "Created",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
+
+  return (
+    <Modal show={show} onHide={handleClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          Create Store
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={createHandler}>
+          <Form.Group className="mb-3">
+            <Form.Label>Store Name</Form.Label>
+            <Form.Control type="text" value={storeName}   onChange={(e) => setStoreName(e.target.value)}/>
+          </Form.Group>
           <button className="submitBtn" type="submit">
             Submit
           </button>
@@ -586,5 +886,6 @@ export {
   CreateBrand,
   CreateSubscription,
   CreateFeatures,
-  CreateFaq
+  CreateFaq,
+  CreateAdminStore
 };
