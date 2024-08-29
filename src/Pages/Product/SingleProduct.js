@@ -66,14 +66,20 @@ const SingleProduct = () => {
             </Col>
             <Col xs={12} md={3}>
               <Form.Group className="mb-3">
+                <Form.Label>Discounted Active</Form.Label>
+                <Form.Control type="text" value={response?.data?.discountActive ? "Active" : "Deactive"} />
+              </Form.Group>
+            </Col>
+            <Col xs={12} md={3}>
+              <Form.Group className="mb-3">
                 <Form.Label>Discounted Price</Form.Label>
                 <Form.Control type="number" min={0} value={response?.data?.discountPrice} />
               </Form.Group>
             </Col>
             <Col xs={12} md={3}>
               <Form.Group className="mb-3">
-                <Form.Label>Product Size</Form.Label>
-                <Form.Control type="text" value={response?.data?.ID} />
+                <Form.Label>Stock</Form.Label>
+                <Form.Control type="text" value={response?.data?.stock} />
               </Form.Group>
             </Col>
             <Col xs={12} md={3}>

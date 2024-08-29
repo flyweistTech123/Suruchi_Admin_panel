@@ -15,6 +15,7 @@ const AdBanner = () => {
   const [response, setResponse] = useState({ data: [] });
   const [loading, setLoading] = useState(false);
   const [id, setId] = useState("");
+  const [selected, setSelected] = useState(null);
 
 
   const fetchHandler = () => {
@@ -50,12 +51,18 @@ const AdBanner = () => {
         onClick={() => {
           setId(i._id);
           setEdit(true);
-          setShow(true);
+          handleEditClick(i)
         }}
       />
       <i className="fa-sharp fa-solid fa-trash" onClick={() => deleteHandler(i._id)}></i>
     </span>,
   ]);
+
+  const handleEditClick = (data) => {
+    setSelected(data);
+    setShow(true);
+  };
+
   return (
     <>
       <CreateBanner
@@ -64,7 +71,7 @@ const AdBanner = () => {
         edit={edit}
         id={id}
         fetchApi={fetchHandler}
-        data ={response.data}
+        data={selected}
       />
       <section className="sectionCont">
         <div className="pb-4  w-full flex justify-between items-center">

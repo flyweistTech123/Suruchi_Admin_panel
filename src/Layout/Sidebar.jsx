@@ -38,6 +38,13 @@ const Sidebar = ({ hamb, setHamb }) => {
       name: "Products",
     },
     {
+      icon: (
+        <i className="fa-solid fa-bag-shopping text-xl mr-3 rounded-full"></i>
+      ),
+      link: "/admin-products",
+      name: "Admin Products",
+    },
+    {
       icon: <i className="fa-solid fa-store  text-xl mr-3 rounded-full"></i>,
       link: "/admin-stores",
       name: " Admin Store",

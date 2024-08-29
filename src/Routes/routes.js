@@ -26,12 +26,18 @@ import Features from "../Pages/Subscription/Features";
 import BlockedVendor from "../Pages/Vendors/BlockedVendor";
 import AdminStore from "../Pages/AdminDetails/AdminStore";
 import CreateAdminStore from "../Pages/AdminDetails/CreateAdminStore";
+import AdminProduct from "../Pages/AdminDetails/AdminProduct";
+import CreateAdminProduct from "../Pages/AdminDetails/CreateAdminProduct";
+import EditAdminProduct from "../Pages/AdminDetails/EditAdminProduct";
 
 const routes = [
   { path: "/", element: <Login /> },
   { path: "/dashboard", element: <Dashboard /> },
   { path: "/all-banners", element: <AdBanner /> },
   { path: "/admin-stores", element: <AdminStore /> },
+  { path: "/admin-products", element: <AdminProduct /> },
+  { path: "/create-admin-product", element: <CreateAdminProduct /> },
+  { path: "/edit-admin-product/:id", element: <EditAdminProduct /> },
   { path: "/edit-admin-stores/:id", element: <CreateAdminStore /> },
   { path: "/Category", element: <ECategory /> },
   { path: "/vendors", element: <Vendors /> },

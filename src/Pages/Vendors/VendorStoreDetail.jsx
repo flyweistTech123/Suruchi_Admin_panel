@@ -52,7 +52,7 @@ const VendorStoreDetail = () => {
 
     return (
         <>
-            <button className="submitBtn" onClick={() => navigate(-1)} style={{marginBottom:"30px"}}>
+            <button className="submitBtn" onClick={() => navigate(-1)} style={{ marginBottom: "30px" }}>
                 back
             </button>
             <section className="sectionCont">
@@ -62,28 +62,34 @@ const VendorStoreDetail = () => {
                     <Row>
                         <Col xs={12} md={3}>
                             <Form.Group className="mb-3">
+                                <Form.Label>Store name</Form.Label>
+                                <Form.Control type="text" value={response?.data?.StoreName} />
+                            </Form.Group>
+                        </Col>
+                        <Col xs={12} md={3}>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Owner's Full Name</Form.Label>
+                                <Form.Control type="text" value={response?.data?.ownerName} />
+                            </Form.Group>
+                        </Col>
+
+                        <Col xs={12} md={3}>
+                            <Form.Group className="mb-3">
                                 <Form.Label>Mobile Number</Form.Label>
                                 <Form.Control type="text" value={response?.data?.vendorMobile} />
                             </Form.Group>
                         </Col>
+
                         <Col xs={12} md={3}>
                             <Form.Group className="mb-3">
                                 <Form.Label>Email</Form.Label>
                                 <Form.Control type="text" value={response?.data?.email} />
                             </Form.Group>
                         </Col>
-
-                        <Col xs={12} md={3}>
+                        <Col xs={12} md={12}>
                             <Form.Group className="mb-3">
-                                <Form.Label>Store name</Form.Label>
-                                <Form.Control type="text" value={response?.data?.StoreName} />
-                            </Form.Group>
-                        </Col>
-
-                        <Col xs={12} md={3}>
-                            <Form.Group className="mb-3">
-                                <Form.Label>Owner's Full Name</Form.Label>
-                                <Form.Control type="text" value={response?.data?.fullName} />
+                                <Form.Label>Bio </Form.Label>
+                                <Form.Control as="textarea" value={response?.data?.bio} />
                             </Form.Group>
                         </Col>
                     </Row>
@@ -115,7 +121,7 @@ const VendorStoreDetail = () => {
                 </Form>
             </section>
 
-            <section className="sectionCont mt-3">
+            {/* <section className="sectionCont mt-3">
                 <h3>Opening & Closing Time</h3>
                 <hr />
                 <Form>
@@ -137,7 +143,7 @@ const VendorStoreDetail = () => {
                         </Col>
                     </Row>
                 </Form>
-            </section>
+            </section> */}
 
             <section className="sectionCont mt-3">
                 <h3>Address Details</h3>

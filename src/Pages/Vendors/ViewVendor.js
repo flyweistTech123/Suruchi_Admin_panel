@@ -33,9 +33,10 @@ const ViewVendor = () => {
     "Store Name",
     "City",
     "Country",
+    "Phone Number",
     "Email",
     "",
-  ];  
+  ];
 
 
   const tbody = response?.data?.stores?.map((i, index) => [
@@ -43,6 +44,7 @@ const ViewVendor = () => {
     i?.StoreName,
     i?.city,
     i?.country,
+    i?.vendorMobile,
     i?.email,
     <span className="flexCont">
       <Link to={`/view-vendor-store/${i._id}`}>
@@ -50,6 +52,10 @@ const ViewVendor = () => {
       </Link>
     </span>,
   ]);
+
+  const expDate = response?.data?.planExpiration?.slice(0, 10)
+
+  console.log(expDate, "gjgjg")
 
 
   return (
@@ -69,28 +75,67 @@ const ViewVendor = () => {
           <Row>
             <Col xs={12} md={3}>
               <Form.Group className="mb-3">
-                <Form.Label>Mobile Number</Form.Label>
-                <Form.Control type="text" value={response?.data?.phone} />
-              </Form.Group>
-            </Col>
-            <Col xs={12} md={3}>
-              <Form.Group className="mb-3">
-                <Form.Label>Category</Form.Label>
-                <Form.Control type="text" value={response?.data?.phone} />
-              </Form.Group>
-            </Col>
-
-            <Col xs={12} md={3}>
-              <Form.Group className="mb-3">
-                <Form.Label>Grocery name</Form.Label>
-                <Form.Control type="text" value={"Grocery"} />
-              </Form.Group>
-            </Col>
-
-            <Col xs={12} md={3}>
-              <Form.Group className="mb-3">
-                <Form.Label>Owner's Full Name</Form.Label>
+                <Form.Label>Vendor Name</Form.Label>
                 <Form.Control type="text" value={response?.data?.fullName} />
+              </Form.Group>
+            </Col>
+            <Col xs={12} md={3}>
+              <Form.Group className="mb-3">
+                <Form.Label>Phone Number</Form.Label>
+                <Form.Control type="text" value={response?.data?.phone} />
+              </Form.Group>
+            </Col>
+
+            <Col xs={12} md={3}>
+              <Form.Group className="mb-3">
+                <Form.Label>Email</Form.Label>
+                <Form.Control type="text" value={response?.data?.email} />
+              </Form.Group>
+            </Col>
+
+            <Col xs={12} md={3}>
+              <Form.Group className="mb-3">
+                <Form.Label>KYC Status</Form.Label>
+                <Form.Control type="text" value={response?.data?.kycStatus} />
+              </Form.Group>
+            </Col>
+            <Col xs={12} md={3}>
+              <Form.Group className="mb-3">
+                <Form.Label>Status</Form.Label>
+                <Form.Control type="text" value={response?.data?.status} />
+              </Form.Group>
+            </Col>
+            <Col xs={12} md={3}>
+              <Form.Group className="mb-3">
+                <Form.Label>City</Form.Label>
+                <Form.Control type="text" value={response?.data?.venderCity} />
+              </Form.Group>
+            </Col>
+            <Col xs={12} md={3}>
+              <Form.Group className="mb-3">
+                <Form.Label>Plan Name</Form.Label>
+                <Form.Control type="text" value={response?.data?.planBuyId?.planName} />
+              </Form.Group>
+            </Col>
+            <Col xs={12} md={3}>
+              <Form.Group className="mb-3">
+                <Form.Label>Plan Type</Form.Label>
+                <Form.Control type="text" value={response?.data?.planBuyId?.planType} />
+              </Form.Group>
+            </Col>
+            <Col xs={12} md={3}>
+              <Form.Group className="mb-3">
+                <Form.Label>Plan Price</Form.Label>
+                <Form.Control type="text" value={response?.data?.planBuyId?.amount} />
+              </Form.Group>
+            </Col>
+            <Col xs={12} md={3}>
+              <Form.Group className="mb-3">
+                <Form.Label>Plan Expiration</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={expDate}
+                />
               </Form.Group>
             </Col>
           </Row>

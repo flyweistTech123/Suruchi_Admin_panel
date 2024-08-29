@@ -7,13 +7,22 @@ import { createApi, getApi, updateApi } from "../../Repository/Repository";
 import { IoCloseSharp } from "react-icons/io5";
 
 
-const CreateBanner = ({ show, handleClose, edit, id, fetchApi }) => {
-  const [type, setType] = useState("");
-  const [desc, setDesc] = useState('');
-  const [image, setImage] = useState("");
-  const [imagePreview, setImagePreview] = useState("");
+const CreateBanner = ({ show, handleClose, edit, id, fetchApi, data }) => {
+  const [type, setType] = useState(data?.type || '');
+  const [desc, setDesc] = useState(data?.desc || '');
+  const [image, setImage] = useState(data?.image || '');
+  const [imagePreview, setImagePreview] = useState(data?.image || '');
   const [loading, setLoading] = useState(false);
-  const [response, setResponse] = useState({});
+
+  
+  useEffect(() => {
+    if (data) {
+      setType(data?.type || "");
+      setDesc(data?.desc || "");
+      setImage(data.image || "");
+      setImagePreview(data.image || "");
+    }
+  }, [data]); 
 
 
   const resetForm = () => {
@@ -22,6 +31,8 @@ const CreateBanner = ({ show, handleClose, edit, id, fetchApi }) => {
     setImage("");
     setImagePreview("");
   };
+
+
 
   const fd = new FormData();
   fd.append("type", type);
@@ -42,28 +53,6 @@ const CreateBanner = ({ show, handleClose, edit, id, fetchApi }) => {
     resetForm();
   };
 
-  const fetchHandler = () => {
-    if (edit && id) {
-      getApi({
-        url: `api/v1/Banner/${id}`,
-        setResponse,
-        setLoading,
-      });
-    }
-  };
-
-  useEffect(() => {
-    fetchHandler();
-  }, [id, edit]);
-
-  useEffect(() => {
-    if (edit && response) {
-      setType(response?.data?.type || "");
-      setDesc(response.data?.desc || "");
-      setImage(response?.data?.image || "");
-      setImagePreview(response?.data?.image || "");
-    }
-  }, [response, edit]);
 
   const updateHandler = (e) => {
     e.preventDefault();
@@ -79,9 +68,8 @@ const CreateBanner = ({ show, handleClose, edit, id, fetchApi }) => {
       successMsg: "Updated",
       additionalFunctions,
     });
+    resetForm();
   };
-
-  console.log(edit, "hadjai")
 
 
 
@@ -89,7 +77,7 @@ const CreateBanner = ({ show, handleClose, edit, id, fetchApi }) => {
     <Modal show={show} onHide={handleClose} centered>
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          {edit ? "Edit Category" : "Add Category"}
+          {edit ? "Edit Banner" : "Add Banner"}
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -327,6 +315,8 @@ const CreateSubCategory = ({ show, handleClose, edit, id, fetchApi, data }) => {
       setName(data.name || "");
       setImage(data.image || "");
       setImagePreview(data.image || "");
+      setCategoryId(data?.categoryId._id || "");
+      setCategoryName(data?.categoryId.name || "");
     }
   }, [data]); // This effect runs whenever the `data` prop changes
 
@@ -433,27 +423,81 @@ const CreateSubCategory = ({ show, handleClose, edit, id, fetchApi, data }) => {
   );
 };
 
-const CreateNotification = ({ show, handleClose }) => {
+const CreateNotification = ({ show, handleClose, fetchApi }) => {
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+  const [total, setTotal] = useState('ALL');
+  const [sendTo, setSendTo] = useState('');
+
+  const resetForm = () => {
+    setTitle("");
+    setBody("");
+    setSendTo("");
+  };
+
+  const data = {
+    sendTo: sendTo,
+    total: total,
+    title: title,
+    body: body
+  };
+
+  const additionalFunctions = [handleClose, fetchApi];
+
+  const createHandler = (e) => {
+    e.preventDefault();
+    createApi({
+      url: "api/v1/notification/sendNotification", 
+      payload: data,
+      setLoading: () => { },
+      successMsg: "Notification Created",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
   return (
     <Modal show={show} onHide={handleClose} centered>
       <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">Create New</Modal.Title>
+        <Modal.Title id="contained-modal-title-vcenter">Create Notification</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form>
+        <Form onSubmit={createHandler}>
           <Form.Group className="mb-3">
             <Form.Label>Title</Form.Label>
-            <Form.Control type="text" />
+            <Form.Control
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+            />
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Description</Form.Label>
-            <FloatingLabel>
-              <Form.Control as="textarea" style={{ height: "100px" }} />
+            <FloatingLabel label="Description">
+              <Form.Control
+                as="textarea"
+                style={{ height: "100px" }}
+                value={body}
+                onChange={(e) => setBody(e.target.value)}
+                required
+              />
             </FloatingLabel>
           </Form.Group>
-
+          <Form.Group className="mb-3">
+            <Form.Label>Send To</Form.Label>
+            <Form.Select
+              value={sendTo}
+              onChange={(e) => setSendTo(e.target.value)}
+              required
+            >
+              <option value="">Select User type</option>
+              <option value="USER">User</option>
+              <option value="VENDOR">Vendor</option>
+            </Form.Select>
+          </Form.Group>
           <button className="submitBtn" type="submit">
-            Submit
+            Send
           </button>
         </Form>
       </Modal.Body>
@@ -809,12 +853,12 @@ const CreateFaq = ({ show, handleClose, edit, id, fetchApi, data }) => {
         <Form onSubmit={edit ? updateHandler : createHandler}>
           <Form.Group className="mb-3">
             <Form.Label>Question</Form.Label>
-            <Form.Control type="text" value={question}   onChange={(e) => setQuestion(e.target.value)}/>
+            <Form.Control type="text" value={question} onChange={(e) => setQuestion(e.target.value)} />
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Answer</Form.Label>
             <FloatingLabel>
-              <Form.Control as="textarea" style={{ height: "100px" }} value={answer}   onChange={(e) => setAnswer(e.target.value)}/>
+              <Form.Control as="textarea" style={{ height: "100px" }} value={answer} onChange={(e) => setAnswer(e.target.value)} />
             </FloatingLabel>
           </Form.Group>
 
@@ -827,7 +871,7 @@ const CreateFaq = ({ show, handleClose, edit, id, fetchApi, data }) => {
   );
 };
 
-const CreateAdminStore = ({ show, handleClose,  fetchApi}) => {
+const CreateAdminStore = ({ show, handleClose, fetchApi }) => {
   const [storeName, setStoreName] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -866,7 +910,7 @@ const CreateAdminStore = ({ show, handleClose,  fetchApi}) => {
         <Form onSubmit={createHandler}>
           <Form.Group className="mb-3">
             <Form.Label>Store Name</Form.Label>
-            <Form.Control type="text" value={storeName}   onChange={(e) => setStoreName(e.target.value)}/>
+            <Form.Control type="text" value={storeName} onChange={(e) => setStoreName(e.target.value)} />
           </Form.Group>
           <button className="submitBtn" type="submit">
             Submit

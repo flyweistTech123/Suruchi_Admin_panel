@@ -10,7 +10,7 @@ import Pagination from "../../Component/Pagination";
 import { debouncedSetQuery } from "../../utils/utils";
 
 
-const Product = () => {
+const AdminProduct = () => {
   const navigate = useNavigate();
   const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -20,17 +20,17 @@ const Product = () => {
   const [id, setId] = useState("");
 
 
-  const fetchHandler = useCallback(() => {
+  const fetchHandler = () => {
     getApi({
-      url: `api/v1/admin/Product/list?page=${page}&limit=${limit}&search=${search}&toDate=null&fromDate=null`,
-      setLoading,
+      url: `api/v1/admin/Product/getProductsByAdminId/666d89663ca1fdd9ce0319b4`,
       setResponse,
+      setLoading,
     });
-  }, [limit, search, page]);
+  };
 
   useEffect(() => {
     fetchHandler();
-  }, [fetchHandler]);
+  }, [id]);
 
 
   const deleteHandler = (id) => {
@@ -53,7 +53,7 @@ const Product = () => {
     "",
   ];
 
-  const tbody = response?.data?.docs?.map((i, index) => [
+  const tbody = response?.data?.map((i, index) => [
     `#${index + 1}`,
     i?.ID,
     <img src={i.productImage} alt="" style={{ maxWidth: "80px" }} />,
@@ -62,9 +62,9 @@ const Product = () => {
     i.subcategoryId.name,
     i.createdAt?.slice(0, 10),
     <span className="flexCont">
-      {/* <Link to={`/edit-product/${i._id}`}>
+      <Link to={`/edit-admin-product/${i._id}`}>
         <i className="fa-solid fa-pen-to-square" />
-      </Link> */}
+      </Link>
       <Link to={`/product/${i._id}`}>
         <i className="fa-solid fa-eye" />
       </Link>
@@ -80,44 +80,20 @@ const Product = () => {
             className="tracking-widest text-slate-900 font-semibold"
             style={{ fontSize: "1.5rem" }}
           >
-            All Product's ({response?.data?.totalDocs})
+            All Admin Product's ({response?.data?.length})
           </span>
 
-          {/* <button
+          <button
             className="submitBtn"
-            onClick={() => navigate("/create-product")}
+            onClick={() => navigate("/create-admin-product")}
           >
             Create New
-          </button> */}
+          </button>
         </div>
-
-        <div className="filterBox">
-          <img
-            src="https://t4.ftcdn.net/jpg/01/41/97/61/360_F_141976137_kQrdYIvfn3e0RT1EWbZOmQciOKLMgCwG.jpg"
-            alt=""
-          />
-          <input
-            type="search"
-            placeholder="Start typing to search for products"
-            onChange={(e) =>
-              debouncedSetQuery({ term: e.target.value, setSearch })
-            }
-          />
-        </div>
-
         <TableLayout thead={thead} tbody={tbody} loading={loading} />
-        {(!response || response !== null) && (
-          <Pagination
-            hasNextPage={response?.data?.hasNextPage}
-            limit={limit}
-            setLimit={setLimit}
-            page={page}
-            setPage={setPage}
-          />
-        )}
       </section>
     </>
   );
 };
 
-export default HOC(Product);
+export default HOC(AdminProduct);

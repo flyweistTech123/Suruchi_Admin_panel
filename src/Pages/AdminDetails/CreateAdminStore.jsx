@@ -12,6 +12,7 @@ const CreateAdminStore = () => {
   const { id } = useParams();
   const [response, setResponse] = useState({});
   const [storelogo, setStoreLogo] = useState('');
+  const [storelogo1, setStoreLogo1] = useState('');
   const [adminName, setAdminName] = useState('');
   const [bio, setBio] = useState('');
   const [email, setEmail] = useState('');
@@ -19,6 +20,7 @@ const CreateAdminStore = () => {
   const [storeName, setStoreName] = useState('');
   const [openingHours, setOpeningHours] = useState({});
   const [storeImages, setStoreImages] = useState([]);
+  const [storeImageURLs, setStoreImageURLs] = useState([]);
   const [sameTimeForAllDays, setSameTimeForAllDays] = useState(true);
   const [timing, setTiming] = useState({ open: "", close: "" });
   const [individualTimings, setIndividualTimings] = useState({});
@@ -45,7 +47,7 @@ const CreateAdminStore = () => {
   useEffect(() => {
     if (response?.data) {
       setStoreLogo(response.data.storeLogo || "");
-      setAdminName(response.data.vendorName || "");
+      setAdminName(response.data.ownerName || "");
       setBio(response.data.bio || "");
       setEmail(response.data.email || "");
       setPhone(response.data.adminMobile || "");
@@ -55,6 +57,31 @@ const CreateAdminStore = () => {
       setStoreImages(response.data.storePhotos || []);
     }
   }, [response]);
+
+
+  // Function to handle file input change for store logo
+  const handleLogoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setStoreLogo(URL.createObjectURL(file));
+      setStoreLogo1(file);
+    }
+  };
+
+  // Function to handle file input change for adding store images
+  const handleAddStoreImages = (e) => {
+    const files = Array.from(e.target.files); // Get the File objects from the input
+
+    // Create image URLs for preview
+    const newImageURLs = files.map((file) => URL.createObjectURL(file));
+
+    // Update state with new file objects
+    setStoreImages((prevImages) => [...prevImages, ...files]); // Store File objects
+
+    // Optionally store URLs if you need them for preview
+    setStoreImageURLs((prevURLs) => [...prevURLs, ...newImageURLs]); // Store URLs for preview
+  };
+
 
 
 
@@ -109,12 +136,12 @@ const CreateAdminStore = () => {
     formData.append('adminMobile', phone);
     formData.append('email', email);
     formData.append('StoreName', storeName);
-    formData.append('vendorName', adminName);
+    formData.append('ownerName', adminName);
     formData.append('bio', bio);
-    formData.append('storeLogo', storelogo);
+    formData.append('storeLogo', storelogo1);
 
     storeImages.forEach((image, index) => {
-      formData.append(`storePhotos[${index}]`, image);
+      formData.append(`storePhotos`, image);
     });
 
     // Add opening hours based on the selected option
@@ -146,7 +173,8 @@ const CreateAdminStore = () => {
       setLoading,
       successMsg: "Updated",
     });
-    fetchHandler()
+    fetchHandler();
+    navigate('/admin-stores')
   };
 
 
@@ -164,6 +192,18 @@ const CreateAdminStore = () => {
           <Row>
             <Col xs={12} md={3}>
               <Form.Group className="mb-3">
+                <Form.Label>Store name</Form.Label>
+                <Form.Control type="text" value={storeName} onChange={(e) => setStoreName(e.target.value)} />
+              </Form.Group>
+            </Col>
+            <Col xs={12} md={3}>
+              <Form.Group className="mb-3">
+                <Form.Label>Owner's Full Name</Form.Label>
+                <Form.Control type="text" value={adminName} onChange={(e) => setAdminName(e.target.value)} />
+              </Form.Group>
+            </Col>
+            <Col xs={12} md={3}>
+              <Form.Group className="mb-3">
                 <Form.Label>Mobile Number</Form.Label>
                 <Form.Control type="text" value={phone} onChange={(e) => setPhone(e.target.value)} />
               </Form.Group>
@@ -172,20 +212,6 @@ const CreateAdminStore = () => {
               <Form.Group className="mb-3">
                 <Form.Label>Email</Form.Label>
                 <Form.Control type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
-              </Form.Group>
-            </Col>
-
-            <Col xs={12} md={3}>
-              <Form.Group className="mb-3">
-                <Form.Label>Store name</Form.Label>
-                <Form.Control type="text" value={storeName} onChange={(e) => setStoreName(e.target.value)} />
-              </Form.Group>
-            </Col>
-
-            <Col xs={12} md={3}>
-              <Form.Group className="mb-3">
-                <Form.Label>Owner's Full Name</Form.Label>
-                <Form.Control type="text" value={adminName} onChange={(e) => setAdminName(e.target.value)} />
               </Form.Group>
             </Col>
             <Col xs={12} md={12}>
@@ -304,15 +330,48 @@ const CreateAdminStore = () => {
         </Form>
       </section>
       <section className="sectionCont mt-3">
-        <h3>Store Logo Details</h3>
+        <h3>Store Images</h3>
         <hr />
-
-        <div className="aadhar-images">
-          <img
-            src={storelogo}
-            alt=""
-          />
-        </div>
+        <Row>
+          <Col xs={12} md={6}>
+            <Form.Group controlId="storeLogo" className="mb-3">
+              <Form.Label>Store Logo</Form.Label>
+              <Form.Control
+                type="file"
+                accept="image/*"
+                onChange={handleLogoChange}
+              />
+            </Form.Group>
+            {storelogo && (
+              <img
+                src={storelogo}
+                alt="Store Logo"
+                style={{ width: "100px", height: "100px", objectFit: "cover" }}
+              />
+            )}
+          </Col>
+          <Col xs={12} md={6}>
+            <Form.Group controlId="storeImages" className="mb-3">
+              <Form.Label>Add Store Images</Form.Label>
+              <Form.Control
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleAddStoreImages}
+              />
+            </Form.Group>
+            <div className="store-images-preview">
+              {storeImageURLs.map((imageURL, index) => (
+                <img
+                  key={index}
+                  src={imageURL}
+                  alt={`Store Image ${index + 1}`}
+                  style={{ width: "100px", height: "100px", objectFit: "cover", margin: "5px" }}
+                />
+              ))}
+            </div>
+          </Col>
+        </Row>
       </section>
       <section className="sectionCont mt-3">
         <h3>Store Photos Details</h3>
@@ -329,7 +388,7 @@ const CreateAdminStore = () => {
       </section>
 
       <button className="submitBtn" onClick={updateHandler} style={{ marginBottom: "30px", marginTop: '20px' }}>
-        submit
+        Update
       </button>
 
     </>

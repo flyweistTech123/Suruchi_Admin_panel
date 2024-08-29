@@ -12,7 +12,7 @@ export const DashboardCards = ({ bg, link, title, number, icon }) => {
       }}
       onClick={() => navigate(link)}
     >
-      <div className="grid  justify-between grid-cols-4">
+      <div className="grid  justify-between grid-cols-4 gap-2">
         <div className="flex flex-col col-span-3 space-y-1">
           <span
             className="tracking-widest text-gray-900"

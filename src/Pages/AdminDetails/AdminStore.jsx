@@ -59,9 +59,9 @@ const AdminStore = () => {
         i?.adminMobile,
         i?.email,
         <span className="flexCont">
-            <Link to={`/view-vendor-store/${i._id}`}>
+            {/* <Link to={`/view-vendor-store/${i._id}`}>
                 <i className="fa-solid fa-eye" />
-            </Link>
+            </Link> */}
             <Link to={`/edit-admin-stores/${i._id}`}>
                 <i className="fa-solid fa-pen-to-square" />
             </Link>

@@ -66,7 +66,8 @@ const Faq = () => {
         edit={edit}
         id={id}
         fetchApi={fetchHandler}
-        data={selected} />
+        data={selected}
+      />
 
       <section className="sectionCont">
         <div className="pb-4   w-full flex justify-between items-center">
@@ -74,7 +75,7 @@ const Faq = () => {
             className="tracking-widest text-slate-900 font-semibold"
             style={{ fontSize: "1.5rem" }}
           >
-            All FAQs's ({response?.data?.length} )
+            All FAQs's ({response?.data?.length})
           </span>
           <button
             onClick={() => {

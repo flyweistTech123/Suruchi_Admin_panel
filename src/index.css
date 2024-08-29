@@ -34,7 +34,7 @@ html {
 }
 .cardDiv {
   cursor: pointer;
-  width: 350px;
+  width: auto;
   padding-right: 3rem;
   padding-left: 3rem;
   box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
@@ -48,7 +48,7 @@ html {
 .CardDiv_Container {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  /* justify-content: center; */
   column-gap: 1rem;
   row-gap: 1.5rem;
 }

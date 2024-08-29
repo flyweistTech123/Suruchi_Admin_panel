@@ -142,10 +142,10 @@ const Dashboard = () => {
       link: "/user",
     },
     {
-      title: "Bloacked Customer ",
-      number: 5,
-      icon: <i className="fa-solid fa-ban text-2xl text-[#4D869C]"></i>,
-      bg: "#4D869C",
+      title: "Total New Customer",
+      number: response?.data?.newCustomersCount,
+      icon: <i className="fa-solid fa-user text-2xl text-[#03AED2]"></i>,
+      bg: "#2C4E80",
       link: "/Product",
     },
     {
@@ -153,15 +153,24 @@ const Dashboard = () => {
       number: response?.data?.vendorCount,
       icon: <i className="fa-solid fa-user-tie text-2xl text-[#00215E]"></i>,
       bg: "#00215E",
-      link: "/Product",
+      link: "/vendors",
     },
     {
-      title: "Total Earning",
-      number: response?.data?.userCount,
-      icon: <i className="fa-solid fa-money-bill text-2xl text-[#2C4E80]"></i>,
+      title: "Bloacked Vendor",
+      number: response?.data?.blockedVendorsCount,
+      icon: <i className="fa-solid fa-ban text-2xl text-[#4D869C]"></i>,
+      bg: "#4D869C",
+      link: "/blokedvendors",
+    },
+
+    {
+      title: "Total Product",
+      number: response?.data?.productCount,
+      icon: <i className="fa-solid fa-box text-2xl text-[#2C4E80]"></i>,
       bg: "#2C4E80",
       link: "/Product",
     },
+
   ];
 
   return (
@@ -182,7 +191,7 @@ const Dashboard = () => {
           )
         )}
       </section>{" "}
-      <div className="charts-container">
+      {/* <div className="charts-container">
         <div className="chart">
           <ReactApexChart
             options={options}
@@ -192,7 +201,7 @@ const Dashboard = () => {
           />
         </div>
         <div className="chart">
-        <ReactApexChart
+          <ReactApexChart
             options={options2}
             series={series2}
             type="line"
@@ -217,7 +226,7 @@ const Dashboard = () => {
             height={350}
           />
         </div>
-      </div>
+      </div> */}
     </>
   );
 };
