@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import HOC from "../../Layout/HOC";
 import TableLayout from "../../Component/TableLayout";
-import { CreateBrand } from "../../Component/Modals/Modals";
+// import { CreateBrand } from "../../Component/Modals/Modals";
 
 const DeliveryCharges = () => {
   const [show, setShow] = useState(false);
@@ -31,7 +31,7 @@ const DeliveryCharges = () => {
   ];
   return (
     <>
-      <CreateBrand show={show} handleClose={() => setShow(false)} />
+      {/* <CreateBrand show={show} handleClose={() => setShow(false)} /> */}
       <section className="sectionCont">
         <div className="pb-4  w-full flex justify-between items-center">
           <span

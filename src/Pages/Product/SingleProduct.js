@@ -91,13 +91,13 @@ const SingleProduct = () => {
             <Col xs={12} md={3}>
               <Form.Group className="mb-3">
                 <Form.Label>Category</Form.Label>
-                <Form.Control type="text" value={response?.data?.categoryId.name} />
+                <Form.Control type="text" value={response?.data?.categoryId?.name} />
               </Form.Group>
             </Col>
             <Col xs={12} md={3}>
               <Form.Group className="mb-3">
                 <Form.Label>Sub-category</Form.Label>
-                <Form.Control type="text" value={response?.data?.subcategoryId.name} />
+                <Form.Control type="text" value={response?.data?.subcategoryId?.name} />
               </Form.Group>
             </Col>
             <Col xs={12} md={3}>

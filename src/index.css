@@ -3299,3 +3299,25 @@ ol {
   gap: 10px;
   margin-bottom: 10px;
 }
+
+
+
+.aboutus{
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+
+.aboutus p{
+  font-size: 26px;
+  color: #000;
+  padding: 0.5rem;
+}
+
+.aboutus  h1{
+  font-size: 30px;
+  color: #000;
+  padding: 0.5rem;
+  font-weight: 700;
+}

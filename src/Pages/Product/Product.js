@@ -56,11 +56,11 @@ const Product = () => {
   const tbody = response?.data?.docs?.map((i, index) => [
     `#${index + 1}`,
     i?.ID,
-    <img src={i.productImage} alt="" style={{ maxWidth: "80px" }} />,
-    i.productName,
-    i.categoryId.name,
-    i.subcategoryId.name,
-    i.createdAt?.slice(0, 10),
+    <img src={i?.productImage} alt="" style={{ maxWidth: "80px" }} />,
+    i?.productName,
+    i?.categoryId?.name,
+    i?.subcategoryId?.name,
+    i?.createdAt?.slice(0, 10),
     <span className="flexCont">
       {/* <Link to={`/edit-product/${i._id}`}>
         <i className="fa-solid fa-pen-to-square" />
@@ -68,7 +68,7 @@ const Product = () => {
       <Link to={`/product/${i._id}`}>
         <i className="fa-solid fa-eye" />
       </Link>
-      <i className="fa-sharp fa-solid fa-trash"  onClick={() => deleteHandler(i._id)}></i>
+      <i className="fa-sharp fa-solid fa-trash"  onClick={() => deleteHandler(i?._id)}></i>
     </span>,
   ]);
 

@@ -14,7 +14,7 @@ const CreateBanner = ({ show, handleClose, edit, id, fetchApi, data }) => {
   const [imagePreview, setImagePreview] = useState(data?.image || '');
   const [loading, setLoading] = useState(false);
 
-  
+
   useEffect(() => {
     if (data) {
       setType(data?.type || "");
@@ -22,7 +22,7 @@ const CreateBanner = ({ show, handleClose, edit, id, fetchApi, data }) => {
       setImage(data.image || "");
       setImagePreview(data.image || "");
     }
-  }, [data]); 
+  }, [data]);
 
 
   const resetForm = () => {
@@ -447,7 +447,7 @@ const CreateNotification = ({ show, handleClose, fetchApi }) => {
   const createHandler = (e) => {
     e.preventDefault();
     createApi({
-      url: "api/v1/notification/sendNotification", 
+      url: "api/v1/notification/sendNotification",
       payload: data,
       setLoading: () => { },
       successMsg: "Notification Created",
@@ -498,33 +498,6 @@ const CreateNotification = ({ show, handleClose, fetchApi }) => {
           </Form.Group>
           <button className="submitBtn" type="submit">
             Send
-          </button>
-        </Form>
-      </Modal.Body>
-    </Modal>
-  );
-};
-
-const CreateBrand = ({ show, handleClose }) => {
-  return (
-    <Modal show={show} onHide={handleClose} centered>
-      <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">Create New</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form>
-          <Form.Group className="mb-3">
-            <Form.Label>Image</Form.Label>
-            <Form.Control type="file" />
-          </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Title</Form.Label>
-            <Form.Control type="text" />
-          </Form.Group>
-
-          <button className="submitBtn" type="submit">
-            Submit
           </button>
         </Form>
       </Modal.Body>
@@ -768,27 +741,6 @@ const CreateSubscription = ({ show, handleClose, edit, id, fetchApi, data }) => 
   );
 };
 
-const CreateFeatures = ({ show, handleClose }) => {
-  return (
-    <Modal show={show} onHide={handleClose} centered>
-      <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">Create New</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form>
-          <Form.Group className="mb-3">
-            <Form.Label>Feature</Form.Label>
-            <Form.Control type="text" />
-          </Form.Group>
-
-          <button className="submitBtn" type="submit">
-            Submit
-          </button>
-        </Form>
-      </Modal.Body>
-    </Modal>
-  );
-};
 
 const CreateFaq = ({ show, handleClose, edit, id, fetchApi, data }) => {
   const [question, setQuestion] = useState(data?.question || '');
@@ -921,15 +873,524 @@ const CreateAdminStore = ({ show, handleClose, fetchApi }) => {
   );
 };
 
+const CreateBlog = ({ show, handleClose, edit, id, fetchApi, data }) => {
+  const [name, setName] = useState(data?.name || '');
+  const [desc, setDesc] = useState(data?.desc || '');
+  const [image, setImage] = useState(data?.blogImage || '');
+  const [imagePreview, setImagePreview] = useState(data?.blogImage || '');
+  const [loading, setLoading] = useState(false);
+
+
+  useEffect(() => {
+    if (data) {
+      setName(data?.name || "");
+      setDesc(data?.desc || "");
+      setImage(data.blogImage || "");
+      setImagePreview(data.blogImage || "");
+    }
+  }, [data]);
+
+
+  const resetForm = () => {
+    setName("");
+    setDesc("");
+    setImage("");
+    setImagePreview("");
+  };
+
+
+
+  const fd = new FormData();
+  fd.append("name", name);
+  fd.append("desc", desc);
+  fd.append("blogImage", image);
+
+  const additionalFunctions = [handleClose, fetchApi];
+
+  const createHandler = (e) => {
+    e.preventDefault();
+    createApi({
+      url: "api/v1/admin/blog/blogAdd",
+      payload: fd,
+      setLoading,
+      successMsg: "Created",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
+
+  const updateHandler = (e) => {
+    e.preventDefault();
+    const fd = new FormData();
+    fd.append("name", name);
+    fd.append("desc", desc);
+    fd.append("blogImage", image);
+
+    updateApi({
+      url: `api/v1/admin/blog/updateBlog/${id}`,
+      payload: fd,
+      setLoading,
+      successMsg: "Updated",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
+
+
+  return (
+    <Modal show={show} onHide={handleClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          {edit ? "Edit Blog" : "Add Blog"}
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={edit ? updateHandler : createHandler}>
+          <Form.Group className="mb-3">
+            <Form.Label>Image</Form.Label>
+            <Form.Control
+              type="file"
+              onChange={(e) => setImage(e.target.files[0])}
+            />
+            {imagePreview && (
+              <img
+                src={imagePreview}
+                alt="Selected"
+                style={{ width: "100%", height: '300px', marginTop: "10px" }}
+              />
+            )}
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Name</Form.Label>
+            <Form.Control type="text" value={name} onChange={(e) => setName(e.target.value)} />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Description</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              value={desc}
+              onChange={(e) => setDesc(e.target.value)}
+            />
+          </Form.Group>
+          <button className="submitBtn" type="submit" disabled={loading}>
+            {loading ? <ClipLoader color="#fff" /> : "Submit"}
+          </button>
+        </Form>
+      </Modal.Body>
+    </Modal>
+  );
+};
+const CreateEvent = ({ show, handleClose, edit, id, fetchApi, data }) => {
+  const [name, setName] = useState(data?.name || '');
+  const [desc, setDesc] = useState(data?.desc || '');
+  const [image, setImage] = useState(data?.eventImage || '');
+  const [imagePreview, setImagePreview] = useState(data?.eventImage || '');
+  const [loading, setLoading] = useState(false);
+
+
+  useEffect(() => {
+    if (data) {
+      setName(data?.name || "");
+      setDesc(data?.desc || "");
+      setImage(data.eventImage || "");
+      setImagePreview(data.eventImage || "");
+    }
+  }, [data]);
+
+
+  const resetForm = () => {
+    setName("");
+    setDesc("");
+    setImage("");
+    setImagePreview("");
+  };
+
+
+
+  const fd = new FormData();
+  fd.append("name", name);
+  fd.append("desc", desc);
+  fd.append("eventImage", image);
+
+  const additionalFunctions = [handleClose, fetchApi];
+
+  const createHandler = (e) => {
+    e.preventDefault();
+    createApi({
+      url: "api/v1/admin/event/eventAdd",
+      payload: fd,
+      setLoading,
+      successMsg: "Created",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
+
+  const updateHandler = (e) => {
+    e.preventDefault();
+    const fd = new FormData();
+    fd.append("name", name);
+    fd.append("desc", desc);
+    fd.append("eventImage", image);
+
+    updateApi({
+      url: `api/v1/admin/event/eventUpdate/${id}`,
+      payload: fd,
+      setLoading,
+      successMsg: "Updated",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
+
+
+  return (
+    <Modal show={show} onHide={handleClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          {edit ? "Edit Blog" : "Add Blog"}
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={edit ? updateHandler : createHandler}>
+          <Form.Group className="mb-3">
+            <Form.Label>Image</Form.Label>
+            <Form.Control
+              type="file"
+              onChange={(e) => setImage(e.target.files[0])}
+            />
+            {imagePreview && (
+              <img
+                src={imagePreview}
+                alt="Selected"
+                style={{ width: "100%", height: '300px', marginTop: "10px" }}
+              />
+            )}
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Name</Form.Label>
+            <Form.Control type="text" value={name} onChange={(e) => setName(e.target.value)} />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Description</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              value={desc}
+              onChange={(e) => setDesc(e.target.value)}
+            />
+          </Form.Group>
+          <button className="submitBtn" type="submit" disabled={loading}>
+            {loading ? <ClipLoader color="#fff" /> : "Submit"}
+          </button>
+        </Form>
+      </Modal.Body>
+    </Modal>
+  );
+};
+const CreateContes = ({ show, handleClose, edit, id, fetchApi, data }) => {
+  const [name, setName] = useState(data?.name || '');
+  const [desc, setDesc] = useState(data?.desc || '');
+  const [image, setImage] = useState(data?.contestImage || '');
+  const [imagePreview, setImagePreview] = useState(data?.contestImage || '');
+  const [loading, setLoading] = useState(false);
+
+
+  useEffect(() => {
+    if (data) {
+      setName(data?.name || "");
+      setDesc(data?.desc || "");
+      setImage(data.contestImage || "");
+      setImagePreview(data.contestImage || "");
+    }
+  }, [data]);
+
+
+  const resetForm = () => {
+    setName("");
+    setDesc("");
+    setImage("");
+    setImagePreview("");
+  };
+
+
+
+  const fd = new FormData();
+  fd.append("name", name);
+  fd.append("desc", desc);
+  fd.append("contestImage", image);
+
+  const additionalFunctions = [handleClose, fetchApi];
+
+  const createHandler = (e) => {
+    e.preventDefault();
+    createApi({
+      url: "api/v1/admin/contests/contestAdd",
+      payload: fd,
+      setLoading,
+      successMsg: "Created",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
+
+  const updateHandler = (e) => {
+    e.preventDefault();
+    const fd = new FormData();
+    fd.append("name", name);
+    fd.append("desc", desc);
+    fd.append("contestImage", image);
+
+    updateApi({
+      url: `api/v1/admin/contests/contestUpdate/${id}`,
+      payload: fd,
+      setLoading,
+      successMsg: "Updated",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
+
+
+  return (
+    <Modal show={show} onHide={handleClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          {edit ? "Edit Blog" : "Add Blog"}
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={edit ? updateHandler : createHandler}>
+          <Form.Group className="mb-3">
+            <Form.Label>Image</Form.Label>
+            <Form.Control
+              type="file"
+              onChange={(e) => setImage(e.target.files[0])}
+            />
+            {imagePreview && (
+              <img
+                src={imagePreview}
+                alt="Selected"
+                style={{ width: "100%", height: '300px', marginTop: "10px" }}
+              />
+            )}
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Name</Form.Label>
+            <Form.Control type="text" value={name} onChange={(e) => setName(e.target.value)} />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Description</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              value={desc}
+              onChange={(e) => setDesc(e.target.value)}
+            />
+          </Form.Group>
+          <button className="submitBtn" type="submit" disabled={loading}>
+            {loading ? <ClipLoader color="#fff" /> : "Submit"}
+          </button>
+        </Form>
+      </Modal.Body>
+    </Modal>
+  );
+};
+
+const CreateAbout = ({ show, handleClose, id, fetchApi, data }) => {
+  const [title, setTitle] = useState(data?.title || '');
+  const [desc, setDesc] = useState(data?.desc || '');
+  const [loading, setLoading] = useState(false);
+
+
+  useEffect(() => {
+    if (data) {
+      setTitle(data?.title || "");
+      setDesc(data?.desc || "");
+    }
+  }, [data]);
+
+
+  const resetForm = () => {
+    setTitle("");
+    setDesc("");
+  };
+
+
+
+  const fd = new FormData();
+  fd.append("title", title);
+  fd.append("desc", desc);
+
+  const additionalFunctions = [handleClose, fetchApi];
+
+
+
+  const updateHandler = (e) => {
+    e.preventDefault();
+    const fd = new FormData();
+    fd.append("title", title);
+    fd.append("desc", desc);
+
+    updateApi({
+      url: `api/v1/static/aboutUs/${id}`,
+      payload: fd,
+      setLoading,
+      successMsg: "Updated",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
+
+
+  return (
+    <Modal show={show} onHide={handleClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          Edit About us
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={updateHandler}>
+          <Form.Group className="mb-3">
+            <Form.Label>Title</Form.Label>
+            <Form.Control type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Description</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              value={desc}
+              onChange={(e) => setDesc(e.target.value)}
+            />
+          </Form.Group>
+          <button className="submitBtn" type="submit" disabled={loading}>
+            {loading ? <ClipLoader color="#fff" /> : "Submit"}
+          </button>
+        </Form>
+      </Modal.Body>
+    </Modal>
+  );
+};
+
+const CreateBrand = ({ show, handleClose, edit, id, fetchApi, data }) => {
+  const [name, setName] = useState(data?.name || '');
+  const [image, setImage] = useState(data?.image || '');
+  const [imagePreview, setImagePreview] = useState(data?.image || '');
+  const [loading, setLoading] = useState(false);
+
+
+  useEffect(() => {
+    if (data) {
+      setName(data?.name || "");
+      setImage(data.image || "");
+      setImagePreview(data.image || "");
+    }
+  }, [data]);
+
+
+  const resetForm = () => {
+    setName("");
+    setImage("");
+    setImagePreview("");
+  };
+
+
+
+  const fd = new FormData();
+  fd.append("name", name);
+  fd.append("image", image);
+
+  const additionalFunctions = [handleClose, fetchApi];
+
+  const createHandler = (e) => {
+    e.preventDefault();
+    createApi({
+      url: "api/v1/admin/Brand/addBrand",
+      payload: fd,
+      setLoading,
+      successMsg: "Created",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
+
+  const updateHandler = (e) => {
+    e.preventDefault();
+    const fd = new FormData();
+    fd.append("name", name);
+    fd.append("image", image);
+
+    updateApi({
+      url: `api/v1/admin/Brand/updateBrand/${id}`,
+      payload: fd,
+      setLoading,
+      successMsg: "Updated",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
+
+
+  return (
+    <Modal show={show} onHide={handleClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          {edit ? "Edit Brand" : "Add Brand"}
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={edit ? updateHandler : createHandler}>
+          <Form.Group className="mb-3">
+            <Form.Label>Image</Form.Label>
+            <Form.Control
+              type="file"
+              onChange={(e) => setImage(e.target.files[0])}
+            />
+            {imagePreview && (
+              <img
+                src={imagePreview}
+                alt="Selected"
+                style={{ width: "100%", height: '300px', marginTop: "10px" }}
+              />
+            )}
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Name</Form.Label>
+            <Form.Control type="text" value={name} onChange={(e) => setName(e.target.value)} />
+          </Form.Group>
+          <button className="submitBtn" type="submit" disabled={loading}>
+            {loading ? <ClipLoader color="#fff" /> : "Submit"}
+          </button>
+        </Form>
+      </Modal.Body>
+    </Modal>
+  );
+};
+
 export {
   CreateBanner,
   CreateCategory,
   EditVendorStatus,
   CreateSubCategory,
   CreateNotification,
-  CreateBrand,
   CreateSubscription,
-  CreateFeatures,
   CreateFaq,
-  CreateAdminStore
+  CreateAdminStore,
+  CreateBlog,
+  CreateEvent,
+  CreateContes,
+  CreateAbout,
+  CreateBrand
 };

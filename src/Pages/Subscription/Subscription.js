@@ -4,8 +4,7 @@ import React, { useEffect, useState } from "react";
 import { CreateSubscription } from "../../Component/Modals/Modals";
 import TableLayout from "../../Component/TableLayout";
 import HOC from "../../Layout/HOC";
-import { getApi, removeApi, createApi } from "../../Repository/Repository";
-import data from "../../Constant/constant.json";
+import { getApi, removeApi } from "../../Repository/Repository";
 import { useNavigate } from "react-router-dom";
 
 const Subscription = () => {

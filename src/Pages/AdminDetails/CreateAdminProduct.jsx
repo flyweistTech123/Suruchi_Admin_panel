@@ -2,8 +2,6 @@
 import HOC from "../../Layout/HOC";
 import { Link, useNavigate } from "react-router-dom";
 import { Form, Button, Row, Col, FloatingLabel } from "react-bootstrap";
-import Select from "react-select";
-import data from "../../Constant/constant.json";
 import BreadCrumb from "../../Component/BreadCrumb";
 import { useEffect, useState } from "react";
 import { createApi, getApi } from "../../Repository/Repository";
@@ -26,6 +24,7 @@ const CreateAdminProduct = () => {
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
   const [response1, setResponse1] = useState(null);
+  const [response2, setResponse2] = useState(null);
 
   const navigate = useNavigate()
 
@@ -49,6 +48,7 @@ const CreateAdminProduct = () => {
   fd.append("image", productImage);
   fd.append("categoryId", categoryid);
   fd.append("subCategoryId", subcategoryid);
+  fd.append("brandName", brandName);
   fd.append("originalPrice", price);
   fd.append("discount", discountprice);
   fd.append("discountActive", discountStatus);
@@ -79,20 +79,31 @@ const CreateAdminProduct = () => {
     });
   };
 
-  useEffect(() => {
-    fetchHandler();
-  }, []);
 
   const fetchHandler1 = () => {
     getApi({
-      url: "api/v1/SubCategory/all/SubCategoryForAdmin",
+      url: `api/v1/SubCategory/allSubcategoryById/${categoryid}`,
       setLoading,
       setResponse: setResponse1,
     });
   };
 
+
   useEffect(() => {
     fetchHandler1();
+  }, [categoryid]);
+
+  const fetchHandler2 = () => {
+    getApi({
+      url: "api/v1/admin/Brand/allBrand",
+      setLoading,
+      setResponse: setResponse2,
+    });
+  };
+
+  useEffect(() => {
+    fetchHandler();
+    fetchHandler2()
   }, []);
 
   const handleDiscountStatusChange = (event) => {
@@ -119,7 +130,19 @@ const CreateAdminProduct = () => {
           <Col xs={12} md={3}>
             <Form.Group className="mb-3">
               <Form.Label>Brand Name</Form.Label>
-              <Form.Control type="text" value={brandName} onChange={(e) => setBrandName(e.target.value)} />
+              <Form.Select
+                value={brandName}
+                onChange={(e) => {
+                  const selectedBrand = response2?.data?.find(brand => brand?.name === e.target.value);
+                  // setCategoryId(selectedCategory?._id);
+                  setBrandName(e.target.value);
+                }}
+              >
+                <option>Select Brand</option>
+                {response2?.data?.map(brand => (
+                  <option key={brand?._id} value={brand?.name}>{brand?.name}</option>
+                ))}
+              </Form.Select>
             </Form.Group>
           </Col>
           <Col xs={12} md={3}>
@@ -207,7 +230,7 @@ const CreateAdminProduct = () => {
             <Form.Group className="mb-3">
               <Form.Label>Description</Form.Label>
               <FloatingLabel>
-                <Form.Control as="textarea" style={{ height: "100px" }} value={description} onChange={(e) => setDescription(e.target.value)}/>
+                <Form.Control as="textarea" style={{ height: "100px" }} value={description} onChange={(e) => setDescription(e.target.value)} />
               </FloatingLabel>
             </Form.Group>
           </Col>

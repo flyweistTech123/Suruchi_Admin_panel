@@ -4,7 +4,7 @@ import AdBanner from "../Pages/Banner/AdBanner";
 import Customers from "../Pages/Customer/Customers";
 import UserData from "../Pages/Customer/UserData";
 import Dashboard from "../Pages/Dashboard";
-import DeliveryCharges from "../Pages/Delivery Charges/DeliveryCharges";
+// import DeliveryCharges from "../Pages/Delivery Charges/DeliveryCharges";
 import ECategory from "../Pages/ECategory";
 import Faq from "../Pages/FAQ/Faq";
 import ForgetPassword from "../Pages/ForgetPassword";
@@ -22,13 +22,17 @@ import Vendors from "../Pages/Vendors/Vendors";
 import VendorProducts from "../Pages/Vendors/VendorProducts";
 import VendorStoreDetail from "../Pages/Vendors/VendorStoreDetail";
 import Subscription from "../Pages/Subscription/Subscription";
-import Features from "../Pages/Subscription/Features";
 import BlockedVendor from "../Pages/Vendors/BlockedVendor";
 import AdminStore from "../Pages/AdminDetails/AdminStore";
 import CreateAdminStore from "../Pages/AdminDetails/CreateAdminStore";
 import AdminProduct from "../Pages/AdminDetails/AdminProduct";
 import CreateAdminProduct from "../Pages/AdminDetails/CreateAdminProduct";
 import EditAdminProduct from "../Pages/AdminDetails/EditAdminProduct";
+import Blog from "../Pages/BlogEvent/Blog";
+import Contes from "../Pages/BlogEvent/Contes";
+import Event from "../Pages/BlogEvent/Event";
+import Aboutus from "../Pages/BlogEvent/Aboutus";
+import Brands from "../Pages/Brands/Brands";
 
 const routes = [
   { path: "/", element: <Login /> },
@@ -54,12 +58,16 @@ const routes = [
   { path: "/user-data/:id", element: <UserData /> },
   { path: "/sub-category", element: <SubCategory /> },
   { path: "/notification", element: <Notification /> },
-  { path: "/brands", element: <DeliveryCharges /> },
+  // { path: "/brands", element: <DeliveryCharges /> },
   { path: "/faq", element: <Faq /> },
   { path: "/payment", element: <Payment /> },
   { path: "/forget-password", element: <ForgetPassword /> },
   { path: "/subscription", element: <Subscription /> },
-  { path: "/subscription-features", element: <Features /> },
+  { path: "/blogs", element: <Blog /> },
+  { path: "/event", element: <Event /> },
+  { path: "/contes", element: <Contes /> },
+  { path: "/about", element: <Aboutus /> },
+  { path: "/brands", element: <Brands /> },
 ];
 
 export default routes;
