@@ -55,7 +55,6 @@ const ViewVendor = () => {
 
   const expDate = response?.data?.planExpiration?.slice(0, 10)
 
-  console.log(expDate, "gjgjg")
 
 
   return (

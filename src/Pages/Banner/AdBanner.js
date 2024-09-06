@@ -40,7 +40,7 @@ const AdBanner = () => {
   };
 
 
-  const tbody = response.data.map((i, index) => [
+  const tbody = response?.data?.map((i, index) => [
     `#${index + 1}`,
     <img src={i.image} alt="" className="adBannerImg" />,
     i.type,

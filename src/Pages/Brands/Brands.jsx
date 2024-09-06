@@ -6,7 +6,7 @@ import TableLayout from "../../Component/TableLayout";
 import { getApi, removeApi } from "../../Repository/Repository";
 import { CreateBrand } from "../../Component/Modals/Modals";
 
-const thead = ["Sno.", "Image", "Name", ""];
+const thead = ["Sno.", "Image", "Name", "Position Number", "Action"];
 
 const Brands = () => {
   const [show, setShow] = useState(false);
@@ -43,6 +43,7 @@ const Brands = () => {
     `#${index + 1}`,
     <img src={i.image} alt="" className="adBannerImg" />,
     i.name,
+    i.positionNumber,
     <span className="flexCont">
       <i
         className="fa-solid fa-pen-to-square"
@@ -77,7 +78,7 @@ const Brands = () => {
             className="tracking-widest text-slate-900 font-semibold "
             style={{ fontSize: "1.5rem" }}
           >
-            All Brandadasdas({response?.data?.length || 0})
+            All Brand({response?.data?.length || 0})
           </span>
 
           <button

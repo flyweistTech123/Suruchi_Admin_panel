@@ -6,7 +6,7 @@ import TableLayout from "../../Component/TableLayout";
 import { getApi, removeApi } from "../../Repository/Repository";
 import { CreateBlog } from "../../Component/Modals/Modals";
 
-const thead = ["Sno.", "Image", "Name", "Description", ""];
+const thead = ["Sno.", "Image", "Name", "Description", "Location", "Action"];
 
 const Blog = () => {
   const [show, setShow] = useState(false);
@@ -41,9 +41,10 @@ const Blog = () => {
 
   const tbody = response.data.map((i, index) => [
     `#${index + 1}`,
-    <img src={i.blogImage} alt="" className="adBannerImg" />,
+    <img src={i.blogImage[0].img} alt="" className="adBannerImg" />,
     i.name,
     i.desc,
+    i.locationOfBlog,
     <span className="flexCont">
       <i
         className="fa-solid fa-pen-to-square"

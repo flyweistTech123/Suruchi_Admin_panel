@@ -143,7 +143,7 @@ const Sidebar = ({ hamb, setHamb }) => {
             ADMIN PANEL
           </span>
         </figure>
-        <nav className="py-6">
+        <nav className="py-1">
           {nav?.map((nav, index) => {
             return (
               <Link

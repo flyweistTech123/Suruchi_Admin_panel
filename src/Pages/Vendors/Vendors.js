@@ -33,11 +33,15 @@ const Vendors = () => {
   const thead = [
     "Sno.",
     "Name",
-    "Mobile Number",
-    "Product",
+    "Number",
+    "Products/Services",
+    "Plan",
+    "Plan Type",
+    "Plan Price",
+    "Plan Expiration",
     "KYC Status",
     "Status",
-    "",
+    "Action",
   ];
 
   const deleteHandler = (id) => {
@@ -68,6 +72,10 @@ const Vendors = () => {
     i?.fullName,
     i?.phone,
     <Link to={`/vendor-products/${i._id}`}>View</Link>,
+    i?.planBuyId?.planName,
+    i?.planBuyId?.planType,
+    i?.planBuyId?.amount,
+    i?.planExpiration?.slice(0, 10),
     i?.kycStatus,
     i?.status,
     <span className="flexCont">

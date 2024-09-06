@@ -5,6 +5,7 @@ import { Button, FloatingLabel, Form, Modal, Row, Col } from "react-bootstrap";
 import { ClipLoader } from "react-spinners";
 import { createApi, getApi, updateApi } from "../../Repository/Repository";
 import { IoCloseSharp } from "react-icons/io5";
+import { MdEdit } from "react-icons/md";
 
 
 const CreateBanner = ({ show, handleClose, edit, id, fetchApi, data }) => {
@@ -876,34 +877,54 @@ const CreateAdminStore = ({ show, handleClose, fetchApi }) => {
 const CreateBlog = ({ show, handleClose, edit, id, fetchApi, data }) => {
   const [name, setName] = useState(data?.name || '');
   const [desc, setDesc] = useState(data?.desc || '');
-  const [image, setImage] = useState(data?.blogImage || '');
-  const [imagePreview, setImagePreview] = useState(data?.blogImage || '');
+  const [location, setLocation] = useState(data?.locationOfBlog || '');
+  const [locationId, setLocationId] = useState('');
+  const [image, setImage] = useState(data?.blogImage || []);
   const [loading, setLoading] = useState(false);
-
+  const [show1, setShow1] = useState(false);
+  const [show2, setShow2] = useState(false);
+  const [imgid, setImageId] = useState('')
+  const [viewimg, setViewImage] = useState('')
+  const [response, setResponse] = useState(null);
 
   useEffect(() => {
-    if (data) {
+    if (edit && data) {
       setName(data?.name || "");
       setDesc(data?.desc || "");
-      setImage(data.blogImage || "");
-      setImagePreview(data.blogImage || "");
+      setLocation(data?.locationOfBlog || '');
+      setImage(data.blogImage || []);
     }
-  }, [data]);
-
+    else {
+      setName('');
+      setDesc('');
+      setImage([]);
+      setLocation('');
+    }
+  }, [edit, data]);
 
   const resetForm = () => {
     setName("");
     setDesc("");
-    setImage("");
-    setImagePreview("");
+    setLocation("");
+    setImage([]); // Clear image after form reset
   };
 
+  // Handle new images by appending them to the existing state
+  const handleImageChange = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    setImage([...image, ...selectedFiles]);
+  };
+
+  // Prepare FormData including all images
 
 
   const fd = new FormData();
   fd.append("name", name);
   fd.append("desc", desc);
-  fd.append("blogImage", image);
+  fd.append("locationOfBlog", location);
+  image.forEach((img) => {
+    fd.append("blogImage", img instanceof File ? img : img.img);
+  });
 
   const additionalFunctions = [handleClose, fetchApi];
 
@@ -919,16 +940,15 @@ const CreateBlog = ({ show, handleClose, edit, id, fetchApi, data }) => {
     resetForm();
   };
 
-
   const updateHandler = (e) => {
     e.preventDefault();
-    const fd = new FormData();
-    fd.append("name", name);
-    fd.append("desc", desc);
-    fd.append("blogImage", image);
-
+    const fd = {
+      name: name,
+      desc: desc,
+      locationOfBlog: location
+    }
     updateApi({
-      url: `api/v1/admin/blog/updateBlog/${id}`,
+      url: `api/v1/admin/blog/${id}/content`,
       payload: fd,
       setLoading,
       successMsg: "Updated",
@@ -938,9 +958,39 @@ const CreateBlog = ({ show, handleClose, edit, id, fetchApi, data }) => {
   };
 
 
+  const fetchHandler = () => {
+    getApi({
+      url: "api/v1/admin/city/getAllCitiess",
+      setLoading,
+      setResponse: setResponse,
+    });
+  };
+
+  useEffect(() => {
+    fetchHandler();
+  }, []);
+
+
+
 
   return (
     <Modal show={show} onHide={handleClose} centered>
+      <UpdateBlogImage
+        show={show1}
+        handleClose={() => setShow1(false)}
+        id={id}
+        imgid={imgid}
+        fetchApi={fetchApi}
+        handleClose1={handleClose}
+        img={viewimg}
+      />
+      <AddBlogImage
+        show={show2}
+        handleClose={() => setShow2(false)}
+        id={id}
+        fetchApi={fetchApi}
+        handleClose1={handleClose}
+      />
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
           {edit ? "Edit Blog" : "Add Blog"}
@@ -950,21 +1000,67 @@ const CreateBlog = ({ show, handleClose, edit, id, fetchApi, data }) => {
         <Form onSubmit={edit ? updateHandler : createHandler}>
           <Form.Group className="mb-3">
             <Form.Label>Image</Form.Label>
-            <Form.Control
-              type="file"
-              onChange={(e) => setImage(e.target.files[0])}
-            />
-            {imagePreview && (
-              <img
-                src={imagePreview}
-                alt="Selected"
-                style={{ width: "100%", height: '300px', marginTop: "10px" }}
+            {edit ?
+              ""
+              :
+              <Form.Control
+                type="file"
+                multiple // Allow multiple file selection
+                onChange={handleImageChange}
               />
-            )}
+            }
+            <div className="imagePreview" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              {image.map((img, index) => (
+                <div key={index} className="imagePreview1">
+                  <img
+                    src={img instanceof File ? URL.createObjectURL(img) : img.img}
+                    alt="Selected"
+                    style={{ width: "100px", height: '100px', objectFit: 'cover' }}
+                  />
+                  <div className="overlay">
+                    <div className="overlay-content" onClick={() => {
+                      setImageId(img._id);
+                      setShow1(true);
+                      setViewImage(img.img)
+                    }}>
+                      <MdEdit color="#ffffff" size={20} />
+                      <span>update</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {edit ?
+                <div className="imagePreview2"
+                  onClick={() => {
+                    setShow2(true);
+                  }}>
+                  Add Image
+                </div>
+
+                :
+                ""
+              }
+            </div>
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Name</Form.Label>
             <Form.Control type="text" value={name} onChange={(e) => setName(e.target.value)} />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Location</Form.Label>
+            <Form.Select
+              value={location}
+              onChange={(e) => {
+                const selectedCity = response?.data?.find(city => city?.name === e.target.value);
+                setLocationId(selectedCity?._id);
+                setLocation(e.target.value);
+              }}
+            >
+              <option>Select City</option>
+              {response?.data?.map(city => (
+                <option key={city?._id} value={city?.name}>{city?.name}</option>
+              ))}
+            </Form.Select>
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Description</Form.Label>
@@ -983,37 +1079,194 @@ const CreateBlog = ({ show, handleClose, edit, id, fetchApi, data }) => {
     </Modal>
   );
 };
+const AddBlogImage = ({ show, handleClose, id, fetchApi, handleClose1 }) => {
+  const [image, setImage] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const resetForm = () => {
+    setImage([]); // Clear image after form reset
+  };
+
+  // Handle new images by appending them to the existing state
+  const handleImageChange = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    setImage([...image, ...selectedFiles]);
+  };
+
+  // Prepare FormData including all images
+
+
+  const fd = new FormData();
+  image.forEach((img) => {
+    fd.append("images", img instanceof File ? img : img.img);
+  });
+
+  const additionalFunctions = [handleClose, fetchApi, handleClose1];
+
+  const createHandler = (e) => {
+    e.preventDefault();
+    createApi({
+      url: `api/v1/admin/addNewImageToBlog/${id}`,
+      payload: fd,
+      setLoading,
+      successMsg: "Added Image",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
+
+  return (
+    <Modal show={show} onHide={handleClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          Add Blog Image
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={createHandler}>
+          <Form.Group className="mb-3">
+            <Form.Label>Image</Form.Label>
+            <Form.Control
+              type="file"
+              multiple // Allow multiple file selection
+              onChange={handleImageChange}
+            />
+            <div className="imagePreview" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              {image.map((img, index) => (
+                <div key={index} className="imagePreview1">
+                  <img
+                    src={img instanceof File ? URL.createObjectURL(img) : img.img}
+                    alt="Selected"
+                    style={{ width: "100px", height: '100px', objectFit: 'cover' }}
+                  />
+                </div>
+              ))}
+            </div>
+          </Form.Group>
+          <button className="submitBtn" type="submit" disabled={loading}>
+            {loading ? <ClipLoader color="#fff" /> : "Add"}
+          </button>
+        </Form>
+      </Modal.Body>
+    </Modal>
+  );
+};
+
+const UpdateBlogImage = ({ show, handleClose, id, imgid, fetchApi, handleClose1, img }) => {
+  const [image, setImage] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const resetForm = () => {
+    setImage('');
+  };
+
+  const additionalFunctions = [handleClose, fetchApi, handleClose1];
+
+  const updateHandler = (e) => {
+    e.preventDefault();
+    const fd = new FormData();
+    fd.append("image", image);
+    updateApi({
+      url: `api/v1/admin/blog/${id}/image/${imgid}`,
+      payload: fd,
+      setLoading,
+      successMsg: "Image Updated",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
+  return (
+    <Modal show={show} onHide={handleClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          Update Image
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={updateHandler}>
+          <Form.Group className="mb-3">
+            <Form.Label>Image</Form.Label>
+            <Form.Control
+              type="file"
+              // multiple // Allow multiple file selection
+              onChange={(e) => setImage(e.target.files[0])}
+            />
+            <div className="imagePreview" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              <div className="imagePreview1">
+                <img
+                  src={image instanceof File ? URL.createObjectURL(image) : img}
+                  alt="Selected"
+                  style={{ width: "100%", height: '100%', objectFit: 'cover' }}
+                />
+              </div>
+            </div>
+          </Form.Group>
+          <button className="submitBtn" type="submit" disabled={loading}>
+            {loading ? <ClipLoader color="#fff" /> : "Submit"}
+          </button>
+        </Form>
+      </Modal.Body>
+    </Modal>
+  );
+};
+
+
 const CreateEvent = ({ show, handleClose, edit, id, fetchApi, data }) => {
   const [name, setName] = useState(data?.name || '');
   const [desc, setDesc] = useState(data?.desc || '');
-  const [image, setImage] = useState(data?.eventImage || '');
-  const [imagePreview, setImagePreview] = useState(data?.eventImage || '');
+  const [location, setLocation] = useState(data?.locationOfEvent || '');
+  const [locationId, setLocationId] = useState('');
+  const [image, setImage] = useState(data?.eventImage || []);
   const [loading, setLoading] = useState(false);
-
+  const [show1, setShow1] = useState(false);
+  const [show2, setShow2] = useState(false);
+  const [imgid, setImageId] = useState('')
+  const [viewimg, setViewImage] = useState('')
+  const [response, setResponse] = useState(null);
 
   useEffect(() => {
-    if (data) {
-      setName(data?.name || "");
-      setDesc(data?.desc || "");
-      setImage(data.eventImage || "");
-      setImagePreview(data.eventImage || "");
+    if (edit && data) {
+      setName(data?.name || '');
+      setDesc(data?.desc || '');
+      setImage(data.eventImage || []);
+      setLocation(data?.locationOfEvent || '');
+    } else {
+      // Reset all fields when edit is false
+      setName('');
+      setDesc('');
+      setImage([]);
+      setLocation('');
     }
-  }, [data]);
+  }, [edit, data]);
+
 
 
   const resetForm = () => {
     setName("");
     setDesc("");
-    setImage("");
-    setImagePreview("");
+    setLocation("");
+    setImage([]);
   };
 
+
+
+
+  // Handle new images by appending them to the existing state
+  const handleImageChange = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    setImage([...image, ...selectedFiles]);
+  };
 
 
   const fd = new FormData();
   fd.append("name", name);
   fd.append("desc", desc);
-  fd.append("eventImage", image);
+  fd.append("locationOfEvent", locationId);
+  image?.forEach((img) => {
+    fd.append("eventImage", img instanceof File ? img : img.img);
+  });
 
   const additionalFunctions = [handleClose, fetchApi];
 
@@ -1032,13 +1285,14 @@ const CreateEvent = ({ show, handleClose, edit, id, fetchApi, data }) => {
 
   const updateHandler = (e) => {
     e.preventDefault();
-    const fd = new FormData();
-    fd.append("name", name);
-    fd.append("desc", desc);
-    fd.append("eventImage", image);
+    const fd = {
+      name: name,
+      desc: desc,
+      locationOfEvent: locationId
+    }
 
     updateApi({
-      url: `api/v1/admin/event/eventUpdate/${id}`,
+      url: `api/v1/admin/event/updateEventContentById/${id}`,
       payload: fd,
       setLoading,
       successMsg: "Updated",
@@ -1048,33 +1302,109 @@ const CreateEvent = ({ show, handleClose, edit, id, fetchApi, data }) => {
   };
 
 
+  const fetchHandler = () => {
+    getApi({
+      url: "api/v1/admin/city/getAllCitiess",
+      setLoading,
+      setResponse: setResponse,
+    });
+  };
+
+  useEffect(() => {
+    fetchHandler();
+  }, []);
+
+
+
 
   return (
     <Modal show={show} onHide={handleClose} centered>
+      <UpdateEventImage
+        show={show1}
+        handleClose={() => setShow1(false)}
+        id={id}
+        imgid={imgid}
+        fetchApi={fetchApi}
+        handleClose1={handleClose}
+        img={viewimg}
+      />
+      <AddEventImage
+        show={show2}
+        handleClose={() => setShow2(false)}
+        id={id}
+        fetchApi={fetchApi}
+        handleClose1={handleClose}
+      />
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          {edit ? "Edit Blog" : "Add Blog"}
+          {edit ? "Edit Event" : "Add Event"}
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={edit ? updateHandler : createHandler}>
           <Form.Group className="mb-3">
             <Form.Label>Image</Form.Label>
-            <Form.Control
-              type="file"
-              onChange={(e) => setImage(e.target.files[0])}
-            />
-            {imagePreview && (
-              <img
-                src={imagePreview}
-                alt="Selected"
-                style={{ width: "100%", height: '300px', marginTop: "10px" }}
+            {edit ?
+              ""
+              :
+              <Form.Control
+                type="file"
+                multiple // Allow multiple file selection
+                onChange={handleImageChange}
               />
-            )}
+            }
+            <div className="imagePreview" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              {image?.map((img, index) => (
+                <div key={index} className="imagePreview1">
+                  <img
+                    src={img instanceof File ? URL.createObjectURL(img) : img.img}
+                    alt="Selected"
+                    style={{ width: "100px", height: '100px', objectFit: 'cover' }}
+                  />
+                  <div className="overlay">
+                    <div className="overlay-content" onClick={() => {
+                      setImageId(img._id);
+                      setShow1(true);
+                      setViewImage(img.img)
+                    }}>
+                      <MdEdit color="#ffffff" size={20} />
+                      <span>update</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {edit ?
+                <div className="imagePreview2"
+                  onClick={() => {
+                    setShow2(true);
+                  }}>
+                  Add Image
+                </div>
+
+                :
+                ""
+              }
+            </div>
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Name</Form.Label>
             <Form.Control type="text" value={name} onChange={(e) => setName(e.target.value)} />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Location</Form.Label>
+            <Form.Select
+              value={location}
+              onChange={(e) => {
+                const selectedCity = response?.data?.find(city => city?.name === e.target.value);
+                setLocationId(selectedCity?._id);
+                setLocation(e.target.value);
+              }}
+            >
+              <option>Select City</option>
+              {response?.data?.map(city => (
+                <option key={city?._id} value={city?.name}>{city?.name}</option>
+              ))}
+            </Form.Select>
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Description</Form.Label>
@@ -1093,37 +1423,190 @@ const CreateEvent = ({ show, handleClose, edit, id, fetchApi, data }) => {
     </Modal>
   );
 };
+const AddEventImage = ({ show, handleClose, id, fetchApi, handleClose1 }) => {
+  const [image, setImage] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const resetForm = () => {
+    setImage([]); // Clear image after form reset
+  };
+
+  // Handle new images by appending them to the existing state
+  const handleImageChange = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    setImage([...image, ...selectedFiles]);
+  };
+
+  // Prepare FormData including all images
+
+
+  const fd = new FormData();
+  image.forEach((img) => {
+    fd.append("images", img instanceof File ? img : img.img);
+  });
+
+  const additionalFunctions = [handleClose, fetchApi, handleClose1];
+
+  const createHandler = (e) => {
+    e.preventDefault();
+    createApi({
+      url: `api/v1/admin/addNewImageToEvent/${id}`,
+      payload: fd,
+      setLoading,
+      successMsg: "Added Image",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
+
+  return (
+    <Modal show={show} onHide={handleClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          Add Event Image
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={createHandler}>
+          <Form.Group className="mb-3">
+            <Form.Label>Image</Form.Label>
+            <Form.Control
+              type="file"
+              multiple // Allow multiple file selection
+              onChange={handleImageChange}
+            />
+            <div className="imagePreview" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              {image.map((img, index) => (
+                <div key={index} className="imagePreview1">
+                  <img
+                    src={img instanceof File ? URL.createObjectURL(img) : img.img}
+                    alt="Selected"
+                    style={{ width: "100px", height: '100px', objectFit: 'cover' }}
+                  />
+                </div>
+              ))}
+            </div>
+          </Form.Group>
+          <button className="submitBtn" type="submit" disabled={loading}>
+            {loading ? <ClipLoader color="#fff" /> : "Add"}
+          </button>
+        </Form>
+      </Modal.Body>
+    </Modal>
+  );
+};
+const UpdateEventImage = ({ show, handleClose, id, imgid, fetchApi, handleClose1, img }) => {
+  const [image, setImage] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const resetForm = () => {
+    setImage('');
+  };
+
+  const additionalFunctions = [handleClose, fetchApi, handleClose1];
+
+  const updateHandler = (e) => {
+    e.preventDefault();
+    const fd = new FormData();
+    fd.append("eventImage", image);
+    updateApi({
+      url: `api/v1/admin/event/${id}/updateEventImageById/${imgid}`,
+      payload: fd,
+      setLoading,
+      successMsg: "Image Updated",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
+  return (
+    <Modal show={show} onHide={handleClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          Update Image
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={updateHandler}>
+          <Form.Group className="mb-3">
+            <Form.Label>Image</Form.Label>
+            <Form.Control
+              type="file"
+              // multiple // Allow multiple file selection
+              onChange={(e) => setImage(e.target.files[0])}
+            />
+            <div className="imagePreview" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              <div className="imagePreview1">
+                <img
+                  src={image instanceof File ? URL.createObjectURL(image) : img}
+                  alt="Selected"
+                  style={{ width: "100%", height: '100%', objectFit: 'cover' }}
+                />
+              </div>
+            </div>
+          </Form.Group>
+          <button className="submitBtn" type="submit" disabled={loading}>
+            {loading ? <ClipLoader color="#fff" /> : "Submit"}
+          </button>
+        </Form>
+      </Modal.Body>
+    </Modal>
+  );
+};
+
+
 const CreateContes = ({ show, handleClose, edit, id, fetchApi, data }) => {
   const [name, setName] = useState(data?.name || '');
   const [desc, setDesc] = useState(data?.desc || '');
-  const [image, setImage] = useState(data?.contestImage || '');
-  const [imagePreview, setImagePreview] = useState(data?.contestImage || '');
+  const [location, setLocation] = useState(data?.locationOfContest || '');
+  const [locationId, setLocationId] = useState('');
+  const [image, setImage] = useState(data?.contestImage || []);
   const [loading, setLoading] = useState(false);
-
+  const [show1, setShow1] = useState(false);
+  const [show2, setShow2] = useState(false);
+  const [imgid, setImageId] = useState('')
+  const [viewimg, setViewImage] = useState('')
+  const [response, setResponse] = useState(null);
 
   useEffect(() => {
-    if (data) {
+    if (edit && data) {
       setName(data?.name || "");
       setDesc(data?.desc || "");
-      setImage(data.contestImage || "");
-      setImagePreview(data.contestImage || "");
+      setLocation(data?.locationOfContest || '');
+      setImage(data.contestImage || []);
     }
-  }, [data]);
+    else {
+      setName('');
+      setDesc('');
+      setImage([]);
+      setLocation('');
+    }
+  }, [edit, data]);
 
 
   const resetForm = () => {
     setName("");
     setDesc("");
-    setImage("");
-    setImagePreview("");
+    setImage([]);
+    setLocation("");
   };
 
+
+  // Handle new images by appending them to the existing state
+  const handleImageChange = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    setImage([...image, ...selectedFiles]);
+  };
 
 
   const fd = new FormData();
   fd.append("name", name);
   fd.append("desc", desc);
-  fd.append("contestImage", image);
+  fd.append("locationOfContest", location);
+  image?.forEach((img) => {
+    fd.append("contestImage", img instanceof File ? img : img.img);
+  });
 
   const additionalFunctions = [handleClose, fetchApi];
 
@@ -1142,13 +1625,14 @@ const CreateContes = ({ show, handleClose, edit, id, fetchApi, data }) => {
 
   const updateHandler = (e) => {
     e.preventDefault();
-    const fd = new FormData();
-    fd.append("name", name);
-    fd.append("desc", desc);
-    fd.append("contestImage", image);
+    const fd = {
+      name: name,
+      desc: desc,
+      locationOfContest: location
+    }
 
     updateApi({
-      url: `api/v1/admin/contests/contestUpdate/${id}`,
+      url: `api/v1/admin/contests/updateContestContentById/${id}`,
       payload: fd,
       setLoading,
       successMsg: "Updated",
@@ -1159,32 +1643,107 @@ const CreateContes = ({ show, handleClose, edit, id, fetchApi, data }) => {
 
 
 
+  const fetchHandler = () => {
+    getApi({
+      url: "api/v1/admin/city/getAllCitiess",
+      setLoading,
+      setResponse: setResponse,
+    });
+  };
+
+  useEffect(() => {
+    fetchHandler();
+  }, []);
+
+
   return (
     <Modal show={show} onHide={handleClose} centered>
+      <UpdateContestImage
+        show={show1}
+        handleClose={() => setShow1(false)}
+        id={id}
+        imgid={imgid}
+        fetchApi={fetchApi}
+        handleClose1={handleClose}
+        img={viewimg}
+      />
+      <AddContestImage
+        show={show2}
+        handleClose={() => setShow2(false)}
+        id={id}
+        fetchApi={fetchApi}
+        handleClose1={handleClose}
+      />
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          {edit ? "Edit Blog" : "Add Blog"}
+          {edit ? "Edit Contest" : "Add Contest"}
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={edit ? updateHandler : createHandler}>
           <Form.Group className="mb-3">
             <Form.Label>Image</Form.Label>
-            <Form.Control
-              type="file"
-              onChange={(e) => setImage(e.target.files[0])}
-            />
-            {imagePreview && (
-              <img
-                src={imagePreview}
-                alt="Selected"
-                style={{ width: "100%", height: '300px', marginTop: "10px" }}
+            {edit ?
+              ""
+              :
+              <Form.Control
+                type="file"
+                multiple // Allow multiple file selection
+                onChange={handleImageChange}
               />
-            )}
+            }
+            <div className="imagePreview" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              {image?.map((img, index) => (
+                <div key={index} className="imagePreview1">
+                  <img
+                    src={img instanceof File ? URL.createObjectURL(img) : img.img}
+                    alt="Selected"
+                    style={{ width: "100px", height: '100px', objectFit: 'cover' }}
+                  />
+                  <div className="overlay">
+                    <div className="overlay-content" onClick={() => {
+                      setImageId(img._id);
+                      setShow1(true);
+                      setViewImage(img.img)
+                    }}>
+                      <MdEdit color="#ffffff" size={20} />
+                      <span>update</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {edit ?
+                <div className="imagePreview2"
+                  onClick={() => {
+                    setShow2(true);
+                  }}>
+                  Add Image
+                </div>
+
+                :
+                ""
+              }
+            </div>
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Name</Form.Label>
             <Form.Control type="text" value={name} onChange={(e) => setName(e.target.value)} />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Location</Form.Label>
+            <Form.Select
+              value={location}
+              onChange={(e) => {
+                const selectedCity = response?.data?.find(city => city?.name === e.target.value);
+                setLocationId(selectedCity?._id);
+                setLocation(e.target.value);
+              }}
+            >
+              <option>Select City</option>
+              {response?.data?.map(city => (
+                <option key={city?._id} value={city?.name}>{city?.name}</option>
+              ))}
+            </Form.Select>
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Description</Form.Label>
@@ -1194,6 +1753,137 @@ const CreateContes = ({ show, handleClose, edit, id, fetchApi, data }) => {
               value={desc}
               onChange={(e) => setDesc(e.target.value)}
             />
+          </Form.Group>
+          <button className="submitBtn" type="submit" disabled={loading}>
+            {loading ? <ClipLoader color="#fff" /> : "Submit"}
+          </button>
+        </Form>
+      </Modal.Body>
+    </Modal>
+  );
+};
+const AddContestImage = ({ show, handleClose, id, fetchApi, handleClose1 }) => {
+  const [image, setImage] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const resetForm = () => {
+    setImage([]); // Clear image after form reset
+  };
+
+  // Handle new images by appending them to the existing state
+  const handleImageChange = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    setImage([...image, ...selectedFiles]);
+  };
+
+  // Prepare FormData including all images
+
+
+  const fd = new FormData();
+  image.forEach((img) => {
+    fd.append("images", img instanceof File ? img : img.img);
+  });
+
+  const additionalFunctions = [handleClose, fetchApi, handleClose1];
+
+  const createHandler = (e) => {
+    e.preventDefault();
+    createApi({
+      url: `api/v1/admin/addNewImageToContest/${id}`,
+      payload: fd,
+      setLoading,
+      successMsg: "Added Image",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
+
+  return (
+    <Modal show={show} onHide={handleClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          Add Contest Image
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={createHandler}>
+          <Form.Group className="mb-3">
+            <Form.Label>Image</Form.Label>
+            <Form.Control
+              type="file"
+              multiple // Allow multiple file selection
+              onChange={handleImageChange}
+            />
+            <div className="imagePreview" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              {image.map((img, index) => (
+                <div key={index} className="imagePreview1">
+                  <img
+                    src={img instanceof File ? URL.createObjectURL(img) : img.img}
+                    alt="Selected"
+                    style={{ width: "100px", height: '100px', objectFit: 'cover' }}
+                  />
+                </div>
+              ))}
+            </div>
+          </Form.Group>
+          <button className="submitBtn" type="submit" disabled={loading}>
+            {loading ? <ClipLoader color="#fff" /> : "Add"}
+          </button>
+        </Form>
+      </Modal.Body>
+    </Modal>
+  );
+};
+const UpdateContestImage = ({ show, handleClose, id, imgid, fetchApi, handleClose1, img }) => {
+  const [image, setImage] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const resetForm = () => {
+    setImage('');
+  };
+
+  const additionalFunctions = [handleClose, fetchApi, handleClose1];
+
+  const updateHandler = (e) => {
+    e.preventDefault();
+    const fd = new FormData();
+    fd.append("contestImage", image);
+    updateApi({
+      url: `api/v1/admin/contests/updateContestImageById/${id}/images/${imgid}`,
+      payload: fd,
+      setLoading,
+      successMsg: "Image Updated",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
+  return (
+    <Modal show={show} onHide={handleClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          Update Image
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={updateHandler}>
+          <Form.Group className="mb-3">
+            <Form.Label>Image</Form.Label>
+            <Form.Control
+              type="file"
+              // multiple // Allow multiple file selection
+              onChange={(e) => setImage(e.target.files[0])}
+            />
+            <div className="imagePreview" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              <div className="imagePreview1">
+                <img
+                  src={image instanceof File ? URL.createObjectURL(image) : img}
+                  alt="Selected"
+                  style={{ width: "100%", height: '100%', objectFit: 'cover' }}
+                />
+              </div>
+            </div>
           </Form.Group>
           <button className="submitBtn" type="submit" disabled={loading}>
             {loading ? <ClipLoader color="#fff" /> : "Submit"}
@@ -1284,24 +1974,29 @@ const CreateAbout = ({ show, handleClose, id, fetchApi, data }) => {
 
 const CreateBrand = ({ show, handleClose, edit, id, fetchApi, data }) => {
   const [name, setName] = useState(data?.name || '');
+  const [positionnumber, setPositionNumber] = useState(data?.positionNumber || '');
   const [image, setImage] = useState(data?.image || '');
-  const [imagePreview, setImagePreview] = useState(data?.image || '');
   const [loading, setLoading] = useState(false);
 
 
   useEffect(() => {
-    if (data) {
+    if (edit && data) {
       setName(data?.name || "");
       setImage(data.image || "");
-      setImagePreview(data.image || "");
+      setPositionNumber(data?.positionNumber || '')
     }
-  }, [data]);
+    else {
+      setName("");
+      setImage("");
+      setPositionNumber("")
+    }
+  }, [edit, data]);
 
 
   const resetForm = () => {
     setName("");
     setImage("");
-    setImagePreview("");
+    setPositionNumber("")
   };
 
 
@@ -1309,6 +2004,7 @@ const CreateBrand = ({ show, handleClose, edit, id, fetchApi, data }) => {
   const fd = new FormData();
   fd.append("name", name);
   fd.append("image", image);
+  fd.append("positionNumber", positionnumber);
 
   const additionalFunctions = [handleClose, fetchApi];
 
@@ -1330,6 +2026,7 @@ const CreateBrand = ({ show, handleClose, edit, id, fetchApi, data }) => {
     const fd = new FormData();
     fd.append("name", name);
     fd.append("image", image);
+    fd.append("positionNumber", positionnumber);
 
     updateApi({
       url: `api/v1/admin/Brand/updateBrand/${id}`,
@@ -1358,9 +2055,9 @@ const CreateBrand = ({ show, handleClose, edit, id, fetchApi, data }) => {
               type="file"
               onChange={(e) => setImage(e.target.files[0])}
             />
-            {imagePreview && (
+            {image && (
               <img
-                src={imagePreview}
+                src={image instanceof File ? URL.createObjectURL(image) : image}
                 alt="Selected"
                 style={{ width: "100%", height: '300px', marginTop: "10px" }}
               />
@@ -1369,6 +2066,10 @@ const CreateBrand = ({ show, handleClose, edit, id, fetchApi, data }) => {
           <Form.Group className="mb-3">
             <Form.Label>Name</Form.Label>
             <Form.Control type="text" value={name} onChange={(e) => setName(e.target.value)} />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>position Number</Form.Label>
+            <Form.Control type="number" value={positionnumber} onChange={(e) => setPositionNumber(e.target.value)} />
           </Form.Group>
           <button className="submitBtn" type="submit" disabled={loading}>
             {loading ? <ClipLoader color="#fff" /> : "Submit"}

@@ -3277,7 +3277,7 @@ ol {
   border-radius: 100%;
 }
 
-.aadhar-images{
+.aadhar-images {
   display: flex;
   gap: 20px;
   align-items: center;
@@ -3287,37 +3287,89 @@ ol {
   width: 200px;
   object-fit: cover;
   object-position: center;
-
 }
 
-
-
-
-.feature-item{
+.feature-item {
   display: flex;
   align-items: center;
   gap: 10px;
   margin-bottom: 10px;
 }
 
-
-
-.aboutus{
+.aboutus {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-
-.aboutus p{
+.aboutus p {
   font-size: 26px;
   color: #000;
   padding: 0.5rem;
 }
 
-.aboutus  h1{
+.aboutus h1 {
   font-size: 30px;
   color: #000;
   padding: 0.5rem;
   font-weight: 700;
+}
+
+.imagePreview{
+  margin-top: 10px;
+}
+
+
+.imagePreview1{
+  position: relative;
+  cursor: pointer;
+}
+
+.imagePreview1 .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width:100px;
+  height: 100px;
+  background: #00000066;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.imagePreview1:hover .overlay {
+  opacity: 1;
+}
+
+.overlay-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.overlay-content span {
+  font-family: "Roboto", sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  color: #ffffff;
+  line-height: 21.09px;
+  margin: 0;
+}
+
+
+
+.imagePreview2{
+  width: 100px;
+  height: 50px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #00000066;
+  cursor: pointer;
+  color: #ffffff;
+  font-weight: 600;
 }
