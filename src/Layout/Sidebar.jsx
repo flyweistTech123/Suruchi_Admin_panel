@@ -22,6 +22,11 @@ const Sidebar = ({ hamb, setHamb }) => {
     },
     {
       icon: <i className="fa-solid fa-list  text-xl mr-3 rounded-full"></i>,
+      link: "/categorytype",
+      name: "Category Types",
+    },
+    {
+      icon: <i className="fa-solid fa-list  text-xl mr-3 rounded-full"></i>,
       link: "/Category",
       name: "Category",
     },
@@ -79,6 +84,16 @@ const Sidebar = ({ hamb, setHamb }) => {
       name: "Notification",
     },
     {
+      icon: <i className="fa-solid fa-bell  text-xl mr-3 rounded-full"></i>,
+      link: "/allstate",
+      name: "All State",
+    },
+    {
+      icon: <i className="fa-solid fa-bell  text-xl mr-3 rounded-full"></i>,
+      link: "/allcity",
+      name: "All City",
+    },
+    {
       icon: <i className="fa-solid fa-blog text-xl mr-3 rounded-full"></i>,
       link: "/blogs",
       name: "Blog",
@@ -91,12 +106,17 @@ const Sidebar = ({ hamb, setHamb }) => {
     {
       icon: <i className="fa-solid fa-trophy text-xl mr-3 rounded-full"></i>,
       link: "/contes",
-      name: "Contes",
+      name: "Contest",
     },
     {
       icon: <i className="fa-solid fa-trophy text-xl mr-3 rounded-full"></i>,
       link: "/about",
       name: "About App",
+    },
+    {
+      icon: <i className="fa-solid fa-trophy text-xl mr-3 rounded-full"></i>,
+      link: "/termsconditions",
+      name: "Terms & Conditions",
     },
     {
       icon: <i className="fa-solid fa-question text-xl mr-3 rounded-full" />,

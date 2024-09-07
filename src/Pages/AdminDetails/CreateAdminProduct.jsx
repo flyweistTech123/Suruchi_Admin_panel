@@ -7,16 +7,17 @@ import { useEffect, useState } from "react";
 import { createApi, getApi } from "../../Repository/Repository";
 
 const CreateAdminProduct = () => {
-  const [productImage, setProductImage] = useState("");
+  const [productImage, setProductImage] = useState([]);
   const [productName, setProductName] = useState("");
   const [brandName, setBrandName] = useState("");
   const [id, setId] = useState("");
   const [price, setPrice] = useState("");
-  const [discountprice, setDiscountPrice] = useState('');
-  const [discountStatus, setDiscountStatus] = useState('');
+  const [discount, setDiscount] = useState('');
   const [Minimumorder, setMinimumOrder] = useState('');
   const [stock, setStock] = useState('');
+  const [stockStatus, setStockStatus] = useState('');
   const [description, setDescription] = useState('');
+  const [returnPolicy, setReturnPolicy] = useState('');
   const [categoryid, setCategoryId] = useState('');
   const [categoryName, setCategoryName] = useState(null);
   const [subcategoryid, setSubCategoryId] = useState('');
@@ -34,34 +35,45 @@ const CreateAdminProduct = () => {
     setBrandName("");
     setId("");
     setPrice("");
-    setDiscountPrice("");
-    setDiscountStatus("");
+    setDiscount("");
     setMinimumOrder("");
     setStock("");
+    setStockStatus("");
     setCategoryId("");
     setCategoryName("");
     setSubCategoryId("");
     setSubCategoryName("");
+    setReturnPolicy('');
+  };
+
+  // Handle new images by appending them to the existing state
+  const handleImageChange = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    setProductImage([...productImage, ...selectedFiles]);
   };
 
   const fd = new FormData();
-  fd.append("image", productImage);
+  productImage.forEach((img) => {
+    fd.append("productImage", img instanceof File ? img : img.img);
+  });
+  // fd.append("image", productImage);
   fd.append("categoryId", categoryid);
   fd.append("subCategoryId", subcategoryid);
   fd.append("brandName", brandName);
   fd.append("originalPrice", price);
-  fd.append("discount", discountprice);
-  fd.append("discountActive", discountStatus);
+  fd.append("discount", discount);
   fd.append("productName", productName);
   fd.append("minimunOrderUnit", Minimumorder);
   fd.append("stock", stock);
+  fd.append("stockStatus", stockStatus);
   fd.append("description", description);
+  fd.append("returnPolicy", returnPolicy);
   fd.append("ID", id);
 
   const createHandler = (e) => {
     e.preventDefault();
     createApi({
-      url: "api/v1/admin/addProductAdmin",
+      url: "api/v1/admin/addProduct",
       payload: fd,
       setLoading,
       successMsg: "Created",
@@ -106,10 +118,6 @@ const CreateAdminProduct = () => {
     fetchHandler2()
   }, []);
 
-  const handleDiscountStatusChange = (event) => {
-    const value = event.target.value;
-    setDiscountStatus(value === "Active");
-  };
   return (
     <section className="sectionCont">
       <BreadCrumb title={"Create Admin Product"} backtitle={"All Admin Product's"} link={'admin-products'} />
@@ -118,7 +126,18 @@ const CreateAdminProduct = () => {
           <Col xs={12} md={12}>
             <Form.Group className="mb-3">
               <Form.Label>Product Image</Form.Label>
-              <Form.Control type="file" multiple onChange={(e) => setProductImage(e.target.files[0])} />
+              <Form.Control type="file" multiple onChange={handleImageChange} />
+              <div className="imagePreview" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                {productImage.map((img, index) => (
+                  <div key={index} className="imagePreview1">
+                    <img
+                      src={img instanceof File ? URL.createObjectURL(img) : img}
+                      alt="Selected"
+                      style={{ width: "100%", height: '100px', objectFit: 'cover' }}
+                    />
+                  </div>
+                ))}
+              </div>
             </Form.Group>
           </Col>
           <Col xs={12} md={3}>
@@ -159,27 +178,28 @@ const CreateAdminProduct = () => {
           </Col>
           <Col xs={12} md={3}>
             <Form.Group className="mb-3">
-              <Form.Label>Discounted Active</Form.Label>
-              <Form.Select
-                value={discountStatus ? "Active" : "Deactive"}
-                onChange={handleDiscountStatusChange}
-              >
-                <option value="Select">Select</option>
-                <option value="Active">Active</option>
-                <option value="Deactive">Deactive</option>
-              </Form.Select>
-            </Form.Group>
-          </Col>
-          <Col xs={12} md={3}>
-            <Form.Group className="mb-3">
-              <Form.Label>Discounted Price</Form.Label>
-              <Form.Control type="number" min={0} value={discountprice} onChange={(e) => setDiscountPrice(e.target.value)} />
+              <Form.Label>Discount</Form.Label>
+              <Form.Control type="text" value={discount} onChange={(e) => setDiscount(e.target.value)} />
             </Form.Group>
           </Col>
           <Col xs={12} md={3}>
             <Form.Group className="mb-3">
               <Form.Label>Stock</Form.Label>
               <Form.Control type="text" value={stock} onChange={(e) => setStock(e.target.value)} />
+            </Form.Group>
+          </Col>
+          <Col xs={12} md={3}>
+            <Form.Group className="mb-3">
+              <Form.Label>Stock Status</Form.Label>
+              <Form.Select
+                value={stockStatus}
+                onChange={(e) => setStockStatus(e.target.value)}
+              >
+                <option value="Select">Select Status</option>
+                <option value="OUTOFSTOCK">OUTOFSTOCK</option>
+                <option value="LOW">LOW</option>
+                <option value="ADEQUATE">ADEQUATE</option>
+              </Form.Select>
             </Form.Group>
           </Col>
           <Col xs={12} md={3}>
@@ -231,6 +251,14 @@ const CreateAdminProduct = () => {
               <Form.Label>Description</Form.Label>
               <FloatingLabel>
                 <Form.Control as="textarea" style={{ height: "100px" }} value={description} onChange={(e) => setDescription(e.target.value)} />
+              </FloatingLabel>
+            </Form.Group>
+          </Col>
+          <Col xs={12} md={12}>
+            <Form.Group className="mb-3">
+              <Form.Label>Return Policy</Form.Label>
+              <FloatingLabel>
+                <Form.Control as="textarea" style={{ height: "100px" }} value={returnPolicy} onChange={(e) => setReturnPolicy(e.target.value)} />
               </FloatingLabel>
             </Form.Group>
           </Col>

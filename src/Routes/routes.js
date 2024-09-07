@@ -33,6 +33,10 @@ import Contes from "../Pages/BlogEvent/Contes";
 import Event from "../Pages/BlogEvent/Event";
 import Aboutus from "../Pages/BlogEvent/Aboutus";
 import Brands from "../Pages/Brands/Brands";
+import CategoryType from "../Pages/CategoryType/CategoryType";
+import AllState from "../Pages/Location/AllState";
+import AllCity from "../Pages/Location/AllCity";
+import TermsConditions from "../Pages/BlogEvent/TermsConditions";
 
 const routes = [
   { path: "/", element: <Login /> },
@@ -68,6 +72,10 @@ const routes = [
   { path: "/contes", element: <Contes /> },
   { path: "/about", element: <Aboutus /> },
   { path: "/brands", element: <Brands /> },
+  { path: "/categorytype", element: <CategoryType /> },
+  { path: "/allstate", element: <AllState /> },
+  { path: "/allcity", element: <AllCity /> },
+  { path: "/termsconditions", element: <TermsConditions /> },
 ];
 
 export default routes;

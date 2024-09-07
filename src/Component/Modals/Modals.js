@@ -17,13 +17,18 @@ const CreateBanner = ({ show, handleClose, edit, id, fetchApi, data }) => {
 
 
   useEffect(() => {
-    if (data) {
+    if (edit && data) {
       setType(data?.type || "");
       setDesc(data?.desc || "");
       setImage(data.image || "");
       setImagePreview(data.image || "");
+    } else {
+      setType("");
+      setDesc("");
+      setImage("");
+      setImagePreview("");
     }
-  }, [data]);
+  }, [edit, data]);
 
 
   const resetForm = () => {
@@ -106,7 +111,104 @@ const CreateBanner = ({ show, handleClose, edit, id, fetchApi, data }) => {
               <option value="">Select your preference</option>
               <option value="Top">Top</option>
               <option value="Bottom">Bottom</option>
+              <option value="LOGIN">Login</option>
             </Form.Select>
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Description</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              value={desc}
+              onChange={(e) => setDesc(e.target.value)}
+            />
+          </Form.Group>
+          <button className="submitBtn" type="submit" disabled={loading}>
+            {loading ? <ClipLoader color="#fff" /> : "Submit"}
+          </button>
+        </Form>
+      </Modal.Body>
+    </Modal>
+  );
+};
+const CreateType = ({ show, handleClose, edit, id, fetchApi, data }) => {
+  const [type, setType] = useState(data?.gender || '');
+  const [desc, setDesc] = useState(data?.desc || '');
+  const [loading, setLoading] = useState(false);
+
+
+  useEffect(() => {
+    if (edit && data) {
+      setType(data?.gender || "");
+      setDesc(data?.desc || "");
+    } else {
+      setType("");
+      setDesc("");
+    }
+  }, [edit, data]);
+
+
+  const resetForm = () => {
+    setType("");
+    setDesc("");
+  };
+
+
+
+  const fd = {
+    gender: type,
+    desc: desc
+  }
+  const additionalFunctions = [handleClose, fetchApi];
+
+  const createHandler = (e) => {
+    e.preventDefault();
+    createApi({
+      url: "api/v1/admin/createGender",
+      payload: fd,
+      setLoading,
+      successMsg: "Created",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
+
+  const updateHandler = (e) => {
+    e.preventDefault();
+    const fd = {
+      gender: type,
+      desc: desc
+    }
+
+    updateApi({
+      url: `api/v1/admin/updateGender/${id}`,
+      payload: fd,
+      setLoading,
+      successMsg: "Updated",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
+
+
+  return (
+    <Modal show={show} onHide={handleClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          {edit ? "Edit Type" : "Add Type"}
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={edit ? updateHandler : createHandler}>
+          <Form.Group className="mb-3">
+            <Form.Label>Type</Form.Label>
+            <Form.Control
+              type="text"
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+            />
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Description</Form.Label>
@@ -129,28 +231,33 @@ const CreateBanner = ({ show, handleClose, edit, id, fetchApi, data }) => {
 const CreateCategory = ({ show, handleClose, edit, id, fetchApi, data }) => {
 
   const [name, setName] = useState(data?.name || '');
-  const [gender, setGender] = useState(data?.gender || '');
+  const [type, setType] = useState(data?.gender || '');
   const [image, setImage] = useState(data?.image || '');
   const [imagePreview, setImagePreview] = useState(data?.image || '');
   const [loading, setLoading] = useState(false);
-
+  const [response, setResponse] = useState(null);
 
 
   // Add useEffect to update state when `data` prop changes
   useEffect(() => {
-    if (data) {
+    if (edit && data) {
       setName(data.name || "");
-      setGender(data.gender || "");
+      setType(data.gender || "");
       setImage(data.image || "");
       setImagePreview(data.image || "");
+    } else {
+      setName("");
+      setType("");
+      setImage("");
+      setImagePreview("");
     }
-  }, [data]); // This effect runs whenever the `data` prop changes
+  }, [edit, data]); // This effect runs whenever the `data` prop changes
 
 
 
   const resetForm = () => {
     setName("");
-    setGender("");
+    setType("");
     setImage("");
     setImagePreview("");
   };
@@ -161,7 +268,7 @@ const CreateCategory = ({ show, handleClose, edit, id, fetchApi, data }) => {
 
   const fd = new FormData();
   fd.append("name", name);
-  fd.append("gender", gender);
+  fd.append("gender", type);
   fd.append("image", image);
 
   const additionalFunctions = [handleClose, fetchApi];
@@ -190,6 +297,18 @@ const CreateCategory = ({ show, handleClose, edit, id, fetchApi, data }) => {
     });
     resetForm();
   };
+
+  const fetchHandler = () => {
+    getApi({
+      url: "api/v1/admin/getAllGenders",
+      setLoading,
+      setResponse: setResponse,
+    });
+  };
+
+  useEffect(() => {
+    fetchHandler();
+  }, []);
 
 
   return (
@@ -225,16 +344,19 @@ const CreateCategory = ({ show, handleClose, edit, id, fetchApi, data }) => {
             />
           </Form.Group>
           <Form.Group className="mb-3">
-            <Form.Label>Gender</Form.Label>
+            <Form.Label>Type</Form.Label>
             <Form.Select
-              value={gender}
-              onChange={(e) => setGender(e.target.value)}
+              value={type}
+              onChange={(e) => {
+                const selectedType = response?.data?.find(type => type?.gender === e.target.value);
+                // setCategoryId(selectedCategory?._id);
+                setType(e.target.value);
+              }}
             >
-              <option value="">Select your preference</option>
-              <option value="men">Men</option>
-              <option value="women">Women</option>
-              <option value="kids">Kids</option>
-              <option value="other">Other</option>
+              <option>Select Type</option>
+              {response?.data?.map(type => (
+                <option key={type?._id} value={type?.gender}>{type?.gender}</option>
+              ))}
             </Form.Select>
           </Form.Group>
 
@@ -824,6 +946,75 @@ const CreateFaq = ({ show, handleClose, edit, id, fetchApi, data }) => {
   );
 };
 
+const EditReview = ({ show, handleClose, id, ids, fetchApi, data }) => {
+  const [rating, setRating] = useState(data?.rating || '');
+  const [comment, setComment] = useState(data?.comment || '');
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (data) {
+      setRating(data?.rating || "");
+      setComment(data?.comment || "");
+    }
+  }, [data]);
+
+  const resetForm = () => {
+    setRating("");
+    setComment("");
+  };
+
+  const fd = {
+    rating: rating,
+    comment: comment
+  }
+
+  const additionalFunctions = [handleClose, fetchApi];
+
+  const updateHandler = (e) => {
+    e.preventDefault();
+    updateApi({
+      url: `api/v1/admin/Product/updateProductReview/${id}/${ids}`,
+      payload: fd,
+      setLoading,
+      successMsg: "Updated",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
+
+
+
+  return (
+    <Modal show={show} onHide={handleClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          {" "}
+          Edit Rating
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={updateHandler}>
+          <Form.Group className="mb-3">
+            <Form.Label>Rating</Form.Label>
+            <Form.Control type="text" value={rating} onChange={(e) => setRating(e.target.value)} />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Comment</Form.Label>
+            <FloatingLabel>
+              <Form.Control as="textarea" style={{ height: "100px" }} value={comment} onChange={(e) => setComment(e.target.value)} />
+            </FloatingLabel>
+          </Form.Group>
+
+          <button className="submitBtn" type="submit">
+            {loading ? <ClipLoader color="#fff" /> : "Submit"}
+          </button>
+        </Form>
+      </Modal.Body>
+    </Modal>
+  );
+};
+
 const CreateAdminStore = ({ show, handleClose, fetchApi }) => {
   const [storeName, setStoreName] = useState('');
   const [loading, setLoading] = useState(false);
@@ -866,7 +1057,7 @@ const CreateAdminStore = ({ show, handleClose, fetchApi }) => {
             <Form.Control type="text" value={storeName} onChange={(e) => setStoreName(e.target.value)} />
           </Form.Group>
           <button className="submitBtn" type="submit">
-            Submit
+            {loading ? <ClipLoader color="#fff" /> : "Submit"}
           </button>
         </Form>
       </Modal.Body>
@@ -923,7 +1114,7 @@ const CreateBlog = ({ show, handleClose, edit, id, fetchApi, data }) => {
   fd.append("desc", desc);
   fd.append("locationOfBlog", location);
   image.forEach((img) => {
-    fd.append("blogImage", img instanceof File ? img : img.img);
+    fd.append("blogImages", img instanceof File ? img : img.img);
   });
 
   const additionalFunctions = [handleClose, fetchApi];
@@ -960,7 +1151,7 @@ const CreateBlog = ({ show, handleClose, edit, id, fetchApi, data }) => {
 
   const fetchHandler = () => {
     getApi({
-      url: "api/v1/admin/city/getAllCitiess",
+      url: "api/getCitiesWithOutPagination",
       setLoading,
       setResponse: setResponse,
     });
@@ -1263,7 +1454,7 @@ const CreateEvent = ({ show, handleClose, edit, id, fetchApi, data }) => {
   const fd = new FormData();
   fd.append("name", name);
   fd.append("desc", desc);
-  fd.append("locationOfEvent", locationId);
+  fd.append("locationOfEvent", location);
   image?.forEach((img) => {
     fd.append("eventImage", img instanceof File ? img : img.img);
   });
@@ -1304,7 +1495,7 @@ const CreateEvent = ({ show, handleClose, edit, id, fetchApi, data }) => {
 
   const fetchHandler = () => {
     getApi({
-      url: "api/v1/admin/city/getAllCitiess",
+      url: "api/getCitiesWithOutPagination",
       setLoading,
       setResponse: setResponse,
     });
@@ -1645,7 +1836,7 @@ const CreateContes = ({ show, handleClose, edit, id, fetchApi, data }) => {
 
   const fetchHandler = () => {
     getApi({
-      url: "api/v1/admin/city/getAllCitiess",
+      url: "api/getCitiesWithOutPagination",
       setLoading,
       setResponse: setResponse,
     });
@@ -1971,6 +2162,84 @@ const CreateAbout = ({ show, handleClose, id, fetchApi, data }) => {
     </Modal>
   );
 };
+const CreateTermsConditions = ({ show, handleClose, id, fetchApi, data }) => {
+  const [title, setTitle] = useState(data?.title || '');
+  const [desc, setDesc] = useState(data?.desc || '');
+  const [loading, setLoading] = useState(false);
+
+
+  useEffect(() => {
+    if (data) {
+      setTitle(data?.title || "");
+      setDesc(data?.desc || "");
+    }
+  }, [data]);
+
+
+  const resetForm = () => {
+    setTitle("");
+    setDesc("");
+  };
+
+
+
+  const fd = new FormData();
+  fd.append("title", title);
+  fd.append("desc", desc);
+
+  const additionalFunctions = [handleClose, fetchApi];
+
+
+
+  const updateHandler = (e) => {
+    e.preventDefault();
+
+    const fd = {
+      title: title,
+      desc: desc
+    }
+    updateApi({
+      url: `api/v1/static/terms/${id}`,
+      payload: fd,
+      setLoading,
+      successMsg: "Updated",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
+
+
+  return (
+    <Modal show={show} onHide={handleClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          Edit Terms & Conditions
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={updateHandler}>
+          <Form.Group className="mb-3">
+            <Form.Label>Title</Form.Label>
+            <Form.Control type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Description</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              value={desc}
+              onChange={(e) => setDesc(e.target.value)}
+            />
+          </Form.Group>
+          <button className="submitBtn" type="submit" disabled={loading}>
+            {loading ? <ClipLoader color="#fff" /> : "Submit"}
+          </button>
+        </Form>
+      </Modal.Body>
+    </Modal>
+  );
+};
 
 const CreateBrand = ({ show, handleClose, edit, id, fetchApi, data }) => {
   const [name, setName] = useState(data?.name || '');
@@ -2093,5 +2362,8 @@ export {
   CreateEvent,
   CreateContes,
   CreateAbout,
-  CreateBrand
+  CreateBrand,
+  EditReview,
+  CreateType,
+  CreateTermsConditions
 };

@@ -32,7 +32,7 @@ const Aboutus = () => {
                 handleClose={() => setShow(false)}
                 id={id}
                 fetchApi={fetchHandler}
-                data={response.data[0]}
+                data={response?.data[0]}
             />
             <section className="sectionCont">
                 <div className="pb-4  w-full flex justify-between items-center">

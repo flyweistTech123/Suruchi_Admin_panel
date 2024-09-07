@@ -3,16 +3,18 @@ import { Button, Col, FloatingLabel, Form, Row } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import HOC from "../../Layout/HOC";
 import { getApi, removeApi } from "../../Repository/Repository";
-import img from "../../assests/Images/product/4.png";
-import img1 from "../../assests/Images/product/1.png";
-import img2 from "../../assests/Images/product/2.png";
-import img3 from "../../assests/Images/product/3.png";
 import { useEffect, useState } from "react";
+import TableLayout from "../../Component/TableLayout";
+import { EditReview } from "../../Component/Modals/Modals";
+
 
 const SingleProduct = () => {
+  const [show, setShow] = useState(false);
   const { id } = useParams();
   const [response, setResponse] = useState({});
   const [loading, setLoading] = useState(false);
+  const [selected, setSelected] = useState(null);
+  const [ids, setIdS] = useState("");
   const navigate = useNavigate();
 
 
@@ -28,14 +30,62 @@ const SingleProduct = () => {
     fetchHandler();
   }, []);
 
+
+  const deleteHandler = (ids) => {
+    const additionalFunctions = [fetchHandler];
+    removeApi({
+      url: `api/v1/admin/Product/deleteProductReview/${id}/${ids}`,
+      successMsg: "Removed !",
+      additionalFunctions,
+    });
+  };
+
+  const thead = [
+    "Sno.",
+    "Rating",
+    "Comment",
+    "Action",
+  ];
+
+  const tbody = response?.data?.reviews?.map((i, index) => [
+    `#${index + 1}`,
+    i?.rating,
+    i?.comment,
+    <span className="flexCont">
+      <i
+        className="fa-solid fa-pen-to-square"
+        onClick={() => {
+          setIdS(i._id);
+          handleEditClick(i)
+        }}
+      />
+      <i className="fa-sharp fa-solid fa-trash" onClick={() => deleteHandler(i.user)}></i>
+    </span>,
+  ]);
+
+  const handleEditClick = (data) => {
+    setSelected(data);
+    setShow(true);
+  };
+
+
   return (
     <>
+      <EditReview
+        show={show}
+        handleClose={() => setShow(false)}
+        id={id}
+        ids={ids}
+        fetchApi={fetchHandler}
+        data={selected}
+      />
       <section className="sectionCont">
-        {response?.data?.productImage?.map((img, index) => (
-          <div className="img-cont" key={index}>
-            <img src={img} alt={`Product ${index + 1}`} className="centerImage" />
-          </div>
-        ))}
+
+        <div className="img-cont" >
+          {response?.data?.productImage?.map((img, index) => (
+            <img key={index} src={img.img} alt={`Product ${index + 1}`} className="centerImage" />
+          ))}
+        </div>
 
         <Form className="mt-3">
           <Row>
@@ -72,6 +122,12 @@ const SingleProduct = () => {
             </Col>
             <Col xs={12} md={3}>
               <Form.Group className="mb-3">
+                <Form.Label>Discount</Form.Label>
+                <Form.Control type="number" min={0} value={response?.data?.discount} />
+              </Form.Group>
+            </Col>
+            <Col xs={12} md={3}>
+              <Form.Group className="mb-3">
                 <Form.Label>Discounted Price</Form.Label>
                 <Form.Control type="number" min={0} value={response?.data?.discountPrice} />
               </Form.Group>
@@ -80,6 +136,12 @@ const SingleProduct = () => {
               <Form.Group className="mb-3">
                 <Form.Label>Stock</Form.Label>
                 <Form.Control type="text" value={response?.data?.stock} />
+              </Form.Group>
+            </Col>
+            <Col xs={12} md={3}>
+              <Form.Group className="mb-3">
+                <Form.Label>Stock Status</Form.Label>
+                <Form.Control type="text" value={response?.data?.stockStatus} />
               </Form.Group>
             </Col>
             <Col xs={12} md={3}>
@@ -103,7 +165,7 @@ const SingleProduct = () => {
             <Col xs={12} md={3}>
               <Form.Group className="mb-3">
                 <Form.Label>Rating</Form.Label>
-                <Form.Control type="text" value={response?.data?.totalRating} />
+                <Form.Control type="text" value={response?.data?.avgRatingsProduct} />
               </Form.Group>
             </Col>
 
@@ -119,8 +181,32 @@ const SingleProduct = () => {
                 </FloatingLabel>
               </Form.Group>
             </Col>
+            <Col xs={12} md={12}>
+              <Form.Group className="mb-3">
+                <Form.Label>Return Policy</Form.Label>
+                <FloatingLabel>
+                  <Form.Control
+                    as="textarea"
+                    style={{ height: "100px" }}
+                    value={response?.data?.returnPolicy}
+                  />
+                </FloatingLabel>
+              </Form.Group>
+            </Col>
           </Row>
         </Form>
+
+        <section className="sectionCont">
+          <div className="pb-4  w-full flex justify-between items-center">
+            <span
+              className="tracking-widest text-slate-900 font-semibold"
+              style={{ fontSize: "1.5rem" }}
+            >
+              All Review/Rating's ({response?.data?.totalRating || 0})
+            </span>
+          </div>
+          <TableLayout thead={thead} tbody={tbody} loading={loading} />
+        </section>
 
         <Link to={-1}>
           <Button variant="dark">Back</Button>

@@ -23,11 +23,12 @@ const Notification = () => {
     fetchHandler();
   }, []);
 
-  const thead = ["Sno.", "Title", "Description"];
+  const thead = ["Sno.", "Title", "Description", "Date"];
   const tbody = response?.data?.map((i, index) => [
     `#${index + 1}`,
     i?.title,
     i?.body,
+    i?.date.slice(0, 10),
   ]);
 
 

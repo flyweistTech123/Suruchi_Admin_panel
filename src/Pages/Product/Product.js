@@ -49,6 +49,8 @@ const Product = () => {
     "Product Name",
     "Category Name",
     "Subcategory Name",
+    "Stock",
+    "Stock Status",
     "Created at", 
     "",
   ];
@@ -56,10 +58,12 @@ const Product = () => {
   const tbody = response?.data?.docs?.map((i, index) => [
     `#${index + 1}`,
     i?.ID,
-    <img src={i?.productImage} alt="" style={{ maxWidth: "80px" }} />,
+    <img src={i?.productImage[0]} alt="" style={{ maxWidth: "80px" }} />,
     i?.productName,
     i?.categoryId?.name,
     i?.subcategoryId?.name,
+    i?.stock,
+    i?.stockStatus,
     i?.createdAt?.slice(0, 10),
     <span className="flexCont">
       {/* <Link to={`/edit-product/${i._id}`}>

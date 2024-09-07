@@ -4,11 +4,12 @@ import React, { useEffect, useState } from "react";
 import HOC from "../../Layout/HOC";
 import TableLayout from "../../Component/TableLayout";
 import { getApi, removeApi } from "../../Repository/Repository";
-import { CreateContes } from "../../Component/Modals/Modals";
+import { CreateType } from "../../Component/Modals/Modals";
+import { data } from "autoprefixer";
 
-const thead = ["Sno.", "Image", "Name", "Description", "Location", "Action"];
+const thead = ["Sno.", "Type Name", "Description", "Action"];
 
-const Contes = () => {
+const CategoryType = () => {
   const [show, setShow] = useState(false);
   const [edit, setEdit] = useState(false);
   const [response, setResponse] = useState({ data: [] });
@@ -19,7 +20,7 @@ const Contes = () => {
 
   const fetchHandler = () => {
     getApi({
-      url: "api/v1/admin/contests/contestGetAll",
+      url: "api/v1/admin/getAllGenders",
       setResponse,
       setLoading,
     });
@@ -32,19 +33,17 @@ const Contes = () => {
   const deleteHandler = (id) => {
     const additionalFunctions = [fetchHandler];
     removeApi({
-      url: `api/v1/admin/contests/contestDelete/${id}`,
+      url: `api/v1/admin/deleteGender/${id}`,
       successMsg: "Removed !",
       additionalFunctions,
     });
   };
 
 
-  const tbody = response.data.map((i, index) => [
+  const tbody = response?.data?.map((i, index) => [
     `#${index + 1}`,
-    <img src={i.contestImage[0].img} alt="" className="adBannerImg" />,
-    i.name,
+    i.gender,
     i.desc,
-    i.locationOfContest,
     <span className="flexCont">
       <i
         className="fa-solid fa-pen-to-square"
@@ -65,7 +64,7 @@ const Contes = () => {
 
   return (
     <>
-      <CreateContes
+      <CreateType
         show={show}
         handleClose={() => setShow(false)}
         edit={edit}
@@ -79,7 +78,7 @@ const Contes = () => {
             className="tracking-widest text-slate-900 font-semibold "
             style={{ fontSize: "1.5rem" }}
           >
-            All Contest({response?.data?.length || 0})
+            All Category Type({response?.data?.length || 0})
           </span>
 
           <button
@@ -99,4 +98,4 @@ const Contes = () => {
   );
 };
 
-export default HOC(Contes);
+export default HOC(CategoryType);

@@ -94,6 +94,7 @@ export const createApi = async ({
 export const removeApi = async ({
   url,
   successMsg,
+  payload,
   setLoading,
   additionalFunctions = [],
 }) => {
