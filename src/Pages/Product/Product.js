@@ -8,6 +8,7 @@ import TableLayout from "../../Component/TableLayout";
 import { getApi, removeApi } from "../../Repository/Repository";
 import Pagination from "../../Component/Pagination";
 import { debouncedSetQuery } from "../../utils/utils";
+import axios from "axios";
 
 
 const Product = () => {
@@ -51,7 +52,7 @@ const Product = () => {
     "Subcategory Name",
     "Stock",
     "Stock Status",
-    "Created at", 
+    "Created at",
     "",
   ];
 
@@ -72,9 +73,25 @@ const Product = () => {
       <Link to={`/product/${i._id}`}>
         <i className="fa-solid fa-eye" />
       </Link>
-      <i className="fa-sharp fa-solid fa-trash"  onClick={() => deleteHandler(i?._id)}></i>
+      <i className="fa-sharp fa-solid fa-trash" onClick={() => deleteHandler(i?._id)}></i>
     </span>,
   ]);
+
+
+  const handleExport = () => {
+    const exportUrl = `https://suruchi-backend.vercel.app/api/v1/admin/downloadProductsExcel`;
+
+    axios.get(exportUrl)
+      .then(response => {
+        const downloadUrl = response.data.filePath;
+        window.open( downloadUrl, '_blank');
+      })
+      .catch(error => {
+        console.error('Error exporting data:', error);
+        // toast.error('Failed to export data. Please try again later.');
+      });
+
+  };
 
   return (
     <>
@@ -87,12 +104,12 @@ const Product = () => {
             All Product's ({response?.data?.totalDocs})
           </span>
 
-          {/* <button
+          <button
             className="submitBtn"
-            onClick={() => navigate("/create-product")}
+            onClick={handleExport}
           >
-            Create New
-          </button> */}
+            Export
+          </button>
         </div>
 
         <div className="filterBox">

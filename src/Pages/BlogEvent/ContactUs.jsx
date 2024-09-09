@@ -6,9 +6,10 @@ import { getApi } from "../../Repository/Repository";
 import { CreateAbout, CreateTermsConditions } from "../../Component/Modals/Modals";
 
 
-const TermsConditions = () => {
+const ContactUs = () => {
     const [show, setShow] = useState(false);
     const [response, setResponse] = useState({ data: [] });
+    const [response1, setResponse1] = useState({ data: [] });
     const [loading, setLoading] = useState(false);
     const [id, setId] = useState("");
     const [selected, setSelected] = useState(null);
@@ -16,20 +17,32 @@ const TermsConditions = () => {
 
     const fetchHandler = () => {
         getApi({
-            url: "api/v1/static/getAllTermsContent",
+            url: "getAllContactContent?userType=USER",
             setResponse,
+            setLoading,
+            
+        });
+    };
+
+    const fetchHandler1 = () => {
+        getApi({
+            url: "getAllContactContent?userType=VENDOR",
+            setResponse1,
             setLoading,
         });
     };
 
     useEffect(() => {
         fetchHandler();
+        fetchHandler1();
     }, []);
 
     const handleEditClick = (data) => {
         setSelected(data);
         setShow(true);
     };
+
+    console.log(response1?.data, "jadgsj")
 
     return (
         <>
@@ -41,60 +54,63 @@ const TermsConditions = () => {
                 data={selected}
             />
             <section className="sectionCont">
-                <div className="pb-4  w-full flex justify-between items-center">
+                <div className="pb-4 w-full flex justify-between items-center">
                     <span
-                        className="tracking-widest text-slate-900 font-semibold "
+                        className="tracking-widest text-slate-900 font-semibold"
                         style={{ fontSize: "1.5rem" }}
                     >
-                        Terms & Conditions User Type
+                        Contact Us User Type
                     </span>
 
-                    <button
-                        className="submitBtn"
-                        onClick={() => {
-                            setId(response.data[0]._id);
-                            handleEditClick(response.data[0])
-                        }}
-                    >
-                        Update
-                    </button>
+                    {response?.data?.length > 0 && (
+                        <button
+                            className="submitBtn"
+                            onClick={() => {
+                                setId(response?.data[0]._id);
+                                handleEditClick(response?.data[0]);
+                            }}
+                        >
+                            Update
+                        </button>
+                    )}
                 </div>
-                {response.data[0] ?
-                    <div className=" aboutus">
-                        <h1>Title:{response.data[0]?.title}</h1>
-                        <p><h1>Description:</h1>{response.data[0]?.desc}</p>
-                    </div>
-                    : (
-                        <div className="no-data">
-                            <h2>No Data Available</h2>
-                        </div>
-                    )
-                }
 
+                {response?.data?.length > 0 ? (
+                    <div className="aboutus">
+                        <h1>Title: {response?.data[0]?.title}</h1>
+                        <h1>Description:</h1>
+                        <p>{response?.data[0]?.desc}</p>
+                    </div>
+                ) : (
+                    <div className="no-data">
+                        <h2>No Data Available</h2>
+                    </div>
+                )}
             </section>
+
             <section className="sectionCont">
                 <div className="pb-4  w-full flex justify-between items-center">
                     <span
                         className="tracking-widest text-slate-900 font-semibold "
                         style={{ fontSize: "1.5rem" }}
                     >
-                        Terms & Conditions Vendor Type
+                        Contact Us Vendor Type
                     </span>
 
                     <button
                         className="submitBtn"
                         onClick={() => {
-                            setId(response.data[1]._id);
-                            handleEditClick(response.data[1])
+                            setId(response1?.data[0]?._id);
+                            handleEditClick(response1?.data[0])
                         }}
                     >
                         Update
                     </button>
                 </div>
-                {response.data[1] ?
-                    <div className=" aboutus">
-                        <h1>Title:{response.data[1]?.title}</h1>
-                        <p><h1>Description:</h1>{response.data[1]?.desc}</p>
+                {response1?.data[0] ?
+                    <div className="aboutus">
+                        <h1>Title:{response1?.data[0]?.title}</h1>
+                        <p><h1>Description:</h1>{response1?.data[0]?.desc}</p>
                     </div>
                     : (
                         <div className="no-data">
@@ -108,4 +124,4 @@ const TermsConditions = () => {
     );
 };
 
-export default HOC(TermsConditions);
+export default HOC(ContactUs);

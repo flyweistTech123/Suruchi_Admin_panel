@@ -14,6 +14,7 @@ const Subscription = () => {
   const [response, setResponse] = useState({ data: [] });
   const [loading, setLoading] = useState(false);
   const [id, setId] = useState("");
+  const [name, setName] = useState("");
   const [selected, setSelected] = useState(null);
 
 
@@ -78,6 +79,7 @@ const Subscription = () => {
         onClick={() => {
           setId(i._id);
           setEdit(true);
+          setName(i.name)
           handleEditClick(i)
         }}
       ></i>
@@ -96,6 +98,7 @@ const Subscription = () => {
         handleClose={() => setModalShow(false)}
         edit={edit}
         id={id}
+        name={name}
         fetchApi={fetchHandler}
         data={selected}
       />

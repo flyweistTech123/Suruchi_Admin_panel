@@ -6,13 +6,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { getApi, removeApi, createApi } from "../../Repository/Repository";
 import TableLayout from "../../Component/TableLayout";
 import { EditVendorStatus } from "../../Component/Modals/Modals";
+import axios from "axios";
 
 const Vendors = () => {
   const [open, setOpen] = useState(false);
   const [response, setResponse] = useState({ data: [] });
   const [loading, setLoading] = useState(false);
   const [id, setId] = useState("");
-  
+
 
   const navigate = useNavigate();
 
@@ -37,8 +38,8 @@ const Vendors = () => {
     "Products/Services",
     "Plan",
     "Plan Type",
-    "Plan Price",
-    "Plan Expiration",
+    // "Plan Price",
+    // "Plan Expiration",
     "KYC Status",
     "Status",
     "Action",
@@ -74,8 +75,8 @@ const Vendors = () => {
     <Link to={`/vendor-products/${i._id}`}>View</Link>,
     i?.planBuyId?.planName,
     i?.planBuyId?.planType,
-    i?.planBuyId?.amount,
-    i?.planExpiration?.slice(0, 10),
+    // i?.planBuyId?.amount,
+    // i?.planExpiration?.slice(0, 10),
     i?.kycStatus,
     i?.status,
     <span className="flexCont">
@@ -85,16 +86,32 @@ const Vendors = () => {
           setId(i._id);
           setOpen(true);
         }}
-      />  
+      />
       <Link to={`/view-vendor/${i._id}`}>
         <i className="fa-solid fa-eye"></i>
       </Link>
       <i className="fa-sharp fa-solid fa-trash" onClick={() => deleteHandler(i._id)}></i>
-      <button className="submitBtn" type="submit" onClick={() => blockHandler(i._id, i.status)}>
+      <button className="submitBtn" onClick={() => blockHandler(i._id, i.status)} style={{ width: '50px' }}>
         {i?.status === 'Block' ? "Unblock" : "Block"}
       </button>
     </span>,
   ]);
+
+  const handleExport = () => {
+    const exportUrl = `https://suruchi-backend.vercel.app/api/v1/admin/download-vendor-excel`;
+
+    axios.get(exportUrl)
+      .then(response => {
+        const downloadUrl = response.data.filePath;
+        window.open(downloadUrl, '_blank');
+      })
+      .catch(error => {
+        console.error('Error exporting data:', error);
+        // toast.error('Failed to export data. Please try again later.');
+      });
+
+  };
+
 
   return (
     <>
@@ -107,9 +124,10 @@ const Vendors = () => {
           >
             All Vendors ({response?.data?.length})
           </span>
-          <button className="submitBtn" onClick={()=>navigate('/blokedvendors')}>
+          <button className="submitBtn" onClick={() => navigate('/blokedvendors')}>
             Blocked Vendors
           </button>
+
         </div>
 
         <div className="filterBox">
@@ -122,7 +140,12 @@ const Vendors = () => {
             placeholder="seach by first name , last name , email address , phone number..."
           />
         </div>
-
+        <button
+          className="submitBtn"
+          onClick={handleExport}
+        >
+          Export
+        </button>
         <TableLayout thead={thead} tbody={tbody} loading={loading} />
       </section>
     </>

@@ -3373,3 +3373,10 @@ ol {
   color: #ffffff;
   font-weight: 600;
 }
+
+
+.discountPriceplan{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}

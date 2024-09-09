@@ -628,28 +628,52 @@ const CreateNotification = ({ show, handleClose, fetchApi }) => {
   );
 };
 
-const CreateSubscription = ({ show, handleClose, edit, id, fetchApi, data }) => {
+const CreateSubscription = ({ show, handleClose, edit, id, name, fetchApi, data }) => {
   const [subscriptionData, setSubscriptionData] = useState({
     name: data?.name || '',
     monthly: data?.monthly || '',
     quarterly: data?.quarterly || '',
     halfYearly: data?.halfYearly || '',
     yearly: data?.yearly || '',
+    discountmonthly: data?.discounts?.monthlyDiscount || '',
+    discountquarterly: data?.discounts?.quarterlyDiscount || '',
+    discounthalfYearly: data?.discounts?.halfYearlyDiscount || '',
+    discountyearly: data?.discounts?.yearlyDiscount || '',
     data: data?.data || [],
   });
 
+  const [adddiscount, setSetDiscount] = useState('');
+
   useEffect(() => {
-    if (data) {
+    if (edit && data) {
       setSubscriptionData({
         name: data.name || '',
         monthly: data.monthly || '',
         quarterly: data.quarterly || '',
         halfYearly: data.halfYearly || '',
         yearly: data.yearly || '',
+        discountmonthly: data?.discounts?.monthlyDiscount || '',
+        discountquarterly: data?.discounts?.quarterlyDiscount || '',
+        discounthalfYearly: data?.discounts?.halfYearlyDiscount || '',
+        discountyearly: data?.discounts?.yearlyDiscount || '',
         data: data.data || [],
       });
     }
-  }, [data]);
+    else {
+      setSubscriptionData({
+        name: "",
+        monthly: "",
+        quarterly: "",
+        halfYearly: "",
+        yearly: "",
+        discountmonthly: "",
+        discountquarterly: "",
+        discounthalfYearly: "",
+        discountyearly: "",
+        data: [],
+      });
+    }
+  }, [edit, data]);
 
 
   const [newFeature, setNewFeature] = useState({ features: "", count: 0 });
@@ -662,6 +686,10 @@ const CreateSubscription = ({ show, handleClose, edit, id, fetchApi, data }) => 
       quarterly: "",
       halfYearly: "",
       yearly: "",
+      discountmonthly: "",
+      discountquarterly: "",
+      discounthalfYearly: "",
+      discountyearly: "",
       data: [],
     });
   };
@@ -670,13 +698,6 @@ const CreateSubscription = ({ show, handleClose, edit, id, fetchApi, data }) => 
     const { name, value } = e.target;
     setSubscriptionData({ ...subscriptionData, [name]: value });
   };
-
-  const handleFeatureChange = (index, value) => {
-    const newData = [...subscriptionData.data];
-    newData[index].count = parseInt(value, 10);
-    setSubscriptionData({ ...subscriptionData, data: newData });
-  };
-
   const handleNewFeatureChange = (e) => {
     const { name, value } = e.target;
     setNewFeature({ ...newFeature, [name]: value });
@@ -711,6 +732,8 @@ const CreateSubscription = ({ show, handleClose, edit, id, fetchApi, data }) => 
     })),
   };
 
+
+
   const additionalFunctions = [handleClose, fetchApi];
 
   const createHandler = (e) => {
@@ -724,6 +747,26 @@ const CreateSubscription = ({ show, handleClose, edit, id, fetchApi, data }) => 
     });
     resetForm();
   };
+
+
+  const createHandler1 = (e) => {
+    e.preventDefault();
+    const payload1 = {
+      monthlyDiscount: parseFloat(subscriptionData.discountmonthly),
+      quarterlyDiscount: parseFloat(subscriptionData.discountquarterly),
+      halfYearlyDiscount: parseFloat(subscriptionData.discounthalfYearly),
+      yearlyDiscount: parseFloat(subscriptionData.discountyearly),
+    };
+    createApi({
+      url: `api/v1/admin/plans/addDiscountToPlan/${name}`,
+      payload: payload1,
+      setLoading,
+      successMsg: "Created",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
 
   const updateHandler = (e) => {
     e.preventDefault();
@@ -787,7 +830,6 @@ const CreateSubscription = ({ show, handleClose, edit, id, fetchApi, data }) => 
               </Form.Group>
             </Col>
           </Row>
-
           <Row>
             <Col>
               <Form.Group className="mb-3">
@@ -816,6 +858,87 @@ const CreateSubscription = ({ show, handleClose, edit, id, fetchApi, data }) => 
               </Form.Group>
             </Col>
           </Row>
+          {edit &&
+            <>
+
+              <Row>
+                <Col>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Discount Monthly Price</Form.Label>
+                    <Form.Control
+                      type="number"
+                      name="discountmonthly"
+                      value={subscriptionData.discountmonthly}
+                      onChange={handleChange}
+                      placeholder="Enter monthly price"
+                      // required
+                    />
+                  </Form.Group>
+                </Col>
+                <Col>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Discount Quarterly Price %</Form.Label>
+                    <Form.Control
+                      type="number"
+                      name="discountquarterly"
+                      value={subscriptionData.discountquarterly}
+                      onChange={handleChange}
+                      placeholder="Enter quarterly price"
+                      // required
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Row>
+                <Col>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Discount Half-Yearly Price</Form.Label>
+                    <Form.Control
+                      type="number"
+                      name="discounthalfYearly"
+                      value={subscriptionData.discounthalfYearly}
+                      onChange={handleChange}
+                      placeholder="Enter half-yearly price"
+                      // required
+                    />
+                  </Form.Group>
+                </Col>
+                <Col>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Discount Yearly Price</Form.Label>
+                    <Form.Control
+                      type="number"
+                      name="discountyearly"
+                      value={subscriptionData.discountyearly}
+                      onChange={handleChange}
+                      placeholder="Enter yearly price"
+                      // required
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <div className="discountPriceplan">
+                <span>
+                  Discounted Price Monthly - {data?.discountedMonthlyPrice}Rs
+                </span>
+                <span>
+                  Discounted Price Quarterly - {data?.discountedQuarterlyPrice}Rs
+                </span>
+                <span>
+                  Discounted Price Half-Yearly - {data?.discountedHalfYearlyPrice}Rs
+                </span>
+                <span>
+                  Discounted Price Yearly - {data?.discountedYearlyPrice}Rs
+                </span>
+              </div>
+
+              <Button variant="secondary" onClick={createHandler1} style={{ marginBottom: '10px', marginTop:'10px' }}>
+                Add Discount price
+              </Button>
+            </>
+          }
 
           <h5>Features</h5>
           {subscriptionData.data.map((feature, index) => (

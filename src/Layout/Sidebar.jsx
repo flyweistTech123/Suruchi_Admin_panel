@@ -4,7 +4,10 @@ import React from "react";
 import { RiCloseLine } from "react-icons/ri";
 import { Link, useNavigate } from "react-router-dom";
 import { BiLogOutCircle } from "react-icons/bi";
-import { MdDashboardCustomize } from "react-icons/md";
+import { MdDashboardCustomize, MdLocationOn } from "react-icons/md";
+// import { FaLocationDot } from "react-icons/fa6";
+import { FaInfoCircle } from "react-icons/fa";
+
 
 const Sidebar = ({ hamb, setHamb }) => {
   const navigate = useNavigate();
@@ -36,9 +39,11 @@ const Sidebar = ({ hamb, setHamb }) => {
       name: "Brands",
     },
     {
-      icon: <i className="fa-solid fa-store  text-xl mr-3 rounded-full"></i>,
-      link: "/vendors",
-      name: " Vendors",
+      icon: (
+        <i className="fa-solid fa-table-list  text-xl mr-3 rounded-full"></i>
+      ),
+      link: "/sub-category",
+      name: "Sub Category",
     },
     {
       icon: (
@@ -60,17 +65,16 @@ const Sidebar = ({ hamb, setHamb }) => {
       name: " Admin Store",
     },
     {
+      icon: <i className="fa-solid fa-store  text-xl mr-3 rounded-full"></i>,
+      link: "/vendors",
+      name: " Vendors",
+    },
+    {
       icon: <i className="fa-solid fa-user  text-xl mr-3 rounded-full"></i>,
       link: "/user",
       name: "Customer",
     },
-    {
-      icon: (
-        <i className="fa-solid fa-table-list  text-xl mr-3 rounded-full"></i>
-      ),
-      link: "/sub-category",
-      name: "Sub Category",
-    },
+
     {
       icon: (
         <i className="fa-solid fa-table-list  text-xl mr-3 rounded-full"></i>
@@ -84,12 +88,12 @@ const Sidebar = ({ hamb, setHamb }) => {
       name: "Notification",
     },
     {
-      icon: <i className="fa-solid fa-bell  text-xl mr-3 rounded-full"></i>,
+      icon: <MdLocationOn className="text-xl mr-3 rounded-full " />,
       link: "/allstate",
       name: "All State",
     },
     {
-      icon: <i className="fa-solid fa-bell  text-xl mr-3 rounded-full"></i>,
+      icon: <MdLocationOn className="text-xl mr-3 rounded-full " />,
       link: "/allcity",
       name: "All City",
     },
@@ -109,14 +113,19 @@ const Sidebar = ({ hamb, setHamb }) => {
       name: "Contest",
     },
     {
-      icon: <i className="fa-solid fa-trophy text-xl mr-3 rounded-full"></i>,
+      icon: <FaInfoCircle className="text-xl mr-3 rounded-full " />,
       link: "/about",
       name: "About App",
     },
     {
-      icon: <i className="fa-solid fa-trophy text-xl mr-3 rounded-full"></i>,
+      icon: <FaInfoCircle className="text-xl mr-3 rounded-full " />,
       link: "/termsconditions",
       name: "Terms & Conditions",
+    },
+    {
+      icon: <FaInfoCircle className="text-xl mr-3 rounded-full " />,
+      link: "/contactus",
+      name: "Contact Us",
     },
     {
       icon: <i className="fa-solid fa-question text-xl mr-3 rounded-full" />,

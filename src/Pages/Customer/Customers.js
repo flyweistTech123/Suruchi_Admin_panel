@@ -6,6 +6,7 @@ import { Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { getApi, removeApi, updateApi } from "../../Repository/Repository";
 import TableLayout from "../../Component/TableLayout";
+import axios from "axios";
 
 const Customers = () => {
   const [users, setUsers] = useState(null);
@@ -74,6 +75,21 @@ const Customers = () => {
     </button>
   ]);
 
+  const handleExport = () => {
+    const exportUrl = `https://suruchi-backend.vercel.app/api/v1/admin/downloadCustomersExcel`;
+
+    axios.get(exportUrl)
+      .then(response => {
+        const downloadUrl = response.data.filePath;
+        window.open(downloadUrl, '_blank');
+      })
+      .catch(error => {
+        console.error('Error exporting data:', error);
+        // toast.error('Failed to export data. Please try again later.');
+      });
+
+  };
+
   return (
     <>
       <section className="sectionCont">
@@ -84,6 +100,12 @@ const Customers = () => {
           >
             Customer's List ({users?.data?.length})
           </span>
+          <button
+            className="submitBtn"
+            onClick={handleExport}
+          >
+            Export
+          </button>
         </div>
 
         <TableLayout thead={thead} tbody={tbody} loading={loading} />
