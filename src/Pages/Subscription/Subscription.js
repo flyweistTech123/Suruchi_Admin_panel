@@ -21,7 +21,6 @@ const Subscription = () => {
   const thead = [
     "Sno.",
     "Plan",
-    "Discount",
     "Monthly",
     "Quarterly",
     "HalfYearly",
@@ -57,7 +56,6 @@ const Subscription = () => {
   const tbody = response?.data?.map((i, index) => [
     `#${index + 1}`,
     i.name,
-    i.discount,
     i.monthly,
     i.quarterly,
     i.halfYearly,

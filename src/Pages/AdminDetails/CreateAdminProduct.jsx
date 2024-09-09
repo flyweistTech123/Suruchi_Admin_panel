@@ -10,7 +10,6 @@ const CreateAdminProduct = () => {
   const [productImage, setProductImage] = useState([]);
   const [productName, setProductName] = useState("");
   const [brandName, setBrandName] = useState("");
-  const [id, setId] = useState("");
   const [price, setPrice] = useState("");
   const [discount, setDiscount] = useState('');
   const [Minimumorder, setMinimumOrder] = useState('');
@@ -33,7 +32,6 @@ const CreateAdminProduct = () => {
     setProductImage("");
     setProductName("");
     setBrandName("");
-    setId("");
     setPrice("");
     setDiscount("");
     setMinimumOrder("");
@@ -68,7 +66,6 @@ const CreateAdminProduct = () => {
   fd.append("stockStatus", stockStatus);
   fd.append("description", description);
   fd.append("returnPolicy", returnPolicy);
-  fd.append("ID", id);
 
   const createHandler = (e) => {
     e.preventDefault();
@@ -162,12 +159,6 @@ const CreateAdminProduct = () => {
                   <option key={brand?._id} value={brand?.name}>{brand?.name}</option>
                 ))}
               </Form.Select>
-            </Form.Group>
-          </Col>
-          <Col xs={12} md={3}>
-            <Form.Group className="mb-3">
-              <Form.Label>ID</Form.Label>
-              <Form.Control type="text" value={id} onChange={(e) => setId(e.target.value)} />
             </Form.Group>
           </Col>
           <Col xs={12} md={3}>

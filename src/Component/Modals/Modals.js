@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Button, FloatingLabel, Form, Modal, Row, Col } from "react-bootstrap";
 import { ClipLoader } from "react-spinners";
-import { createApi, getApi, updateApi } from "../../Repository/Repository";
+import { createApi, getApi, removeApi, updateApi } from "../../Repository/Repository";
 import { IoCloseSharp } from "react-icons/io5";
 import { MdEdit } from "react-icons/md";
 
@@ -12,7 +12,7 @@ const CreateBanner = ({ show, handleClose, edit, id, fetchApi, data }) => {
   const [type, setType] = useState(data?.type || '');
   const [desc, setDesc] = useState(data?.desc || '');
   const [image, setImage] = useState(data?.image || '');
-  const [imagePreview, setImagePreview] = useState(data?.image || '');
+  // const [imagePreview, setImagePreview] = useState(data?.image || '');
   const [loading, setLoading] = useState(false);
 
 
@@ -21,12 +21,12 @@ const CreateBanner = ({ show, handleClose, edit, id, fetchApi, data }) => {
       setType(data?.type || "");
       setDesc(data?.desc || "");
       setImage(data.image || "");
-      setImagePreview(data.image || "");
+      // setImagePreview(data.image || "");
     } else {
       setType("");
       setDesc("");
       setImage("");
-      setImagePreview("");
+      // setImagePreview("");
     }
   }, [edit, data]);
 
@@ -35,7 +35,7 @@ const CreateBanner = ({ show, handleClose, edit, id, fetchApi, data }) => {
     setType("");
     setDesc("");
     setImage("");
-    setImagePreview("");
+    // setImagePreview("");
   };
 
 
@@ -63,10 +63,23 @@ const CreateBanner = ({ show, handleClose, edit, id, fetchApi, data }) => {
   const updateHandler = (e) => {
     e.preventDefault();
     const fd = new FormData();
-    fd.append("type", type);
-    fd.append("desc", desc);
-    fd.append("image", image);
 
+    // Check if type has changed
+    if (type !== data?.type) {
+      fd.append("type", type);
+    }
+
+    // Check if description has changed
+    if (desc !== data?.desc) {
+      fd.append("desc", desc);
+    }
+
+    // Check if image has changed (image might be a file object or a URL string)
+    if (image && (image instanceof File || image !== data?.image)) {
+      fd.append("image", image);
+    }
+
+    // Call the update API only with the changed data
     updateApi({
       url: `api/v1/Banner/updateBanner/${id}`,
       payload: fd,
@@ -74,6 +87,7 @@ const CreateBanner = ({ show, handleClose, edit, id, fetchApi, data }) => {
       successMsg: "Updated",
       additionalFunctions,
     });
+
     resetForm();
   };
 
@@ -94,13 +108,11 @@ const CreateBanner = ({ show, handleClose, edit, id, fetchApi, data }) => {
               type="file"
               onChange={(e) => setImage(e.target.files[0])}
             />
-            {imagePreview && (
-              <img
-                src={imagePreview}
-                alt="Selected"
-                style={{ width: "100%", height: '300px', marginTop: "10px" }}
-              />
-            )}
+            <img
+              src={image instanceof File ? URL.createObjectURL(image) : image}
+              alt="Selected"
+              style={{ width: "100%", height: '300px', marginTop: "10px" }}
+            />
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Type</Form.Label>
@@ -233,7 +245,7 @@ const CreateCategory = ({ show, handleClose, edit, id, fetchApi, data }) => {
   const [name, setName] = useState(data?.name || '');
   const [type, setType] = useState(data?.gender || '');
   const [image, setImage] = useState(data?.image || '');
-  const [imagePreview, setImagePreview] = useState(data?.image || '');
+  // const [imagePreview, setImagePreview] = useState(data?.image || '');
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
 
@@ -244,12 +256,12 @@ const CreateCategory = ({ show, handleClose, edit, id, fetchApi, data }) => {
       setName(data.name || "");
       setType(data.gender || "");
       setImage(data.image || "");
-      setImagePreview(data.image || "");
+      // setImagePreview(data.image || "");
     } else {
       setName("");
       setType("");
       setImage("");
-      setImagePreview("");
+      // setImagePreview("");
     }
   }, [edit, data]); // This effect runs whenever the `data` prop changes
 
@@ -259,7 +271,7 @@ const CreateCategory = ({ show, handleClose, edit, id, fetchApi, data }) => {
     setName("");
     setType("");
     setImage("");
-    setImagePreview("");
+    // setImagePreview("");
   };
 
 
@@ -327,9 +339,9 @@ const CreateCategory = ({ show, handleClose, edit, id, fetchApi, data }) => {
               type="file"
               onChange={(e) => setImage(e.target.files[0])}
             />
-            {imagePreview && (
+            {image && (
               <img
-                src={imagePreview}
+                src={image instanceof File ? URL.createObjectURL(image) : image}
                 alt="Selected"
                 style={{ width: "100%", height: '', marginTop: "10px" }}
               />
@@ -425,7 +437,7 @@ const CreateSubCategory = ({ show, handleClose, edit, id, fetchApi, data }) => {
   const [name, setName] = useState(data?.name || '');
   const [image, setImage] = useState(data?.image || '');
   const [categoryid, setCategoryId] = useState(data?.categoryId._id || '');
-  const [imagePreview, setImagePreview] = useState(data?.image || '');
+  // const [imagePreview, setImagePreview] = useState(data?.image || '');
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
   const [categoryName, setCategoryName] = useState(data?.categoryId.name || null);
@@ -434,20 +446,29 @@ const CreateSubCategory = ({ show, handleClose, edit, id, fetchApi, data }) => {
 
   // Add useEffect to update state when `data` prop changes
   useEffect(() => {
-    if (data) {
+    if (edit && data) {
       setName(data.name || "");
       setImage(data.image || "");
-      setImagePreview(data.image || "");
+      // setImagePreview(data.image || "");
       setCategoryId(data?.categoryId._id || "");
       setCategoryName(data?.categoryId.name || "");
     }
-  }, [data]); // This effect runs whenever the `data` prop changes
+    else {
+      setName("");
+      setImage("");
+      setCategoryName("");
+      setCategoryId("")
+      // setImagePreview("");
+    }
+  }, [edit, data]);
 
 
   const resetForm = () => {
     setName("");
     setImage("");
-    setImagePreview("");
+    setCategoryName("");
+    setCategoryId("")
+    // setImagePreview("");
   };
 
   const fd = new FormData();
@@ -508,9 +529,9 @@ const CreateSubCategory = ({ show, handleClose, edit, id, fetchApi, data }) => {
           <Form.Group className="mb-3">
             <Form.Label>Image</Form.Label>
             <Form.Control type="file" onChange={(e) => setImage(e.target.files[0])} />
-            {imagePreview && (
+            {image && (
               <img
-                src={imagePreview}
+                src={image instanceof File ? URL.createObjectURL(image) : image}
                 alt="Selected"
                 style={{ width: "100%", height: '', marginTop: "10px" }}
               />
@@ -639,353 +660,182 @@ const CreateSubscription = ({ show, handleClose, edit, id, name, fetchApi, data 
     discountquarterly: data?.discounts?.quarterlyDiscount || '',
     discounthalfYearly: data?.discounts?.halfYearlyDiscount || '',
     discountyearly: data?.discounts?.yearlyDiscount || '',
-    data: data?.data || [],
+    features: {
+      monthlyData: data?.monthlyData || [],
+      quarterlyData: data?.quarterlyData || [],
+      halfYearlyData: data?.halfYearlyData || [],
+      yearlyData: data?.yearlyData || []
+    }
   });
 
-  const [adddiscount, setSetDiscount] = useState('');
+  const [newFeature, setNewFeature] = useState({ features: "", count: 0 });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (edit && data) {
       setSubscriptionData({
+        ...subscriptionData,
         name: data.name || '',
         monthly: data.monthly || '',
         quarterly: data.quarterly || '',
         halfYearly: data.halfYearly || '',
         yearly: data.yearly || '',
-        discountmonthly: data?.discounts?.monthlyDiscount || '',
-        discountquarterly: data?.discounts?.quarterlyDiscount || '',
-        discounthalfYearly: data?.discounts?.halfYearlyDiscount || '',
-        discountyearly: data?.discounts?.yearlyDiscount || '',
-        data: data.data || [],
-      });
-    }
-    else {
-      setSubscriptionData({
-        name: "",
-        monthly: "",
-        quarterly: "",
-        halfYearly: "",
-        yearly: "",
-        discountmonthly: "",
-        discountquarterly: "",
-        discounthalfYearly: "",
-        discountyearly: "",
-        data: [],
+        features: {
+          monthlyData: data?.monthlyData || [],
+          quarterlyData: data?.quarterlyData || [],
+          halfYearlyData: data?.halfYearlyData || [],
+          yearlyData: data?.yearlyData || []
+        }
       });
     }
   }, [edit, data]);
-
-
-  const [newFeature, setNewFeature] = useState({ features: "", count: 0 });
-  const [loading, setLoading] = useState(false);
-
-  const resetForm = () => {
-    setSubscriptionData({
-      name: "",
-      monthly: "",
-      quarterly: "",
-      halfYearly: "",
-      yearly: "",
-      discountmonthly: "",
-      discountquarterly: "",
-      discounthalfYearly: "",
-      discountyearly: "",
-      data: [],
-    });
-  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setSubscriptionData({ ...subscriptionData, [name]: value });
   };
-  const handleNewFeatureChange = (e) => {
+
+  const handleFeatureChange = (e, period) => {
     const { name, value } = e.target;
     setNewFeature({ ...newFeature, [name]: value });
   };
 
-  const addFeature = () => {
+  const addFeature = (period) => {
     if (newFeature.features && newFeature.count >= 0) {
       setSubscriptionData({
         ...subscriptionData,
-        data: [...subscriptionData.data, { ...newFeature, count: parseInt(newFeature.count, 10) }],
+        features: {
+          ...subscriptionData.features,
+          [period]: [...subscriptionData.features[period], { ...newFeature, count: parseInt(newFeature.count, 10) }]
+        }
       });
       setNewFeature({ features: "", count: 0 });
     }
   };
 
-  const removeFeature = (index) => {
+  const removeFeature = (index, period) => {
     setSubscriptionData({
       ...subscriptionData,
-      data: subscriptionData.data.filter((_, i) => i !== index),
+      features: {
+        ...subscriptionData.features,
+        [period]: subscriptionData.features[period].filter((_, i) => i !== index),
+      }
     });
   };
 
-  const payload = {
-    name: subscriptionData.name,
-    monthly: parseFloat(subscriptionData.monthly),
-    quarterly: parseFloat(subscriptionData.quarterly),
-    halfYearly: parseFloat(subscriptionData.halfYearly),
-    yearly: parseFloat(subscriptionData.yearly),
-    data: subscriptionData.data.map((item) => ({
-      features: item.features,
-      count: parseInt(item.count, 10),
-    })),
-  };
-
-
-
-  const additionalFunctions = [handleClose, fetchApi];
-
-  const createHandler = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    createApi({
-      url: "api/v1/admin/Plans/create",
-      payload: payload,
-      setLoading,
-      successMsg: "Created",
-      additionalFunctions,
-    });
-    resetForm();
-  };
-
-
-  const createHandler1 = (e) => {
-    e.preventDefault();
-    const payload1 = {
-      monthlyDiscount: parseFloat(subscriptionData.discountmonthly),
-      quarterlyDiscount: parseFloat(subscriptionData.discountquarterly),
-      halfYearlyDiscount: parseFloat(subscriptionData.discounthalfYearly),
-      yearlyDiscount: parseFloat(subscriptionData.discountyearly),
+    const payload = {
+      ...subscriptionData,
+      features: {
+        monthlyData: subscriptionData.features.monthlyData,
+        quarterlyData: subscriptionData.features.quarterlyData,
+        halfYearlyData: subscriptionData.features.halfYearlyData,
+        yearlyData: subscriptionData.features.yearlyData,
+      }
     };
-    createApi({
-      url: `api/v1/admin/plans/addDiscountToPlan/${name}`,
-      payload: payload1,
-      setLoading,
-      successMsg: "Created",
-      additionalFunctions,
-    });
-    resetForm();
-  };
 
-
-  const updateHandler = (e) => {
-    e.preventDefault();
-    // Use your update API function with payload
-    updateApi({
-      url: `api/v1/admin/Plans/update/${id}`,
-      payload: payload,
-      setLoading,
-      successMsg: "Updated",
-      additionalFunctions,
-    });
-    resetForm();
+    // API call to create or update the subscription
+    if (edit) {
+      updateApi({ url: `api/v1/admin/Plans/update/${id}`, payload, setLoading, successMsg: "Updated", additionalFunctions: [handleClose, fetchApi] });
+    } else {
+      createApi({ url: "api/v1/admin/Plans/create", payload, setLoading, successMsg: "Created", additionalFunctions: [handleClose, fetchApi] });
+    }
   };
 
   return (
     <Modal show={show} onHide={handleClose} centered>
       <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">
-          {edit ? "Edit Subscription" : "Create New Subscription"}
-        </Modal.Title>
+        <Modal.Title>{edit ? "Edit Subscription" : "Create New Subscription"}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form onSubmit={edit ? updateHandler : createHandler}>
+        <Form onSubmit={handleSubmit}>
+          {/* Subscription Plan Name */}
           <Form.Group className="mb-3">
             <Form.Label>Plan Name</Form.Label>
-            <Form.Control
-              type="text"
-              name="name"
-              value={subscriptionData.name}
-              onChange={handleChange}
-              placeholder="Enter plan name (e.g., Basic, pro, Premium, Advance)"
-              required
-            />
+            <Form.Control type="text" name="name" value={subscriptionData.name} onChange={handleChange} placeholder="Enter plan name" required />
           </Form.Group>
 
+          {/* Subscription Prices */}
           <Row>
             <Col>
               <Form.Group className="mb-3">
                 <Form.Label>Monthly Price</Form.Label>
-                <Form.Control
-                  type="number"
-                  name="monthly"
-                  value={subscriptionData.monthly}
-                  onChange={handleChange}
-                  placeholder="Enter monthly price"
-                  required
-                />
+                <Form.Control type="number" name="monthly" value={subscriptionData.monthly} onChange={handleChange} placeholder="Enter monthly price" required />
               </Form.Group>
             </Col>
             <Col>
               <Form.Group className="mb-3">
                 <Form.Label>Quarterly Price</Form.Label>
-                <Form.Control
-                  type="number"
-                  name="quarterly"
-                  value={subscriptionData.quarterly}
-                  onChange={handleChange}
-                  placeholder="Enter quarterly price"
-                  required
-                />
+                <Form.Control type="number" name="quarterly" value={subscriptionData.quarterly} onChange={handleChange} placeholder="Enter quarterly price" required />
               </Form.Group>
             </Col>
           </Row>
+          {/* Additional Price Fields */}
           <Row>
             <Col>
               <Form.Group className="mb-3">
                 <Form.Label>Half-Yearly Price</Form.Label>
-                <Form.Control
-                  type="number"
-                  name="halfYearly"
-                  value={subscriptionData.halfYearly}
-                  onChange={handleChange}
-                  placeholder="Enter half-yearly price"
-                  required
-                />
+                <Form.Control type="number" name="halfYearly" value={subscriptionData.halfYearly} onChange={handleChange} placeholder="Enter half-yearly price" required />
               </Form.Group>
             </Col>
             <Col>
               <Form.Group className="mb-3">
                 <Form.Label>Yearly Price</Form.Label>
-                <Form.Control
-                  type="number"
-                  name="yearly"
-                  value={subscriptionData.yearly}
-                  onChange={handleChange}
-                  placeholder="Enter yearly price"
-                  required
-                />
+                <Form.Control type="number" name="yearly" value={subscriptionData.yearly} onChange={handleChange} placeholder="Enter yearly price" required />
               </Form.Group>
             </Col>
           </Row>
-          {edit &&
-            <>
 
+          {/* Discount Section (only for edit) */}
+          {edit && (
+            <div>
               <Row>
                 <Col>
                   <Form.Group className="mb-3">
-                    <Form.Label>Discount Monthly Price</Form.Label>
-                    <Form.Control
-                      type="number"
-                      name="discountmonthly"
-                      value={subscriptionData.discountmonthly}
-                      onChange={handleChange}
-                      placeholder="Enter monthly price"
-                      // required
-                    />
+                    <Form.Label>Monthly Discount (%)</Form.Label>
+                    <Form.Control type="number" name="discountmonthly" value={subscriptionData.discountmonthly} onChange={handleChange} placeholder="Enter discount" />
                   </Form.Group>
                 </Col>
                 <Col>
                   <Form.Group className="mb-3">
-                    <Form.Label>Discount Quarterly Price %</Form.Label>
-                    <Form.Control
-                      type="number"
-                      name="discountquarterly"
-                      value={subscriptionData.discountquarterly}
-                      onChange={handleChange}
-                      placeholder="Enter quarterly price"
-                      // required
-                    />
+                    <Form.Label>Quarterly Discount (%)</Form.Label>
+                    <Form.Control type="number" name="discountquarterly" value={subscriptionData.discountquarterly} onChange={handleChange} placeholder="Enter discount" />
                   </Form.Group>
                 </Col>
               </Row>
+              {/* More discount fields for half-yearly and yearly */}
+            </div>
+          )}
 
-              <Row>
-                <Col>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Discount Half-Yearly Price</Form.Label>
-                    <Form.Control
-                      type="number"
-                      name="discounthalfYearly"
-                      value={subscriptionData.discounthalfYearly}
-                      onChange={handleChange}
-                      placeholder="Enter half-yearly price"
-                      // required
-                    />
-                  </Form.Group>
-                </Col>
-                <Col>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Discount Yearly Price</Form.Label>
-                    <Form.Control
-                      type="number"
-                      name="discountyearly"
-                      value={subscriptionData.discountyearly}
-                      onChange={handleChange}
-                      placeholder="Enter yearly price"
-                      // required
-                    />
-                  </Form.Group>
-                </Col>
-              </Row>
-
-              <div className="discountPriceplan">
-                <span>
-                  Discounted Price Monthly - {data?.discountedMonthlyPrice}Rs
-                </span>
-                <span>
-                  Discounted Price Quarterly - {data?.discountedQuarterlyPrice}Rs
-                </span>
-                <span>
-                  Discounted Price Half-Yearly - {data?.discountedHalfYearlyPrice}Rs
-                </span>
-                <span>
-                  Discounted Price Yearly - {data?.discountedYearlyPrice}Rs
-                </span>
-              </div>
-
-              <Button variant="secondary" onClick={createHandler1} style={{ marginBottom: '10px', marginTop:'10px' }}>
-                Add Discount price
-              </Button>
-            </>
-          }
-
-          <h5>Features</h5>
-          {subscriptionData.data.map((feature, index) => (
-            <div key={index} className="feature-item">
-              <span>
-                {feature.features} - {feature.count}
-              </span>
-              <IoCloseSharp onClick={() => removeFeature(index)} style={{ cursor: 'pointer' }} color="red" size={25} />
+          {/* Features for different plans */}
+          {['monthlyData', 'quarterlyData', 'halfYearlyData', 'yearlyData'].map((period) => (
+            <div key={period}>
+              <h5>{period.replace('Data', '')} Features</h5>
+              {subscriptionData.features[period].map((feature, index) => (
+                <div key={index} className="feature-item">
+                  <span>{feature.features} - {feature.count}</span>
+                  <IoCloseSharp onClick={() => removeFeature(index, period)} style={{ cursor: 'pointer' }} color="red" size={25} />
+                </div>
+              ))}
+              <Form.Group className="mb-3">
+                <Form.Label>Add New Feature</Form.Label>
+                <Form.Control type="text" name="features" value={newFeature.features} onChange={(e) => handleFeatureChange(e, period)} placeholder="Enter feature name" />
+                <Form.Control type="number" name="count" value={newFeature.count} onChange={(e) => handleFeatureChange(e, period)} min={0} placeholder="Enter feature count" />
+                <Button variant="secondary" onClick={() => addFeature(period)} style={{ marginTop: '10px' }}>Add Feature</Button>
+              </Form.Group>
             </div>
           ))}
-          <h6>Add New Feature</h6>
-          <Form.Group className="mb-3">
-            <Form.Label>Feature Name</Form.Label>
-            <Form.Control
-              type="text"
-              name="features"
-              value={newFeature.features}
-              onChange={handleNewFeatureChange}
-              placeholder="Enter feature name"
-            />
-          </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Feature Count</Form.Label>
-            <Form.Control
-              type="number"
-              name="count"
-              value={newFeature.count}
-              onChange={handleNewFeatureChange}
-              min={0}
-              placeholder="Enter feature count"
-            />
-
-            <Button variant="secondary" onClick={addFeature} style={{ marginTop: '10px' }}>
-              Add Feature
-            </Button>
-          </Form.Group>
-
 
           <Button variant="primary" type="submit" className="mt-3">
-            Submit
+            {edit ? "Update Subscription" : "Create Subscription"}
           </Button>
         </Form>
       </Modal.Body>
     </Modal>
   );
 };
+
 
 
 const CreateFaq = ({ show, handleClose, edit, id, fetchApi, data }) => {
@@ -2472,6 +2322,526 @@ const CreateBrand = ({ show, handleClose, edit, id, fetchApi, data }) => {
   );
 };
 
+
+
+
+const CreateProduct = ({ show, handleClose, edit, id, fetchApi, data }) => {
+  const [productImage, setProductImage] = useState(data?.productImage || []);
+  const [productName, setProductName] = useState(data?.productName || '');
+  const [brandName, setBrandName] = useState(data?.brandName || '');
+  const [ids, setIds] = useState(data?.ID || '');
+  const [price, setPrice] = useState(data?.originalPrice || '');
+  const [discount, setDiscount] = useState(data?.discount || '');
+  const [Minimumorder, setMinimumOrder] = useState(data?.minimunOrderUnit || '');
+  const [stock, setStock] = useState(data?.stock || '');
+  const [stockStatus, setStockStatus] = useState(data?.stockStatus || '');
+  const [description, setDescription] = useState(data?.description || '');
+  const [returnPolicy, setReturnPolicy] = useState(data?.returnPolicy || '');
+  const [categoryid, setCategoryId] = useState(data?.categoryId?._id || '');
+  const [categoryName, setCategoryName] = useState(data?.categoryId?.name || '');
+  const [subcategoryid, setSubCategoryId] = useState(data?.subcategoryId?._id || '');
+  const [subcategoryName, setSubCategoryName] = useState(data?.categoryId?.name || '');
+  const [response, setResponse] = useState(null);
+  const [response1, setResponse1] = useState(null);
+  const [response2, setResponse2] = useState(null);
+  const [show1, setShow1] = useState(false);
+  const [show2, setShow2] = useState(false);
+  const [imgid, setImageId] = useState('')
+  const [viewimg, setViewImage] = useState('')
+  const [loading, setLoading] = useState(false);
+
+
+  useEffect(() => {
+    if (edit && data) {
+      setProductImage(data?.productImage || []);
+      setProductName(data?.productName || '');
+      setBrandName(data?.brandName || '');
+      setIds(data?.ID || '');
+      setPrice(data?.originalPrice || '');
+      setDiscount(data?.discount || '');
+      setMinimumOrder(data?.minimunOrderUnit || '');
+      setStock(data?.stock || '');
+      setStockStatus(data?.stockStatus || '');
+      setDescription(data?.description || '');
+      setReturnPolicy(data?.returnPolicy || '');
+      setCategoryId(data?.categoryId?._id || '');
+      setCategoryName(data?.categoryId?.name || '');
+      setSubCategoryId(data?.subcategoryId?._id || '');
+      setSubCategoryName(data?.subcategoryId?.name || '');
+    }
+    else {
+      setBrandName("");
+      setProductName("");
+      setIds("");
+      setProductImage([]);
+      setPrice('')
+      setDiscount('')
+      setMinimumOrder('')
+      setStock('')
+      setStockStatus('')
+      setDescription('')
+      setReturnPolicy('')
+      setCategoryId('')
+      setCategoryName('')
+      setSubCategoryId('')
+      setSubCategoryName('')
+    }
+  }, [edit, data]);
+
+  const resetForm = () => {
+    setBrandName("");
+    setProductName("");
+    setIds("");
+    setProductImage([]);
+    setPrice('')
+    setDiscount('')
+    setMinimumOrder('')
+    setStock('')
+    setStockStatus('')
+    setDescription('')
+    setReturnPolicy('')
+    setCategoryId('')
+    setCategoryName('')
+    setSubCategoryId('')
+    setSubCategoryName('')
+  };
+
+  // Handle new images by appending them to the existing state
+  const handleImageChange = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    setProductImage([...productImage, ...selectedFiles]);
+  };
+
+  // Prepare FormData including all images
+
+
+  const fd = new FormData();
+  productImage.forEach((img) => {
+    fd.append("productImage", img instanceof File ? img : img.img);
+  });
+  // fd.append("image", productImage);
+  fd.append("categoryId", categoryid);
+  fd.append("subCategoryId", subcategoryid);
+  fd.append("brandName", brandName);
+  fd.append("originalPrice", price);
+  fd.append("discount", discount);
+  fd.append("productName", productName);
+  fd.append("minimunOrderUnit", Minimumorder);
+  fd.append("stock", stock);
+  fd.append("stockStatus", stockStatus);
+  fd.append("description", description);
+  fd.append("returnPolicy", returnPolicy);
+
+
+  const additionalFunctions = [handleClose, fetchApi];
+
+  const createHandler = (e) => {
+    e.preventDefault();
+    createApi({
+      url: "api/v1/admin/addProduct",
+      payload: fd,
+      setLoading,
+      successMsg: "Created",
+      additionalFunctions
+    });
+    resetForm()
+  };
+
+  const updateHandler = (e) => {
+    e.preventDefault();
+    updateApi({
+      url: `updateProduct/${id}`,
+      payload: fd,
+      setLoading,
+      successMsg: "Updated",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
+
+  const fetchHandler = () => {
+    getApi({
+      url: "api/v1/Category/allCategory",
+      setLoading,
+      setResponse: setResponse,
+    });
+  };
+
+  const fetchHandler1 = () => {
+    getApi({
+      url: `api/v1/SubCategory/allSubcategoryById/${categoryid}`,
+      setLoading,
+      setResponse: setResponse1,
+    });
+  };
+
+
+
+  useEffect(() => {
+    fetchHandler1();
+  }, [categoryid]);
+
+  const fetchHandler2 = () => {
+    getApi({
+      url: "api/v1/admin/Brand/allBrand",
+      setLoading,
+      setResponse: setResponse2,
+    });
+  };
+
+  useEffect(() => {
+    fetchHandler();
+    fetchHandler2()
+  }, []);
+
+
+
+
+  return (
+    <Modal show={show} onHide={handleClose} centered size="lg">
+      <UpdateProductImage
+        show={show1}
+        handleClose={() => setShow1(false)}
+        id={id}
+        imgid={imgid}
+        fetchApi={fetchApi}
+        handleClose1={handleClose}
+        img={viewimg}
+      />
+      <AddProductImage
+        show={show2}
+        handleClose={() => setShow2(false)}
+        id={id}
+        fetchApi={fetchApi}
+        handleClose1={handleClose}
+      />
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          {edit ? "Edit Product" : "Add Product"}
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={edit ? updateHandler : createHandler}>
+          <Form.Group className="mb-3">
+            <Form.Label>Image</Form.Label>
+            {edit ?
+              ""
+              :
+              <Form.Control
+                type="file"
+                multiple
+                onChange={handleImageChange}
+              />
+            }
+            <div className="imagePreview" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              {productImage.map((img, index) => (
+                <div key={index} className="imagePreview1">
+                  <img
+                    src={img instanceof File ? URL.createObjectURL(img) : img.img}
+                    alt="Selected"
+                    style={{ width: "100px", height: '100px', objectFit: 'cover' }}
+                  />
+                  <div className="overlay">
+                    <div className="overlay-content" onClick={() => {
+                      setImageId(img._id);
+                      setShow1(true);
+                      setViewImage(img.img)
+                    }}>
+                      <MdEdit color="#ffffff" size={20} />
+                      <span>update</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {edit ?
+                <div className="imagePreview2"
+                  onClick={() => {
+                    setShow2(true);
+                  }}>
+                  Add Image
+                </div>
+
+                :
+                ""
+              }
+            </div>
+          </Form.Group>
+          <Row>
+            <Col xs={12} md={4}>
+              <Form.Group className="mb-3">
+                <Form.Label>Product Name</Form.Label>
+                <Form.Control type="text" value={productName} onChange={(e) => setProductName(e.target.value)} />
+              </Form.Group>
+            </Col>
+            <Col xs={12} md={4}>
+              <Form.Group className="mb-3">
+                <Form.Label>Brand Name</Form.Label>
+                <Form.Select
+                  value={brandName}
+                  onChange={(e) => {
+                    const selectedBrand = response2?.data?.find(brand => brand?.name === e.target.value);
+                    // setCategoryId(selectedCategory?._id);
+                    setBrandName(e.target.value);
+                  }}
+                >
+                  <option>Select Brand</option>
+                  {response2?.data?.map(brand => (
+                    <option key={brand?._id} value={brand?.name}>{brand?.name}</option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+            </Col>
+            <Col xs={12} md={4}>
+              <Form.Group className="mb-3">
+                <Form.Label>Price</Form.Label>
+                <Form.Control type="number" min={0} value={price} onChange={(e) => setPrice(e.target.value)} />
+              </Form.Group>
+            </Col>
+            <Col xs={12} md={4}>
+              <Form.Group className="mb-3">
+                <Form.Label>Discount</Form.Label>
+                <Form.Control type="text" value={discount} onChange={(e) => setDiscount(e.target.value)} />
+              </Form.Group>
+            </Col>
+            <Col xs={12} md={4}>
+              <Form.Group className="mb-3">
+                <Form.Label>Stock</Form.Label>
+                <Form.Control type="text" value={stock} onChange={(e) => setStock(e.target.value)} />
+              </Form.Group>
+            </Col>
+            <Col xs={12} md={4}>
+              <Form.Group className="mb-3">
+                <Form.Label>Stock Status</Form.Label>
+                <Form.Select
+                  value={stockStatus}
+                  onChange={(e) => setStockStatus(e.target.value)}
+                >
+                  <option value="Select">Select Status</option>
+                  <option value="OUTOFSTOCK">OUTOFSTOCK</option>
+                  <option value="LOW">LOW</option>
+                  <option value="ADEQUATE">ADEQUATE</option>
+                </Form.Select>
+              </Form.Group>
+            </Col>
+            <Col xs={12} md={4}>
+              <Form.Group className="mb-3">
+                <Form.Label>Minimum Order Quantity</Form.Label>
+                <Form.Control type="number" min={0} value={Minimumorder} onChange={(e) => setMinimumOrder(e.target.value)} />
+              </Form.Group>
+            </Col>
+
+            <Col xs={12} md={4}>
+              <Form.Group className="mb-3">
+                <Form.Label>Category</Form.Label>
+                <Form.Select
+                  value={categoryName}
+                  onChange={(e) => {
+                    const selectedCategory = response?.data?.find(category => category?.name === e.target.value);
+                    setCategoryId(selectedCategory?._id);
+                    setCategoryName(e.target.value);
+                  }}
+                >
+                  <option>Select Category</option>
+                  {response?.data?.map(category => (
+                    <option key={category?._id} value={category?.name}>{category?.name}</option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+            </Col>
+            <Col xs={12} md={4}>
+              <Form.Group className="mb-3">
+                <Form.Label>Sub-category</Form.Label>
+                <Form.Select
+                  value={subcategoryName}
+                  onChange={(e) => {
+                    const selectedSubCategory = response1?.data?.find(subcategory => subcategory?.name === e.target.value);
+                    setSubCategoryId(selectedSubCategory?._id);
+                    setSubCategoryName(e.target.value);
+                  }}
+                >
+                  <option>Select Sub Category</option>
+                  {response1?.data?.map(subcategory => (
+                    <option key={subcategory?._id} value={subcategory?.name}>{subcategory?.name}</option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+            </Col>
+            <Col xs={12} md={12}>
+              <Form.Group className="mb-3">
+                <Form.Label>Description</Form.Label>
+                <FloatingLabel>
+                  <Form.Control as="textarea" style={{ height: "100px" }} value={description} onChange={(e) => setDescription(e.target.value)} />
+                </FloatingLabel>
+              </Form.Group>
+            </Col>
+            <Col xs={12} md={12}>
+              <Form.Group className="mb-3">
+                <Form.Label>Return Policy</Form.Label>
+                <FloatingLabel>
+                  <Form.Control as="textarea" style={{ height: "100px" }} value={returnPolicy} onChange={(e) => setReturnPolicy(e.target.value)} />
+                </FloatingLabel>
+              </Form.Group>
+            </Col>
+          </Row>
+          <button className="submitBtn" type="submit" disabled={loading}>
+            {loading ? <ClipLoader color="#fff" /> : "Submit"}
+          </button>
+        </Form>
+      </Modal.Body>
+    </Modal>
+  );
+};
+const AddProductImage = ({ show, handleClose, id, fetchApi, handleClose1 }) => {
+  const [productImage, setProductImage] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const resetForm = () => {
+    setProductImage([]); // Clear image after form reset
+  };
+
+  // Handle new images by appending them to the existing state
+  const handleImageChange = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    setProductImage([...productImage, ...selectedFiles]);
+  };
+
+
+  // Prepare FormData including all images
+
+
+  const fd = new FormData();
+  productImage.forEach((img) => {
+    fd.append("productImages", img instanceof File ? img : img.img);
+  });
+
+  const additionalFunctions = [handleClose, fetchApi, handleClose1];
+
+  const createHandler = (e) => {
+    e.preventDefault();
+    updateApi({
+      url: `addProductImage/${id}`,
+      payload: fd,
+      setLoading,
+      successMsg: "Added Image",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
+
+  return (
+    <Modal show={show} onHide={handleClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          Add Product Image
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={createHandler}>
+          <Form.Group className="mb-3">
+            <Form.Label>Image</Form.Label>
+            <Form.Control
+              type="file"
+              multiple // Allow multiple file selection
+              onChange={handleImageChange}
+            />
+            <div className="imagePreview" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              {productImage.map((img, index) => (
+                <div key={index} className="imagePreview1">
+                  <img
+                    src={img instanceof File ? URL.createObjectURL(img) : img.img}
+                    alt="Selected"
+                    style={{ width: "100px", height: '100px', objectFit: 'cover' }}
+                  />
+                </div>
+              ))}
+            </div>
+          </Form.Group>
+          <button className="submitBtn" type="submit" disabled={loading}>
+            {loading ? <ClipLoader color="#fff" /> : "Add"}
+          </button>
+        </Form>
+      </Modal.Body>
+    </Modal>
+  );
+};
+
+const UpdateProductImage = ({ show, handleClose, id, imgid, fetchApi, handleClose1, img }) => {
+  const [productImage, setProductImage] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const resetForm = () => {
+    setProductImage('');
+  };
+
+  const additionalFunctions = [handleClose, fetchApi, handleClose1];
+
+  const updateHandler = (e) => {
+    e.preventDefault();
+    const fd = new FormData();
+    fd.append("productImage", productImage);
+    updateApi({
+      url: `updateProductImage/${id}/${imgid}`,
+      payload: fd,
+      setLoading,
+      successMsg: "Image Updated",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
+  const deleteHandler = (e) => {
+    e.preventDefault();
+    removeApi({
+      url: `deleteProductImage/${id}/${imgid}`,
+      successMsg: "Removed Image!",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
+  return (
+    <Modal show={show} onHide={handleClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          Update Image
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={updateHandler}>
+          <Form.Group className="mb-3">
+            <Form.Label>Image</Form.Label>
+            <Form.Control
+              type="file"
+              // multiple // Allow multiple file selection
+              onChange={(e) => setProductImage(e.target.files[0])}
+            />
+            <div className="imagePreview" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              <div className="imagePreview1">
+                <img
+                  src={productImage instanceof File ? URL.createObjectURL(productImage) : img}
+                  alt="Selected"
+                  style={{ width: "100%", height: '100%', objectFit: 'cover' }}
+                />
+              </div>
+            </div>
+          </Form.Group>
+          <div style={{ display: 'flex', justifyContent: "space-between" }}>
+            <button className="submitBtn" type="submit" disabled={loading}>
+              {loading ? <ClipLoader color="#fff" /> : "Submit"}
+            </button>
+            <button className="submitBtn" onClick={deleteHandler} >
+              Delete Image
+            </button>
+          </div>
+        </Form>
+      </Modal.Body>
+    </Modal>
+  );
+};
+
+
 export {
   CreateBanner,
   CreateCategory,
@@ -2488,5 +2858,6 @@ export {
   CreateBrand,
   EditReview,
   CreateType,
-  CreateTermsConditions
+  CreateTermsConditions,
+  CreateProduct
 };

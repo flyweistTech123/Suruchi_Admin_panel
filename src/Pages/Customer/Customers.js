@@ -50,7 +50,8 @@ const Customers = () => {
     "Email address",
     "Mobile Number",
     "Status",
-    "",
+    "Location",
+    "Action",
     "",
   ];
 
@@ -61,6 +62,7 @@ const Customers = () => {
     i?.email,
     i?.phone,
     i?.status,
+    i?.city,
     <span className="flexCont">
       <Link to={`/user-data/${i._id}`}>
         <i className="fa-solid fa-eye"></i>

@@ -59,7 +59,7 @@ const Product = () => {
   const tbody = response?.data?.docs?.map((i, index) => [
     `#${index + 1}`,
     i?.ID,
-    <img src={i?.productImage[0]} alt="" style={{ maxWidth: "80px" }} />,
+    <img src={i?.productImage[0]?.img} alt="" style={{ maxWidth: "80px" }} />,
     i?.productName,
     i?.categoryId?.name,
     i?.subcategoryId?.name,
