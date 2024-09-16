@@ -5,6 +5,7 @@ import { ScrollToTop } from "./utils/utils";
 import routes from "./Routes/routes";
 
 function App() {
+  
   return (
     <>
       <ScrollToTop />

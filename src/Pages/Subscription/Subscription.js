@@ -5,7 +5,7 @@ import { CreateSubscription } from "../../Component/Modals/Modals";
 import TableLayout from "../../Component/TableLayout";
 import HOC from "../../Layout/HOC";
 import { getApi, removeApi } from "../../Repository/Repository";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Subscription = () => {
   const navigate = useNavigate();
@@ -25,9 +25,7 @@ const Subscription = () => {
     "Quarterly",
     "HalfYearly",
     "Yearly",
-    "Features",
-    "Count",
-    "",
+    "Action",
   ];
 
   const fetchHandler = () => {
@@ -60,18 +58,8 @@ const Subscription = () => {
     i.quarterly,
     i.halfYearly,
     i.yearly,
-    <ul>
-      {i.data?.map((item) => (
-        <li key={item}>{item.features}</li>
-      ))}
-    </ul>,
-    <ul>
-      {i.data?.map((item) => (
-        <li key={item}>{item.count}</li>
-      ))}
-    </ul>,
     <span className="flexCont">
-      <i className="fa-solid fa-trash" onClick={() => deleteHandler(i._id)}/>
+      <i className="fa-solid fa-trash" onClick={() => deleteHandler(i._id)} />
       <i
         className="fa-solid fa-pen-to-square"
         onClick={() => {
@@ -81,6 +69,9 @@ const Subscription = () => {
           handleEditClick(i)
         }}
       ></i>
+      <Link to={`/subsciptiondetails/${i?._id}`}>
+        <i className="fa-solid fa-eye" />
+      </Link>
     </span>,
   ]);
 

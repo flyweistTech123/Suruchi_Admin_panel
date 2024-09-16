@@ -656,10 +656,6 @@ const CreateSubscription = ({ show, handleClose, edit, id, name, fetchApi, data 
     quarterly: data?.quarterly || '',
     halfYearly: data?.halfYearly || '',
     yearly: data?.yearly || '',
-    discountmonthly: data?.discounts?.monthlyDiscount || '',
-    discountquarterly: data?.discounts?.quarterlyDiscount || '',
-    discounthalfYearly: data?.discounts?.halfYearlyDiscount || '',
-    discountyearly: data?.discounts?.yearlyDiscount || '',
     features: {
       monthlyData: data?.monthlyData || [],
       quarterlyData: data?.quarterlyData || [],
@@ -697,51 +693,85 @@ const CreateSubscription = ({ show, handleClose, edit, id, name, fetchApi, data 
 
   const handleFeatureChange = (e, period) => {
     const { name, value } = e.target;
-    setNewFeature({ ...newFeature, [name]: value });
+    setNewFeature((prev) => ({
+      ...prev,
+      [period]: {
+        ...prev[period], // Maintain previous data for this period
+        [name]: value // Update the input field based on its name (either "features" or "count")
+      }
+    }));
   };
 
+
+
+  // Add a feature to the appropriate period
   const addFeature = (period) => {
-    if (newFeature.features && newFeature.count >= 0) {
-      setSubscriptionData({
-        ...subscriptionData,
+    if (newFeature[period]?.features && newFeature[period]?.count) {
+      setSubscriptionData((prevData) => ({
+        ...prevData,
         features: {
-          ...subscriptionData.features,
-          [period]: [...subscriptionData.features[period], { ...newFeature, count: parseInt(newFeature.count, 10) }]
+          ...prevData.features,
+          [period]: [
+            ...prevData.features[period], // Access the correct period data
+            newFeature[period] // Add the new feature for the correct period
+          ]
         }
-      });
-      setNewFeature({ features: "", count: 0 });
+      }));
+
+      // Reset the newFeature state for that period after adding the feature
+      setNewFeature((prev) => ({
+        ...prev,
+        [period]: { features: '', count: 0 } // Reset only the specific period
+      }));
     }
   };
 
+
+  // Remove a feature from the appropriate period
   const removeFeature = (index, period) => {
-    setSubscriptionData({
-      ...subscriptionData,
+    setSubscriptionData((prevData) => ({
+      ...prevData,
       features: {
-        ...subscriptionData.features,
-        [period]: subscriptionData.features[period].filter((_, i) => i !== index),
+        ...prevData.features,
+        [period]: prevData.features[period].filter((_, i) => i !== index)
       }
-    });
+    }));
   };
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Creating the payload with the correct structure
     const payload = {
       ...subscriptionData,
-      features: {
-        monthlyData: subscriptionData.features.monthlyData,
-        quarterlyData: subscriptionData.features.quarterlyData,
-        halfYearlyData: subscriptionData.features.halfYearlyData,
-        yearlyData: subscriptionData.features.yearlyData,
-      }
+      monthlyData: subscriptionData.features.monthlyData,
+      quarterlyData: subscriptionData.features.quarterlyData,
+      halfYearlyData: subscriptionData.features.halfYearlyData,
+      yearlyData: subscriptionData.features.yearlyData,
     };
 
     // API call to create or update the subscription
     if (edit) {
-      updateApi({ url: `api/v1/admin/Plans/update/${id}`, payload, setLoading, successMsg: "Updated", additionalFunctions: [handleClose, fetchApi] });
+      updateApi({
+        url: `api/v1/admin/Plans/update/${id}`,
+        payload,
+        setLoading,
+        successMsg: "Updated",
+        additionalFunctions: [handleClose, fetchApi]
+      });
     } else {
-      createApi({ url: "api/v1/admin/Plans/create", payload, setLoading, successMsg: "Created", additionalFunctions: [handleClose, fetchApi] });
+      createApi({
+        url: "api/v1/admin/Plans/create",
+        payload,
+        setLoading,
+        successMsg: "Created",
+        additionalFunctions: [handleClose, fetchApi]
+      });
     }
   };
+
+
 
   return (
     <Modal show={show} onHide={handleClose} centered>
@@ -787,32 +817,12 @@ const CreateSubscription = ({ show, handleClose, edit, id, name, fetchApi, data 
             </Col>
           </Row>
 
-          {/* Discount Section (only for edit) */}
-          {edit && (
-            <div>
-              <Row>
-                <Col>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Monthly Discount (%)</Form.Label>
-                    <Form.Control type="number" name="discountmonthly" value={subscriptionData.discountmonthly} onChange={handleChange} placeholder="Enter discount" />
-                  </Form.Group>
-                </Col>
-                <Col>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Quarterly Discount (%)</Form.Label>
-                    <Form.Control type="number" name="discountquarterly" value={subscriptionData.discountquarterly} onChange={handleChange} placeholder="Enter discount" />
-                  </Form.Group>
-                </Col>
-              </Row>
-              {/* More discount fields for half-yearly and yearly */}
-            </div>
-          )}
-
           {/* Features for different plans */}
           {['monthlyData', 'quarterlyData', 'halfYearlyData', 'yearlyData'].map((period) => (
             <div key={period}>
               <h5>{period.replace('Data', '')} Features</h5>
-              {subscriptionData.features[period].map((feature, index) => (
+              {/* Render each feature for the current period */}
+              {subscriptionData.features[period]?.map((feature, index) => (
                 <div key={index} className="feature-item">
                   <span>{feature.features} - {feature.count}</span>
                   <IoCloseSharp onClick={() => removeFeature(index, period)} style={{ cursor: 'pointer' }} color="red" size={25} />
@@ -820,12 +830,36 @@ const CreateSubscription = ({ show, handleClose, edit, id, name, fetchApi, data 
               ))}
               <Form.Group className="mb-3">
                 <Form.Label>Add New Feature</Form.Label>
-                <Form.Control type="text" name="features" value={newFeature.features} onChange={(e) => handleFeatureChange(e, period)} placeholder="Enter feature name" />
-                <Form.Control type="number" name="count" value={newFeature.count} onChange={(e) => handleFeatureChange(e, period)} min={0} placeholder="Enter feature count" />
-                <Button variant="secondary" onClick={() => addFeature(period)} style={{ marginTop: '10px' }}>Add Feature</Button>
+                {/* Handle new feature name input */}
+                <Form.Control
+                  type="text"
+                  name="features"
+                  value={newFeature[period]?.features || ''}
+                  onChange={(e) => handleFeatureChange(e, period)}
+                  placeholder="Enter feature name"
+                />
+                {/* Handle new feature count input */}
+                <Form.Control
+                  type="number"
+                  name="count"
+                  value={newFeature[period]?.count || ''}
+                  onChange={(e) => handleFeatureChange(e, period)}
+                  min={0}
+                  placeholder="Enter feature count"
+                  style={{ marginTop: '10px' }}
+                />
+                <Button
+                  variant="secondary"
+                  onClick={() => addFeature(period)}
+                  style={{ marginTop: '10px' }}
+                >
+                  Add Feature
+                </Button>
               </Form.Group>
             </div>
           ))}
+
+
 
           <Button variant="primary" type="submit" className="mt-3">
             {edit ? "Update Subscription" : "Create Subscription"}
@@ -835,6 +869,116 @@ const CreateSubscription = ({ show, handleClose, edit, id, name, fetchApi, data 
     </Modal>
   );
 };
+
+const CreateSubscriptionDiscount = ({ show, handleClose, name,fetchApi, data }) => {
+  const [subscriptionData, setSubscriptionData] = useState({
+    discountmonthly: data?.monthlyDiscount || '',
+    discountquarterly: data?.quarterlyDiscount || '',
+    discounthalfYearly: data?.halfYearlyDiscount || '',
+    discountyearly: data?.yearlyDiscount || '',
+  });
+
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setSubscriptionData({ ...subscriptionData, [name]: value });
+  };
+
+  const payload = {
+    monthlyDiscount: subscriptionData.discountmonthly,
+    quarterlyDiscount: subscriptionData.discountquarterly,
+    halfYearlyDiscount: subscriptionData.discounthalfYearly,
+    yearlyDiscount: subscriptionData.discountyearly,
+  };
+
+  const additionalFunctions = [handleClose, fetchApi];
+
+  const createHandler = (e) => {
+    e.preventDefault();
+    createApi({
+      url: `api/v1/admin/plans/addDiscountToPlan/${name}`,
+      payload: payload,
+      setLoading,
+      successMsg: 'Created',
+      additionalFunctions,
+    });
+    // resetForm(); // Uncomment if needed
+  };
+
+  return (
+    <Modal show={show} onHide={handleClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title>Add Discount Subscription</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={createHandler}>
+          <div>
+            <Row>
+              <Col>
+                <Form.Group className="mb-3">
+                  <Form.Label>Monthly Discount</Form.Label>
+                  <Form.Control
+                    type="number"
+                    name="discountmonthly"
+                    value={subscriptionData.discountmonthly}
+                    onChange={handleChange}
+                    placeholder="Enter discount"
+                  />
+                </Form.Group>
+              </Col>
+              <Col>
+                <Form.Group className="mb-3">
+                  <Form.Label>Quarterly Discount</Form.Label>
+                  <Form.Control
+                    type="number"
+                    name="discountquarterly"
+                    value={subscriptionData.discountquarterly}
+                    onChange={handleChange}
+                    placeholder="Enter discount"
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <Form.Group className="mb-3">
+                  <Form.Label>HalfYearly Discount</Form.Label>
+                  <Form.Control
+                    type="number"
+                    name="discounthalfYearly"
+                    value={subscriptionData.discounthalfYearly}
+                    onChange={handleChange}
+                    placeholder="Enter discount"
+                  />
+                </Form.Group>
+              </Col>
+              <Col>
+                <Form.Group className="mb-3">
+                  <Form.Label>Yearly Discount</Form.Label>
+                  <Form.Control
+                    type="number"
+                    name="discountyearly"
+                    value={subscriptionData.discountyearly}
+                    onChange={handleChange}
+                    placeholder="Enter discount"
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+          </div>
+
+          <Button variant="primary" type="submit" className="mt-3">
+            Add
+          </Button>
+        </Form>
+      </Modal.Body>
+    </Modal>
+  );
+};
+
+export default CreateSubscriptionDiscount;
+
 
 
 
@@ -2859,5 +3003,6 @@ export {
   EditReview,
   CreateType,
   CreateTermsConditions,
-  CreateProduct
+  CreateProduct,
+  CreateSubscriptionDiscount
 };
