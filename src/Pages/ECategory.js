@@ -67,6 +67,8 @@ const ECategory = () => {
     setModalShow(true);
   };
 
+  console.log(response?.data?.totalPages, "jhf")
+
   return (
     <>
       <CreateCategory
@@ -120,6 +122,7 @@ const ECategory = () => {
             setLimit={setLimit}
             page={page}
             setPage={setPage}
+            totalPages={response?.data?.totalPages}
           />
         )}
       </section>

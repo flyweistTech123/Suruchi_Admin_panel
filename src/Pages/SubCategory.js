@@ -108,6 +108,7 @@ const SubCategory = () => {
             setLimit={setLimit}
             page={page}
             setPage={setPage}
+            totalPages={response?.data?.totalPages}
           />
         )}
       </section>

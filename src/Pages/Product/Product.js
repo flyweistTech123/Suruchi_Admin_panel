@@ -134,6 +134,7 @@ const Product = () => {
             setLimit={setLimit}
             page={page}
             setPage={setPage}
+            totalPages={response?.data?.totalPages}
           />
         )}
       </section>

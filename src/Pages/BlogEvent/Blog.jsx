@@ -41,10 +41,10 @@ const Blog = () => {
 
   const tbody = response.data.map((i, index) => [
     `#${index + 1}`,
-    <img src={i.blogImage[0].img} alt="" className="adBannerImg" />,
-    i.name,
-    i.desc,
-    i.locationOfBlog,
+    <img src={i.blogImage[0]?.img} alt="" className="adBannerImg" />,
+    i?.name,
+    i?.desc,
+    i?.locationOfBlog,
     <span className="flexCont">
       <i
         className="fa-solid fa-pen-to-square"

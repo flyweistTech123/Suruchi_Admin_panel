@@ -126,7 +126,7 @@ const AllState = () => {
                         setLimit={setLimit}
                         page={page}
                         setPage={setPage}
-                        totalPages={response?.data?.totalPages} // Pass total pages here
+                        totalPages={response?.totalPages}
                     />
                 )}
             </section>
