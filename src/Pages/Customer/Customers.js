@@ -51,6 +51,7 @@ const Customers = () => {
     "Mobile Number",
     "Status",
     "Location",
+    "Last Login",
     "Action",
     "",
   ];
@@ -63,6 +64,14 @@ const Customers = () => {
     i?.phone,
     i?.status,
     i?.city,
+    <span className="flexCont1">
+      <i>
+        {i?.lastLogin?.slice(0, 10)}
+      </i><br/>
+      <i>
+        {i?.lastLogin?.slice(11, 19)}
+      </i>
+    </span>,
     <span className="flexCont">
       <Link to={`/user-data/${i._id}`}>
         <i className="fa-solid fa-eye"></i>
@@ -71,10 +80,12 @@ const Customers = () => {
         className="fa-sharp fa-solid fa-trash"
         onClick={() => deleteHandler(i._id)}
       ></i>
-    </span>,
-    <button className="submitBtn" type="submit" onClick={() => blockHandler(i._id, i.status)}>
-      {i?.status === 'Block' ? "Unblock" : "Block"}
-    </button>
+      <i
+        className={i?.status === 'Block' ? "fas fa-ban text-danger" : "fas fa-ban text-success"}
+        onClick={() => blockHandler(i._id, i.status)}
+        style={{ cursor: 'pointer', fontSize: '18px' }}
+      ></i>
+    </span>
   ]);
 
   const handleExport = () => {

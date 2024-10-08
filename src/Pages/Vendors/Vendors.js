@@ -80,6 +80,9 @@ const Vendors = () => {
     i?.kycStatus,
     i?.status,
     <span className="flexCont">
+      <Link to={`/view-vendor/${i._id}`}>
+        <i className="fa-solid fa-eye"></i>
+      </Link>
       <i
         className="fa-solid fa-pen-to-square"
         onClick={() => {
@@ -87,13 +90,12 @@ const Vendors = () => {
           setOpen(true);
         }}
       />
-      <Link to={`/view-vendor/${i._id}`}>
-        <i className="fa-solid fa-eye"></i>
-      </Link>
       <i className="fa-sharp fa-solid fa-trash" onClick={() => deleteHandler(i._id)}></i>
-      <button className="submitBtn" onClick={() => blockHandler(i._id, i.status)} style={{ width: '50px' }}>
-        {i?.status === 'Block' ? "Unblock" : "Block"}
-      </button>
+      <i
+        className={i?.status === 'Block' ? "fas fa-ban text-danger" : "fas fa-ban text-success"}
+        onClick={() => blockHandler(i._id, i.status)}
+        style={{ cursor: 'pointer', fontSize:'18px' }}
+      ></i>
     </span>,
   ]);
 

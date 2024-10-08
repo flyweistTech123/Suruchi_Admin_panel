@@ -66,6 +66,9 @@ const AdminProduct = () => {
     i?.stockStatus,
     i?.createdAt?.slice(0, 10),
     <span className="flexCont">
+      <Link to={`/product/${i?._id}`}>
+        <i className="fa-solid fa-eye" />
+      </Link>
       <i
         className="fa-solid fa-pen-to-square"
         onClick={() => {
@@ -74,9 +77,6 @@ const AdminProduct = () => {
           handleEditClick(i)
         }}
       />
-      <Link to={`/product/${i?._id}`}>
-        <i className="fa-solid fa-eye" />
-      </Link>
       <i className="fa-sharp fa-solid fa-trash" onClick={() => deleteHandler(i?._id)}></i>
     </span>,
   ]);

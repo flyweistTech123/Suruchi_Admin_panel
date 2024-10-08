@@ -68,24 +68,18 @@ const AllState = () => {
         i?.isoCode,
         i?.countryCode,
         <span className="flexCont">
-            <button
-                className="submitBtn"
-                style={{ background: "green", border: "none" }}
-                onClick={(e) => {
-                    createHandler(e, i?.isoCode);
-                }}
-            >
-                Add City Of this state
-            </button>
-            <button
-                className="submitBtn"
-                style={{ background: "red", border: "none" }}
-                onClick={(e) => {
-                    createHandler1(e, i?.isoCode);
-                }}
-            >
-                Remove City Of this state
-            </button>
+            <i
+                className="fas fa-plus"
+                style={{ color: 'green', fontSize: '18px', cursor: 'pointer' }}
+                onClick={(e) => createHandler(e, i?.isoCode)}
+            ></i>
+
+            {/* Remove City Button */}
+            <i
+                className="fas fa-minus"
+                style={{ color: 'red', fontSize: '18px', cursor: 'pointer', marginLeft: '10px' }}
+                onClick={(e) => createHandler1(e, i?.isoCode)}
+            ></i>
         </span>,
     ]);
 

@@ -26,8 +26,6 @@ import BlockedVendor from "../Pages/Vendors/BlockedVendor";
 import AdminStore from "../Pages/AdminDetails/AdminStore";
 import CreateAdminStore from "../Pages/AdminDetails/CreateAdminStore";
 import AdminProduct from "../Pages/AdminDetails/AdminProduct";
-import CreateAdminProduct from "../Pages/AdminDetails/CreateAdminProduct";
-import EditAdminProduct from "../Pages/AdminDetails/EditAdminProduct";
 import Blog from "../Pages/BlogEvent/Blog";
 import Contes from "../Pages/BlogEvent/Contes";
 import Event from "../Pages/BlogEvent/Event";
@@ -46,8 +44,6 @@ const routes = [
   { path: "/all-banners", element: <AdBanner /> },
   { path: "/admin-stores", element: <AdminStore /> },
   { path: "/admin-products", element: <AdminProduct /> },
-  { path: "/create-admin-product", element: <CreateAdminProduct /> },
-  { path: "/edit-admin-product/:id", element: <EditAdminProduct /> },
   { path: "/edit-admin-stores/:id", element: <CreateAdminStore /> },
   { path: "/Category", element: <ECategory /> },
   { path: "/vendors", element: <Vendors /> },
@@ -73,7 +69,7 @@ const routes = [
   { path: "/event", element: <Event /> },
   { path: "/contes", element: <Contes /> },
   { path: "/about", element: <Aboutus /> },
-  { path: "/brands", element: <Brands /> },
+  { path: "/topseller", element: <Brands /> },
   { path: "/categorytype", element: <CategoryType /> },
   { path: "/allstate", element: <AllState /> },
   { path: "/allcity", element: <AllCity /> },

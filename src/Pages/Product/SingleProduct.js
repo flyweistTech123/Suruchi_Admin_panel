@@ -103,7 +103,7 @@ const SingleProduct = () => {
             </Col>
             <Col xs={12} md={3}>
               <Form.Group className="mb-3">
-                <Form.Label>Brand Name</Form.Label>
+                <Form.Label>Top Seller Name</Form.Label>
                 <Form.Control type="text" value={response?.data?.brandName} />
               </Form.Group>
             </Col>

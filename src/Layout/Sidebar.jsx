@@ -35,8 +35,8 @@ const Sidebar = ({ hamb, setHamb }) => {
     },
     {
       icon: <i className="fa-solid fa-list  text-xl mr-3 rounded-full"></i>,
-      link: "/brands",
-      name: "Brands",
+      link: "/topseller",
+      name: "Top Seller",
     },
     {
       icon: (
@@ -100,7 +100,7 @@ const Sidebar = ({ hamb, setHamb }) => {
     {
       icon: <i className="fa-solid fa-blog text-xl mr-3 rounded-full"></i>,
       link: "/blogs",
-      name: "Blog",
+      name: "Blogs",
     },
     {
       icon: <i className="fa-solid fa-calendar-check text-xl mr-3 rounded-full"></i>,

@@ -41,7 +41,6 @@ const Faq = () => {
     i?.question,
     i?.answer,
     <span className="flexCont">
-      <i className="fa-solid fa-trash" onClick={() => deleteHandler(i._id)} />
       <i
         className="fa-solid fa-pen-to-square"
         onClick={() => {
@@ -50,6 +49,7 @@ const Faq = () => {
           handleEditClick(i)
         }}
       ></i>
+      <i className="fa-solid fa-trash" onClick={() => deleteHandler(i._id)} />
     </span>,
   ]);
 

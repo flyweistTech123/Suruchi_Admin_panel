@@ -2430,7 +2430,7 @@ const CreateBrand = ({ show, handleClose, edit, id, fetchApi, data }) => {
     <Modal show={show} onHide={handleClose} centered>
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          {edit ? "Edit Brand" : "Add Brand"}
+          {edit ? "Edit Top Seller" : "Add Top Seller"}
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -2720,7 +2720,7 @@ const CreateProduct = ({ show, handleClose, edit, id, fetchApi, data }) => {
             </Col>
             <Col xs={12} md={4}>
               <Form.Group className="mb-3">
-                <Form.Label>Brand Name</Form.Label>
+                <Form.Label>Top Seller Name</Form.Label>
                 <Form.Select
                   value={brandName}
                   onChange={(e) => {
@@ -2729,7 +2729,7 @@ const CreateProduct = ({ show, handleClose, edit, id, fetchApi, data }) => {
                     setBrandName(e.target.value);
                   }}
                 >
-                  <option>Select Brand</option>
+                  <option>Select Top Seller</option>
                   {response2?.data?.map(brand => (
                     <option key={brand?._id} value={brand?.name}>{brand?.name}</option>
                   ))}

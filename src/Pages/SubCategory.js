@@ -42,7 +42,7 @@ const SubCategory = () => {
     });
   };
 
-  const thead = ["Sno.", "Images", "Title", "Category", "status", ""];
+  const thead = ["Sno.", "Images", "Title", "Category", "Category Type", "status", ""];
 
 
   const tbody = response?.data?.docs?.map((i, index) => [
@@ -50,6 +50,7 @@ const SubCategory = () => {
     <img src={i.image} alt="" style={{ maxWidth: "80px" }} />,
     i?.name,
     i?.categoryId?.name,
+    i?.categoryId?.gender,
     i?.status,
     <span className="flexCont">
       <i

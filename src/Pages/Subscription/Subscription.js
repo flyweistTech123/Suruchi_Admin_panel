@@ -59,7 +59,9 @@ const Subscription = () => {
     i.halfYearly,
     i.yearly,
     <span className="flexCont">
-      <i className="fa-solid fa-trash" onClick={() => deleteHandler(i._id)} />
+      <Link to={`/subsciptiondetails/${i?._id}`}>
+        <i className="fa-solid fa-eye" />
+      </Link>
       <i
         className="fa-solid fa-pen-to-square"
         onClick={() => {
@@ -69,9 +71,7 @@ const Subscription = () => {
           handleEditClick(i)
         }}
       ></i>
-      <Link to={`/subsciptiondetails/${i?._id}`}>
-        <i className="fa-solid fa-eye" />
-      </Link>
+      <i className="fa-solid fa-trash" onClick={() => deleteHandler(i._id)} />
     </span>,
   ]);
 

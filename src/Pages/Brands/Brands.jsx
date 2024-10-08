@@ -78,7 +78,7 @@ const Brands = () => {
             className="tracking-widest text-slate-900 font-semibold "
             style={{ fontSize: "1.5rem" }}
           >
-            All Brand({response?.data?.length || 0})
+            All Top Seller({response?.data?.length || 0})
           </span>
 
           <button

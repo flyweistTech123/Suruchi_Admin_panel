@@ -40,7 +40,7 @@ const ECategory = () => {
     });
   };
 
-  const thead = ["Sno.", "Image", "Title", "Gender", "status", "Approval Status", ""];
+  const thead = ["Sno.", "Image", "Title", "Type", "status", "Approval Status", ""];
   const tbody = response?.data?.docs?.map((i, index) => [
     `#${index + 1}`,
     <img src={i.image} alt="" style={{ maxWidth: "80px" }} />,
@@ -49,7 +49,6 @@ const ECategory = () => {
     i?.status,
     i?.approvalStatus,
     <span className="flexCont">
-      <i className="fa-solid fa-trash" onClick={() => deleteHandler(i._id)} />
       <i
         className="fa-solid fa-pen-to-square"
         onClick={() => {
@@ -58,6 +57,7 @@ const ECategory = () => {
           handleEditClick(i)
         }}
       ></i>
+      <i className="fa-solid fa-trash" onClick={() => deleteHandler(i._id)} />
     </span>,
   ]);
 
@@ -67,7 +67,6 @@ const ECategory = () => {
     setModalShow(true);
   };
 
-  console.log(response?.data?.totalPages, "jhf")
 
   return (
     <>

@@ -190,6 +190,11 @@ html {
   border: none;
 }
 
+.flexCont1 {
+  display: flex;
+  flex-direction: column;
+}
+
 .flexCont {
   display: flex;
   align-items: center;
@@ -3315,12 +3320,11 @@ ol {
   font-weight: 700;
 }
 
-.imagePreview{
+.imagePreview {
   margin-top: 10px;
 }
 
-
-.imagePreview1{
+.imagePreview1 {
   position: relative;
   cursor: pointer;
 }
@@ -3329,7 +3333,7 @@ ol {
   position: absolute;
   top: 0;
   left: 0;
-  width:100px;
+  width: 100px;
   height: 100px;
   background: #00000066;
   display: flex;
@@ -3359,9 +3363,7 @@ ol {
   margin: 0;
 }
 
-
-
-.imagePreview2{
+.imagePreview2 {
   width: 100px;
   height: 50px;
   border-radius: 5px;
@@ -3374,9 +3376,36 @@ ol {
   font-weight: 600;
 }
 
-
-.discountPriceplan{
+.discountPriceplan {
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.pageNumber {
+  padding: 5px 10px;
+  border: 1px solid #555;
+  background-color: transparent;
+  color: black;
+  cursor: pointer;
+}
+
+.pageNumber.active {
+  background-color: green;
+  color: white;
+}
+
+.prevBtn,
+.nextBtn {
+  padding: 5px 10px;
+  border: 1px solid #555;
+  background-color: transparent;
+  color: black;
+  cursor: pointer;
+}
+
+.prevBtn:disabled,
+.nextBtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
