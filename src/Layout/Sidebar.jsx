@@ -50,7 +50,7 @@ const Sidebar = ({ hamb, setHamb }) => {
         <i className="fa-solid fa-bag-shopping text-xl mr-3 rounded-full"></i>
       ),
       link: "/Product",
-      name: "Products",
+      name: "Products/Services",
     },
     {
       icon: (

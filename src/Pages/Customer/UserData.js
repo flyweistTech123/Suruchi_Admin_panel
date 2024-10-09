@@ -4,12 +4,14 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { getApi } from "../../Repository/Repository";
+import TableLayout from "../../Component/TableLayout";
 
 
 const UserData = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [response, setResponse] = useState({});
+  const [response1, setResponse1] = useState({});
   const [loading, setLoading] = useState(false);
 
   const fetchHandler = () => {
@@ -19,11 +21,48 @@ const UserData = () => {
       setLoading,
     });
   };
+  const fetchHandler1 = () => {
+    getApi({
+      url: `api/v1/admin/getWishlistByUserId/${id}`,
+      setResponse1,
+      setLoading,
+    });
+  };
 
   useEffect(() => {
     fetchHandler();
+    fetchHandler1();
   }, []);
 
+  const thead = [
+    "Sno.",
+    "ID",
+    "Category Name",
+    "Category Type",
+    "SubCategory",
+    "Product Name",
+    "Stock Status",
+    "Action"
+  ];
+
+  const tbody = response1?.data?.wishlist?.products?.map((i, index) => [
+    `#${index + 1}`,
+    i?.ID,
+    i?.categoryId?.name,
+    i?.categoryId?.gender,
+    i?.subcategoryId?.name,
+    i?.subcategoryId?.name,
+    i?.productName,
+    i?.stockStatus,
+    <span className="flexCont">
+      <Link to={`/product/${i?._id}`}>
+        <i className="fa-solid fa-eye" />
+      </Link>
+    </span>,
+  ]);
+
+
+  console.log(response1?.wishlist?.products, "hajhd");
   return (
     <>
       <section className="sectionCont">
@@ -76,6 +115,20 @@ const UserData = () => {
         <Button variant="dark" onClick={() => navigate(-1)}>
           Back
         </Button>
+      </section>
+      <section className="sectionCont">
+        <div className="pb-4  w-full flex justify-between items-center">
+          <span
+            className="tracking-widest text-slate-900 font-semibold"
+            style={{ fontSize: "1.5rem" }}
+          >
+            All Wishlist Product's ({response?.wishlist?.products?.length || 0})
+          </span>
+          <button className="submitBtn" onClick={() => navigate(-1)}>
+            back
+          </button>
+        </div>
+        <TableLayout thead={thead} tbody={tbody} loading={loading} />
       </section>
     </>
   );

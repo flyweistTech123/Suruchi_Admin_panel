@@ -33,14 +33,15 @@ const Vendors = () => {
 
   const thead = [
     "Sno.",
+    "Profile",
     "Name",
     "Number",
+    "Category",
     "Products/Services",
     "Plan",
     "Plan Type",
-    // "Plan Price",
-    // "Plan Expiration",
-    "KYC Status",
+    "Plan Expiration",
+    "Vendor Acceptance",
     "Status",
     "Action",
   ];
@@ -70,13 +71,15 @@ const Vendors = () => {
 
   const tbody = response.data.map((i, index) => [
     `#${index + 1}`,
+    <img className="profile-pic" src={i?.image} alt="" />,
     i?.fullName,
     i?.phone,
+    i?.categoryId?.name,
     <Link to={`/vendor-products/${i._id}`}>View</Link>,
     i?.planBuyId?.planName,
     i?.planBuyId?.planType,
     // i?.planBuyId?.amount,
-    // i?.planExpiration?.slice(0, 10),
+    i?.planExpiration?.slice(0, 10),
     i?.kycStatus,
     i?.status,
     <span className="flexCont">
@@ -94,7 +97,7 @@ const Vendors = () => {
       <i
         className={i?.status === 'Block' ? "fas fa-ban text-danger" : "fas fa-ban text-success"}
         onClick={() => blockHandler(i._id, i.status)}
-        style={{ cursor: 'pointer', fontSize:'18px' }}
+        style={{ cursor: 'pointer', fontSize: '18px' }}
       ></i>
     </span>,
   ]);
@@ -117,7 +120,12 @@ const Vendors = () => {
 
   return (
     <>
-      <EditVendorStatus show={open} handleClose={() => setOpen(false)} id={id} />
+      <EditVendorStatus
+        show={open}
+        handleClose={() => setOpen(false)}
+        id={id}
+        fetchApi={fetchHandler}
+      />
       <section className="sectionCont">
         <div className="pb-4  w-full flex justify-between items-center">
           <span

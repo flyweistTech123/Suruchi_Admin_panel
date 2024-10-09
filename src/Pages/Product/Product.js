@@ -10,6 +10,9 @@ import Pagination from "../../Component/Pagination";
 import { debouncedSetQuery } from "../../utils/utils";
 import axios from "axios";
 
+import { ProductStatus } from "../../Component/Modals/Modals";
+
+
 
 const Product = () => {
   const navigate = useNavigate();
@@ -19,6 +22,8 @@ const Product = () => {
   const [limit, setLimit] = useState(10);
   const [search, setSearch] = useState("");
   const [id, setId] = useState("");
+  const [open, setOpen] = useState(false);
+
 
 
   const fetchHandler = useCallback(() => {
@@ -52,6 +57,9 @@ const Product = () => {
     "Subcategory Name",
     "Stock",
     "Stock Status",
+    "Product View",
+    "In Demand",
+    "New Arrival",
     "Created at",
     "",
   ];
@@ -65,14 +73,19 @@ const Product = () => {
     i?.subcategoryId?.name,
     i?.stock,
     i?.stockStatus,
+    i?.productView,
+    i?.productShowInIndemand ? "Yes" : "",
+    i?.productShowInNewArrival ? "Yes" : "",
     i?.createdAt?.slice(0, 10),
     <span className="flexCont">
-      {/* <Link to={`/edit-product/${i._id}`}>
-        <i className="fa-solid fa-pen-to-square" />
-      </Link> */}
       <Link to={`/product/${i._id}`}>
         <i className="fa-solid fa-eye" />
       </Link>
+      <i className="fa-solid fa-pen-to-square"
+        onClick={() => {
+          setId(i._id);
+          setOpen(true);
+        }} />
       <i className="fa-sharp fa-solid fa-trash" onClick={() => deleteHandler(i?._id)}></i>
     </span>,
   ]);
@@ -84,7 +97,7 @@ const Product = () => {
     axios.get(exportUrl)
       .then(response => {
         const downloadUrl = response.data.filePath;
-        window.open( downloadUrl, '_blank');
+        window.open(downloadUrl, '_blank');
       })
       .catch(error => {
         console.error('Error exporting data:', error);
@@ -95,13 +108,19 @@ const Product = () => {
 
   return (
     <>
+      <ProductStatus
+        show={open}
+        handleClose={() => setOpen(false)}
+        fetchApi={fetchHandler}
+        id={id}
+      />
       <section className="sectionCont">
         <div className="pb-4  w-full flex justify-between items-center">
           <span
             className="tracking-widest text-slate-900 font-semibold"
             style={{ fontSize: "1.5rem" }}
           >
-            All Product's ({response?.data?.totalDocs})
+            All Product/Service's ({response?.data?.totalDocs})
           </span>
 
           <button

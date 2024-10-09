@@ -381,34 +381,83 @@ const CreateCategory = ({ show, handleClose, edit, id, fetchApi, data }) => {
   );
 };
 
-const EditVendorStatus = ({ show, handleClose, id }) => {
+
+const VendorControlStatus = ({ show, handleClose, id, fetchApi }) => {
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
 
 
   const data = {
     kycStatus: status,
-    kycId: id
   }
 
-  const additionalFunctions = [handleClose];
+  const additionalFunctions = [handleClose,fetchApi];
 
 
   const updateHandler = (e) => {
     e.preventDefault();
     updateApi({
-      url: `api/v1/kyc/vendorKycVerification`,
+      url: `api/v1/kyc/vendorKycVerification/${id}`,
       payload: data,
       setLoading,
       successMsg: "Updated",
       additionalFunctions,
     });
   };
-  console.log(id, "akda")
   return (
     <Modal show={show} onHide={handleClose} centered>
       <Modal.Header closeButton>
-        <Modal.Title>Change KYC Status</Modal.Title>
+        <Modal.Title>Change Vendor Acceptance Status</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={updateHandler}>
+          <Form.Group className="mb-3">
+            <Form.Label>Status</Form.Label>
+            <Form.Select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+            >
+              <option value=''>Select your preference</option>
+              <option value="PENDING">Pending</option>
+              <option value="APPROVED">Approved</option>
+              <option value="REJECT">Reject</option>
+            </Form.Select>
+          </Form.Group>
+          <button className="submitBtn" type="submit" disabled={loading}>
+            {loading ? <ClipLoader color="#fff" /> : "Submit"}
+          </button>
+        </Form>
+      </Modal.Body>
+    </Modal>
+  );
+};
+
+const EditVendorStatus = ({ show, handleClose, id, fetchApi }) => {
+  const [status, setStatus] = useState("");
+  const [loading, setLoading] = useState(false);
+
+
+  const data = {
+    kycStatus: status,
+  }
+
+  const additionalFunctions = [handleClose,fetchApi];
+
+
+  const updateHandler = (e) => {
+    e.preventDefault();
+    updateApi({
+      url: `api/v1/kyc/vendorKycVerification/${id}`,
+      payload: data,
+      setLoading,
+      successMsg: "Updated",
+      additionalFunctions,
+    });
+  };
+  return (
+    <Modal show={show} onHide={handleClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title>Change Vendor Acceptance Status</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={updateHandler}>
@@ -638,6 +687,7 @@ const CreateNotification = ({ show, handleClose, fetchApi }) => {
               <option value="">Select User type</option>
               <option value="USER">User</option>
               <option value="VENDOR">Vendor</option>
+              <option value="BOTH">Both</option>
             </Form.Select>
           </Form.Group>
           <button className="submitBtn" type="submit">
@@ -656,6 +706,9 @@ const CreateSubscription = ({ show, handleClose, edit, id, name, fetchApi, data 
     quarterly: data?.quarterly || '',
     halfYearly: data?.halfYearly || '',
     yearly: data?.yearly || '',
+    isShowHomeScreen: data?.isShowHomeScreen || false,
+    isShowSalesScreen: data?.isShowSalesScreen || false,
+    isShowOrderScreen: data?.isShowOrderScreen || false,
     features: {
       monthlyData: data?.monthlyData || [],
       quarterlyData: data?.quarterlyData || [],
@@ -676,6 +729,9 @@ const CreateSubscription = ({ show, handleClose, edit, id, name, fetchApi, data 
         quarterly: data.quarterly || '',
         halfYearly: data.halfYearly || '',
         yearly: data.yearly || '',
+        isShowHomeScreen: data?.isShowHomeScreen || false,
+        isShowSalesScreen: data?.isShowSalesScreen || false,
+        isShowOrderScreen: data?.isShowOrderScreen || false,
         features: {
           monthlyData: data?.monthlyData || [],
           quarterlyData: data?.quarterlyData || [],
@@ -688,8 +744,16 @@ const CreateSubscription = ({ show, handleClose, edit, id, name, fetchApi, data 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setSubscriptionData({ ...subscriptionData, [name]: value });
+
+    // Convert string "true"/"false" to actual boolean values
+    const booleanValue = value === "true" ? true : value === "false" ? false : value;
+
+    setSubscriptionData({
+      ...subscriptionData,
+      [name]: booleanValue,
+    });
   };
+
 
   const handleFeatureChange = (e, period) => {
     const { name, value } = e.target;
@@ -816,6 +880,46 @@ const CreateSubscription = ({ show, handleClose, edit, id, name, fetchApi, data 
               </Form.Group>
             </Col>
           </Row>
+          <Form.Group className="mb-3">
+            <Form.Label>Show on Home Screen</Form.Label>
+            <Form.Select
+
+              name="isShowHomeScreen"
+              value={subscriptionData.isShowHomeScreen === true ? "true" : subscriptionData.isShowHomeScreen === false ? "false" : ''}
+              onChange={handleChange}
+            >
+              <option value=''>Select your preference</option>
+              <option value="true">Yes</option>
+              <option value="false">No</option>
+            </Form.Select>
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Show on Sales Screen</Form.Label>
+            <Form.Select
+              name="isShowSalesScreen"
+              value={subscriptionData.isShowSalesScreen === true ? "true" : subscriptionData.isShowSalesScreen === false ? "false" : ''}
+              onChange={handleChange}
+            >
+              <option value=''>Select your preference</option>
+              <option value="true">Yes</option>
+              <option value="false">No</option>
+            </Form.Select>
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Show on Order Screen</Form.Label>
+            <Form.Select
+              name="isShowOrderScreen"
+              value={subscriptionData.isShowOrderScreen === true ? "true" : subscriptionData.isShowOrderScreen === false ? "false" : ''}
+              onChange={handleChange}
+            >
+              <option value=''>Select your preference</option>
+              <option value="true">Yes</option>
+              <option value="false">No</option>
+            </Form.Select>
+          </Form.Group>
+
 
           {/* Features for different plans */}
           {['monthlyData', 'quarterlyData', 'halfYearlyData', 'yearlyData'].map((period) => (
@@ -870,7 +974,7 @@ const CreateSubscription = ({ show, handleClose, edit, id, name, fetchApi, data 
   );
 };
 
-const CreateSubscriptionDiscount = ({ show, handleClose, name,fetchApi, data }) => {
+const CreateSubscriptionDiscount = ({ show, handleClose, name, fetchApi, data }) => {
   const [subscriptionData, setSubscriptionData] = useState({
     discountmonthly: data?.monthlyDiscount || '',
     discountquarterly: data?.quarterlyDiscount || '',
@@ -2986,6 +3090,70 @@ const UpdateProductImage = ({ show, handleClose, id, imgid, fetchApi, handleClos
 };
 
 
+const ProductStatus = ({ show, handleClose, id, fetchApi }) => {
+  const [status1, setStatus1] = useState("");
+  const [status2, setStatus2] = useState("");
+  const [loading, setLoading] = useState(false);
+
+
+  const data = {
+    productShowInIndemand: status1,
+    productShowInNewArrival: status2,
+  }
+
+  const additionalFunctions = [handleClose, fetchApi];
+
+
+  const updateHandler = (e) => {
+    e.preventDefault();
+    updateApi({
+      url: `admin/updateProductShowIn/${id}`,
+      payload: data,
+      setLoading,
+      successMsg: "Updated",
+      additionalFunctions,
+    });
+  };
+  return (
+    <Modal show={show} onHide={handleClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title>Change Product Status</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={updateHandler}>
+          <Form.Group className="mb-3">
+            <Form.Label>Product Show In demand</Form.Label>
+            <Form.Select
+              value={status1}
+              onChange={(e) => setStatus1(e.target.value)}
+            >
+              <option value=''>Select your preference</option>
+              <option value="true">Yes</option>
+              <option value="false">No</option>
+            </Form.Select>
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Product Show In New Arrival</Form.Label>
+            <Form.Select
+              value={status2}
+              onChange={(e) => setStatus2(e.target.value)}
+            >
+              <option value=''>Select your preference</option>
+              <option value="true">Yes</option>
+              <option value="false">No</option>
+            </Form.Select>
+          </Form.Group>
+          <button className="submitBtn" type="submit" disabled={loading}>
+            {loading ? <ClipLoader color="#fff" /> : "Submit"}
+          </button>
+        </Form>
+      </Modal.Body>
+    </Modal>
+  );
+};
+
+
+
 export {
   CreateBanner,
   CreateCategory,
@@ -3004,5 +3172,6 @@ export {
   CreateType,
   CreateTermsConditions,
   CreateProduct,
-  CreateSubscriptionDiscount
+  CreateSubscriptionDiscount,
+  ProductStatus
 };

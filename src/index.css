@@ -363,7 +363,7 @@ html {
   color: black;
 }
 .sectionCont {
-  /* width: 98%; */
+  width: 100%;
   background-color: #fff;
   /* margin-left: 2%; */
   padding: 20px;
@@ -3019,7 +3019,7 @@ ol {
 }
 
 .main_hoc {
-  background-color: rgb(242, 243, 248);
+  background-color: rgb(20, 39, 136);
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
   transition-duration: 150ms;

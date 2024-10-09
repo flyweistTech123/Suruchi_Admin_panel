@@ -87,7 +87,7 @@ const SubCategory = () => {
             className="tracking-widest text-slate-900 font-semibold"
             style={{ fontSize: "1.5rem" }}
           >
-            Sub Cateogries ({response?.data?. totalDocs})
+            Sub Cateogries ({response?.data?.totalDocs})
           </span>
 
           <button
@@ -99,6 +99,20 @@ const SubCategory = () => {
           >
             Create New
           </button>
+        </div>
+
+        <div className="filterBox">
+          <img
+            src="https://t4.ftcdn.net/jpg/01/41/97/61/360_F_141976137_kQrdYIvfn3e0RT1EWbZOmQciOKLMgCwG.jpg"
+            alt=""
+          />
+          <input
+            type="search"
+            placeholder=""
+            onChange={(e) =>
+              debouncedSetQuery({ term: e.target.value, setSearch })
+            }
+          />
         </div>
 
         <TableLayout thead={thead} tbody={tbody} loading={loading} />

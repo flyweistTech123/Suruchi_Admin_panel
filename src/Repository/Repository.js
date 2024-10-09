@@ -34,7 +34,7 @@ export const getApi = async ({
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     });
-    setResponse(res.data);
+    setResponse(res?.data);
     additionalFunctions.forEach((func) => {
       if (typeof func === "function") {
         func();

@@ -150,6 +150,24 @@ const SubscriptionDetails = () => {
                                 <Form.Control type="text" value={response?.data?.discountedYearlyPrice} />
                             </Form.Group>
                         </Col>
+                        <Col xs={12} md={3}>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Is Show Home Screen</Form.Label>
+                                <Form.Control type="text" value={response?.data?.isShowHomeScreen ?"Yes" : "No"} />
+                            </Form.Group>
+                        </Col>
+                        <Col xs={12} md={3}>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Is Show Sales Screen</Form.Label>
+                                <Form.Control type="text" value={response?.data?.isShowSalesScreen  ?"Yes" : "No"} />
+                            </Form.Group>
+                        </Col>
+                        <Col xs={12} md={3}>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Is Show Order Screen</Form.Label>
+                                <Form.Control type="text" value={response?.data?.isShowOrderScreen  ?"Yes" : "No"} />
+                            </Form.Group>
+                        </Col>
                     </Row>
 
                     <div>

@@ -67,7 +67,7 @@ const Customers = () => {
     <span className="flexCont1">
       <i>
         {i?.lastLogin?.slice(0, 10)}
-      </i><br/>
+      </i><br />
       <i>
         {i?.lastLogin?.slice(11, 19)}
       </i>

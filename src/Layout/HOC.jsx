@@ -10,7 +10,7 @@ const HOC = (Wcomponenet) => {
     return (
       <>
         <section
-          className="flex overflow-x-hidden relative "
+          className="flex overflow-x-hidden relative"
           style={{ backgroundColor: "#f2f3f8" }}
         >
           {/* Sidebar */}
@@ -20,7 +20,7 @@ const HOC = (Wcomponenet) => {
                 ? " absolute top-0 z-30 md:w-auto shadow-md bg-slate-200  w-60 transition-all md:-left-full left duration-150  h-auto overflow-y-auto  left-0 "
                 : " md:w-72 z-30 bg-slate-200  shadow-md  md:static absolute top-0 -left-full   transition-all duration-150  overflow-y-auto h-auto"
             }
-            style={{ minWidth: "300px" }}
+            style={{ minWidth: "250px" }}
           >
             <Sidebar hamb={hamb} setHamb={setHamb} />
           </div>
@@ -28,10 +28,10 @@ const HOC = (Wcomponenet) => {
           <div
             className={
               hamb
-                ? " transition-all px-4 py-2  duration-150 w-full h-screen "
-                : " main_hoc "
+                ? " transition-all px-4 py-2  duration-150 flex-1  h-screen "
+                : "main_hoc flex-1"
             }
-            style={{ backgroundColor: "#f2f3f8" }}
+            style={{ backgroundColor: "#f2f3f8",width:"80%" }}
           >
             <Navbar hamb={hamb} setHamb={setHamb} />
             <div

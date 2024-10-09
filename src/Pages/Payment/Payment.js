@@ -39,6 +39,7 @@ const Payment = () => {
               <tr>
                 <th>SNo.</th>
                 <th>Vendor</th>
+                <th>Vendor Number</th>
                 <th>Plan</th>
                 <th>Amount</th>
                 <th>Payment Method</th>
@@ -49,6 +50,7 @@ const Payment = () => {
               <tr>
                 <td>1</td>
                 <td>John Doe</td>
+                <td>638984128</td>
                 <td>Basic</td>
                 <td>
                   <i className="fa-solid fa-indian-rupee-sign"></i>1000
