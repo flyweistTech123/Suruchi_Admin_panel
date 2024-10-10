@@ -169,7 +169,7 @@ const Vendors = () => {
             className="tracking-widest text-slate-900 font-semibold"
             style={{ fontSize: "1.5rem" }}
           >
-            All Vendors ({response?.data?.length})
+            All Vendors ({response?.pagination?.total})
           </span>
           <button className="submitBtn" onClick={() => navigate('/blokedvendors')}>
             Blocked Vendors

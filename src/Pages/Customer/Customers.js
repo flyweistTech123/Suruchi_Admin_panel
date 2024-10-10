@@ -120,7 +120,7 @@ const Customers = () => {
             className="tracking-widest text-slate-900 font-semibold"
             style={{ fontSize: "1.5rem" }}
           >
-            Customer's List ({users?.data?.length})
+            Customer's List ({response?.pagination?.totalUsers})
           </span>
           <button
             className="submitBtn"

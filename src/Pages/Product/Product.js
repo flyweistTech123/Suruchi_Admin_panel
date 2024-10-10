@@ -120,7 +120,7 @@ const Product = () => {
             className="tracking-widest text-slate-900 font-semibold"
             style={{ fontSize: "1.5rem" }}
           >
-            All Product/Service's ({response?.data?.totalDocs})
+            All Product/Service's ({response?.pagination?.totalProducts})
           </span>
 
           <button
