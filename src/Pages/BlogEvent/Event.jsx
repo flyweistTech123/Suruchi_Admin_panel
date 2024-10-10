@@ -6,7 +6,7 @@ import TableLayout from "../../Component/TableLayout";
 import { getApi, removeApi } from "../../Repository/Repository";
 import { CreateEvent } from "../../Component/Modals/Modals";
 
-const thead = ["Sno.", "Image", "Name", "Description","Location", "Action"];
+const thead = ["Sno.", "Image", "Name", "Description","Location","Area", "Date", "Action"];
 
 const Event = () => {
   const [show, setShow] = useState(false);
@@ -42,9 +42,11 @@ const Event = () => {
   const tbody = response.data.map((i, index) => [
     `#${index + 1}`,
     <img src={i.eventImage[0].img} alt="" className="adBannerImg" />,
-    i.name,
-    i.desc,
-    i.locationOfEvent,
+    i?.name,
+    i?.desc,
+    i?.locationOfEvent,
+    i?.areaName,
+    i?.createdAt.slice(0, 10),
     <span className="flexCont">
       <i
         className="fa-solid fa-pen-to-square"

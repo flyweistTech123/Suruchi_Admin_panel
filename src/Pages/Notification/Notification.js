@@ -1,27 +1,33 @@
 /** @format */
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import HOC from "../../Layout/HOC";
 import TableLayout from "../../Component/TableLayout";
 import { CreateNotification } from "../../Component/Modals/Modals";
-import { getApi, removeApi } from "../../Repository/Repository";
+import { getApi } from "../../Repository/Repository";
+import Pagination from "../../Component/Pagination";
 
 const Notification = () => {
   const [modalShow, setModalShow] = useState(false);
   const [response, setResponse] = useState({ data: [] });
   const [loading, setLoading] = useState(false);
 
-  const fetchHandler = () => {
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
+  const fetchHandler = useCallback(() => {
     getApi({
-      url: "api/v1/notification/allNotification",
+      url: `api/v1/notification/allNotification?page=${page}&limit=${limit}&startDate=${startDate}&endDate=${endDate}`,
       setResponse,
       setLoading,
     });
-  };
+  }, [limit, page, startDate, endDate]);
 
   useEffect(() => {
     fetchHandler();
-  }, []);
+  }, [fetchHandler]);
 
   const thead = ["Sno.", "Title", "Description", "Date"];
   const tbody = response?.data?.map((i, index) => [
@@ -31,6 +37,11 @@ const Notification = () => {
     i?.date.slice(0, 10),
   ]);
 
+  const clearFilters = () => {
+    setStartDate("");
+    setEndDate("");
+    fetchHandler();
+  };
 
   return (
     <>
@@ -60,7 +71,35 @@ const Notification = () => {
           </div>
         </div>
 
+        <div className="filterBox">
+          <label>Start Date:</label>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+          />
+          <label>End Date:</label>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+          />
+          <button className="submitBtn" onClick={clearFilters}>
+            Clear
+          </button>
+        </div>
+
         <TableLayout thead={thead} tbody={tbody} />
+        {(!response || response !== null) && (
+          <Pagination
+            hasNextPage={response?.data?.hasNextPage}
+            limit={limit}
+            setLimit={setLimit}
+            page={page}
+            setPage={setPage}
+            totalPages={response?.pagination?.totalPages}
+          />
+        )}
       </section>
     </>
   );

@@ -1,35 +1,51 @@
 /** @format */
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import HOC from "../../Layout/HOC";
 import { Link, useNavigate } from "react-router-dom";
-import { getApi, removeApi, createApi } from "../../Repository/Repository";
+import { getApi, removeApi, createApi, updateApi } from "../../Repository/Repository";
 import TableLayout from "../../Component/TableLayout";
 import { EditVendorStatus } from "../../Component/Modals/Modals";
 import axios from "axios";
+import { debouncedSetQuery } from "../../utils/utils";
+import Pagination from "../../Component/Pagination";
+
 
 const Vendors = () => {
   const [open, setOpen] = useState(false);
   const [response, setResponse] = useState({ data: [] });
   const [loading, setLoading] = useState(false);
   const [id, setId] = useState("");
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [search, setSearch] = useState("");
+  const [status1, setStatus1] = useState(false);
+
 
 
   const navigate = useNavigate();
 
 
 
-  const fetchHandler = () => {
+  const fetchHandler = useCallback(() => {
     getApi({
-      url: "api/v1/admin/getAllVendor",
+      url: `api/v1/admin/getAllVendor?page=${page}&limit=${limit}&search=${search}`,
       setResponse,
       setLoading,
     });
-  };
+  }, [limit, search, page]);
 
   useEffect(() => {
     fetchHandler();
-  }, []);
+  }, [fetchHandler]);
+
+  useEffect(() => {
+    if (response?.data?.length > 0) {
+      setStatus1(response?.data?.[0]?.bankDetailsDisableEnable); // Set initial toggle state from response
+    }
+  }, [response]);
+
+
 
   const thead = [
     "Sno.",
@@ -69,7 +85,7 @@ const Vendors = () => {
 
 
 
-  const tbody = response.data.map((i, index) => [
+  const tbody = response?.data?.map((i, index) => [
     `#${index + 1}`,
     <img className="profile-pic" src={i?.image} alt="" />,
     i?.fullName,
@@ -83,13 +99,13 @@ const Vendors = () => {
     i?.kycStatus,
     i?.status,
     <span className="flexCont">
-      <Link to={`/view-vendor/${i._id}`}>
+      <Link to={`/view-vendor/${i?._id}`}>
         <i className="fa-solid fa-eye"></i>
       </Link>
       <i
         className="fa-solid fa-pen-to-square"
         onClick={() => {
-          setId(i._id);
+          setId(i?._id);
           setOpen(true);
         }}
       />
@@ -99,7 +115,7 @@ const Vendors = () => {
         onClick={() => blockHandler(i._id, i.status)}
         style={{ cursor: 'pointer', fontSize: '18px' }}
       ></i>
-    </span>,
+    </span>
   ]);
 
   const handleExport = () => {
@@ -116,6 +132,27 @@ const Vendors = () => {
       });
 
   };
+
+
+  const updateHandler = (newStatus) => {
+    const data = {
+      bankDetailsDisableEnable: newStatus, // Send the current toggle status in the payload
+    };
+
+    updateApi({
+      url: `api/v1/admin/accessDetailsDisableEnable`,
+      payload: data,
+      setLoading,
+      successMsg: "Updated",
+    });
+  };
+
+  const handleToggle = (e) => {
+    const newStatus = e.target.checked; // Get the new toggle status (true/false)
+    setStatus1(newStatus); // Update local state with new toggle status
+    updateHandler(newStatus); // Send the new status in the payload
+  };
+
 
 
   return (
@@ -137,6 +174,15 @@ const Vendors = () => {
           <button className="submitBtn" onClick={() => navigate('/blokedvendors')}>
             Blocked Vendors
           </button>
+          <div className="toggle-container">
+            <label htmlFor="bankToggle" className="toggle-label">
+              Bank Details
+            </label>
+            <label className="toggle-switch">
+              <input type="checkbox" id="bankToggle" checked={status1} onChange={handleToggle} />
+              <span className="slider"></span>
+            </label>
+          </div>
 
         </div>
 
@@ -147,9 +193,13 @@ const Vendors = () => {
           />
           <input
             type="search"
-            placeholder="seach by first name , last name , email address , phone number..."
+            placeholder=""
+            onChange={(e) =>
+              debouncedSetQuery({ term: e.target.value, setSearch })
+            }
           />
         </div>
+
         <button
           className="submitBtn"
           onClick={handleExport}
@@ -157,6 +207,17 @@ const Vendors = () => {
           Export
         </button>
         <TableLayout thead={thead} tbody={tbody} loading={loading} />
+
+        {(!response || response !== null) && (
+          <Pagination
+            hasNextPage={response?.data?.hasNextPage}
+            limit={limit}
+            setLimit={setLimit}
+            page={page}
+            setPage={setPage}
+            totalPages={response?.pagination?.totalPages}
+          />
+        )}
       </section>
     </>
   );

@@ -37,6 +37,7 @@ import AllCity from "../Pages/Location/AllCity";
 import TermsConditions from "../Pages/BlogEvent/TermsConditions";
 import ContactUs from "../Pages/BlogEvent/ContactUs";
 import SubscriptionDetails from "../Pages/Subscription/SubscriptionDetails";
+import AllArea from "../Pages/Location/AllArea";
 
 const routes = [
   { path: "/", element: <Login /> },
@@ -76,6 +77,7 @@ const routes = [
   { path: "/termsconditions", element: <TermsConditions /> },
   { path: "/contactus", element: <ContactUs /> },
   { path: "/subsciptiondetails/:id", element: <SubscriptionDetails /> },
+  { path: "/allarea", element: <AllArea /> },
 ];
 
 export default routes;

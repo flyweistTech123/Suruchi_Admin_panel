@@ -6,7 +6,7 @@ import TableLayout from "../../Component/TableLayout";
 import { getApi, removeApi } from "../../Repository/Repository";
 import { CreateContes } from "../../Component/Modals/Modals";
 
-const thead = ["Sno.", "Image", "Name", "Description", "Location", "Action"];
+const thead = ["Sno.", "Image", "Name", "Description", "Location", "Area", "Date","Action"];
 
 const Contes = () => {
   const [show, setShow] = useState(false);
@@ -45,6 +45,8 @@ const Contes = () => {
     i.name,
     i.desc,
     i.locationOfContest,
+    i?.areaName,
+    i?.createdAt.slice(0, 10),
     <span className="flexCont">
       <i
         className="fa-solid fa-pen-to-square"

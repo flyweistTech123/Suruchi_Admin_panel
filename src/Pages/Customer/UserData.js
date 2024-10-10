@@ -24,7 +24,7 @@ const UserData = () => {
   const fetchHandler1 = () => {
     getApi({
       url: `api/v1/admin/getWishlistByUserId/${id}`,
-      setResponse1,
+      setResponse: setResponse1,
       setLoading,
     });
   };
@@ -32,7 +32,7 @@ const UserData = () => {
   useEffect(() => {
     fetchHandler();
     fetchHandler1();
-  }, []);
+  }, [id]);
 
   const thead = [
     "Sno.",
@@ -45,21 +45,23 @@ const UserData = () => {
     "Action"
   ];
 
-  const tbody = response1?.data?.wishlist?.products?.map((i, index) => [
-    `#${index + 1}`,
-    i?.ID,
-    i?.categoryId?.name,
-    i?.categoryId?.gender,
-    i?.subcategoryId?.name,
-    i?.subcategoryId?.name,
-    i?.productName,
-    i?.stockStatus,
-    <span className="flexCont">
-      <Link to={`/product/${i?._id}`}>
-        <i className="fa-solid fa-eye" />
-      </Link>
-    </span>,
-  ]);
+  const tbody = response1?.wishlist?.flatMap((wishlistItem, index) =>
+    wishlistItem?.products?.map((product, productIndex) => [
+      `#${index + 1}-${productIndex + 1}`, // Unique index for each product
+      product.ID,
+      product.categoryId?.name,
+      product.categoryId?.gender,
+      product.categoryId?.name, // Fetching subcategory name
+      product.productName, // Fetching product name
+      product.stockStatus, // Fetching stock status
+      <span className="flexCont">
+        <Link to={`/product/${product._id}`}>
+          <i className="fa-solid fa-eye" />
+        </Link>
+      </span>,
+    ])
+  );
+
 
 
   console.log(response1?.wishlist?.products, "hajhd");

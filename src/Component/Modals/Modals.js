@@ -381,57 +381,6 @@ const CreateCategory = ({ show, handleClose, edit, id, fetchApi, data }) => {
   );
 };
 
-
-const VendorControlStatus = ({ show, handleClose, id, fetchApi }) => {
-  const [status, setStatus] = useState("");
-  const [loading, setLoading] = useState(false);
-
-
-  const data = {
-    kycStatus: status,
-  }
-
-  const additionalFunctions = [handleClose,fetchApi];
-
-
-  const updateHandler = (e) => {
-    e.preventDefault();
-    updateApi({
-      url: `api/v1/kyc/vendorKycVerification/${id}`,
-      payload: data,
-      setLoading,
-      successMsg: "Updated",
-      additionalFunctions,
-    });
-  };
-  return (
-    <Modal show={show} onHide={handleClose} centered>
-      <Modal.Header closeButton>
-        <Modal.Title>Change Vendor Acceptance Status</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form onSubmit={updateHandler}>
-          <Form.Group className="mb-3">
-            <Form.Label>Status</Form.Label>
-            <Form.Select
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-            >
-              <option value=''>Select your preference</option>
-              <option value="PENDING">Pending</option>
-              <option value="APPROVED">Approved</option>
-              <option value="REJECT">Reject</option>
-            </Form.Select>
-          </Form.Group>
-          <button className="submitBtn" type="submit" disabled={loading}>
-            {loading ? <ClipLoader color="#fff" /> : "Submit"}
-          </button>
-        </Form>
-      </Modal.Body>
-    </Modal>
-  );
-};
-
 const EditVendorStatus = ({ show, handleClose, id, fetchApi }) => {
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
@@ -441,7 +390,7 @@ const EditVendorStatus = ({ show, handleClose, id, fetchApi }) => {
     kycStatus: status,
   }
 
-  const additionalFunctions = [handleClose,fetchApi];
+  const additionalFunctions = [handleClose, fetchApi];
 
 
   const updateHandler = (e) => {
@@ -481,6 +430,7 @@ const EditVendorStatus = ({ show, handleClose, id, fetchApi }) => {
     </Modal>
   );
 };
+
 
 const CreateSubCategory = ({ show, handleClose, edit, id, fetchApi, data }) => {
   const [name, setName] = useState(data?.name || '');
@@ -1172,6 +1122,7 @@ const EditReview = ({ show, handleClose, id, ids, fetchApi, data }) => {
   const [comment, setComment] = useState(data?.comment || '');
   const [loading, setLoading] = useState(false);
 
+
   useEffect(() => {
     if (data) {
       setRating(data?.rating || "");
@@ -1630,6 +1581,8 @@ const CreateEvent = ({ show, handleClose, edit, id, fetchApi, data }) => {
   const [desc, setDesc] = useState(data?.desc || '');
   const [location, setLocation] = useState(data?.locationOfEvent || '');
   const [locationId, setLocationId] = useState('');
+  const [area, setarea] = useState(data?.areaName || '');
+  const [areaNameId, setareaNameId] = useState('');
   const [image, setImage] = useState(data?.eventImage || []);
   const [loading, setLoading] = useState(false);
   const [show1, setShow1] = useState(false);
@@ -1637,6 +1590,7 @@ const CreateEvent = ({ show, handleClose, edit, id, fetchApi, data }) => {
   const [imgid, setImageId] = useState('')
   const [viewimg, setViewImage] = useState('')
   const [response, setResponse] = useState(null);
+  const [response1, setResponse1] = useState(null);
 
   useEffect(() => {
     if (edit && data) {
@@ -1644,12 +1598,14 @@ const CreateEvent = ({ show, handleClose, edit, id, fetchApi, data }) => {
       setDesc(data?.desc || '');
       setImage(data.eventImage || []);
       setLocation(data?.locationOfEvent || '');
+      setarea(data?.areaName || '');
     } else {
       // Reset all fields when edit is false
       setName('');
       setDesc('');
       setImage([]);
       setLocation('');
+      setarea('');
     }
   }, [edit, data]);
 
@@ -1659,6 +1615,7 @@ const CreateEvent = ({ show, handleClose, edit, id, fetchApi, data }) => {
     setName("");
     setDesc("");
     setLocation("");
+    setarea("");
     setImage([]);
   };
 
@@ -1676,6 +1633,7 @@ const CreateEvent = ({ show, handleClose, edit, id, fetchApi, data }) => {
   fd.append("name", name);
   fd.append("desc", desc);
   fd.append("locationOfEvent", location);
+  fd.append("areaName", area);
   image?.forEach((img) => {
     fd.append("eventImage", img instanceof File ? img : img.img);
   });
@@ -1700,7 +1658,8 @@ const CreateEvent = ({ show, handleClose, edit, id, fetchApi, data }) => {
     const fd = {
       name: name,
       desc: desc,
-      locationOfEvent: locationId
+      locationOfEvent: location,
+      areaName:area
     }
 
     updateApi({
@@ -1721,6 +1680,20 @@ const CreateEvent = ({ show, handleClose, edit, id, fetchApi, data }) => {
       setResponse: setResponse,
     });
   };
+
+
+  const fetchHandler1 = () => {
+    getApi({
+      url: `getAllAreasByCityId/${locationId}`,
+      setLoading,
+      setResponse: setResponse1,
+    });
+  };
+
+
+  useEffect(() => {
+    fetchHandler1();
+  }, [locationId]);
 
   useEffect(() => {
     fetchHandler();
@@ -1803,7 +1776,7 @@ const CreateEvent = ({ show, handleClose, edit, id, fetchApi, data }) => {
             <Form.Control type="text" value={name} onChange={(e) => setName(e.target.value)} />
           </Form.Group>
           <Form.Group className="mb-3">
-            <Form.Label>Location</Form.Label>
+            <Form.Label>City</Form.Label>
             <Form.Select
               value={location}
               onChange={(e) => {
@@ -1815,6 +1788,22 @@ const CreateEvent = ({ show, handleClose, edit, id, fetchApi, data }) => {
               <option>Select City</option>
               {response?.data?.map(city => (
                 <option key={city?._id} value={city?.name}>{city?.name}</option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Area</Form.Label>
+            <Form.Select
+              value={area}
+              onChange={(e) => {
+                const selectedArea = response1?.data?.find(area => area?.name === e.target.value);
+                setareaNameId(selectedArea?._id);
+                setarea(e.target.value);
+              }}
+            >
+              <option>Select Area</option>
+              {response1?.data?.map(area => (
+                <option key={area?._id} value={area?.name}>{area?.name}</option>
               ))}
             </Form.Select>
           </Form.Group>
@@ -1980,6 +1969,9 @@ const CreateContes = ({ show, handleClose, edit, id, fetchApi, data }) => {
   const [imgid, setImageId] = useState('')
   const [viewimg, setViewImage] = useState('')
   const [response, setResponse] = useState(null);
+  const [response1, setResponse1] = useState(null);
+  const [area, setarea] = useState(data?.areaName || '');
+  const [areaNameId, setareaNameId] = useState('');
 
   useEffect(() => {
     if (edit && data) {
@@ -2016,6 +2008,7 @@ const CreateContes = ({ show, handleClose, edit, id, fetchApi, data }) => {
   fd.append("name", name);
   fd.append("desc", desc);
   fd.append("locationOfContest", location);
+  fd.append("areaName", area);
   image?.forEach((img) => {
     fd.append("contestImage", img instanceof File ? img : img.img);
   });
@@ -2040,7 +2033,8 @@ const CreateContes = ({ show, handleClose, edit, id, fetchApi, data }) => {
     const fd = {
       name: name,
       desc: desc,
-      locationOfContest: location
+      locationOfContest: location,
+      areaName:area
     }
 
     updateApi({
@@ -2062,6 +2056,18 @@ const CreateContes = ({ show, handleClose, edit, id, fetchApi, data }) => {
       setResponse: setResponse,
     });
   };
+
+  const fetchHandler1 = () => {
+    getApi({
+      url: `getAllAreasByCityId/${locationId}`,
+      setLoading,
+      setResponse: setResponse1,
+    });
+  };
+
+  useEffect(() => {
+    fetchHandler1();
+  }, [locationId]);
 
   useEffect(() => {
     fetchHandler();
@@ -2142,7 +2148,7 @@ const CreateContes = ({ show, handleClose, edit, id, fetchApi, data }) => {
             <Form.Control type="text" value={name} onChange={(e) => setName(e.target.value)} />
           </Form.Group>
           <Form.Group className="mb-3">
-            <Form.Label>Location</Form.Label>
+            <Form.Label>City</Form.Label>
             <Form.Select
               value={location}
               onChange={(e) => {
@@ -2154,6 +2160,22 @@ const CreateContes = ({ show, handleClose, edit, id, fetchApi, data }) => {
               <option>Select City</option>
               {response?.data?.map(city => (
                 <option key={city?._id} value={city?.name}>{city?.name}</option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Area</Form.Label>
+            <Form.Select
+              value={area}
+              onChange={(e) => {
+                const selectedArea = response1?.data?.find(area => area?.name === e.target.value);
+                setareaNameId(selectedArea?._id);
+                setarea(e.target.value);
+              }}
+            >
+              <option>Select Area</option>
+              {response1?.data?.map(area => (
+                <option key={area?._id} value={area?.name}>{area?.name}</option>
               ))}
             </Form.Select>
           </Form.Group>
@@ -3153,6 +3175,159 @@ const ProductStatus = ({ show, handleClose, id, fetchApi }) => {
 };
 
 
+const CreateArea = ({ show, handleClose, edit, id, fetchApi, data }) => {
+  const [name, setName] = useState(data?.name || '');
+  const [cityId, setCityId] = useState(data?.cityId || '');
+  const [cityName, setCityName] = useState(data?.cityId?.name || '');
+  const [loading, setLoading] = useState(false);
+  const [stateName, setStateName] = useState('');
+  const [stateId, setStateId] = useState(data?.cityId?.stateCode || '');
+  const [response, setResponse] = useState(null);
+  const [response1, setResponse1] = useState(null);
+
+  useEffect(() => {
+    if (edit && data) {
+      setName(data?.name || "");
+      setCityId(data.cityId || "");
+    }
+    else {
+      setName("");
+      setCityId("");
+    }
+  }, [edit, data]);
+
+
+  const resetForm = () => {
+    setName("");
+    setCityId("");
+  };
+
+
+  const fd = {
+    name: name,
+    cityId: cityId
+  }
+
+
+
+
+
+  const additionalFunctions = [handleClose, fetchApi];
+
+  const createHandler = (e) => {
+    e.preventDefault();
+    createApi({
+      url: "api/v1/admin/area/addAreas",
+      payload: fd,
+      setLoading,
+      successMsg: "Created",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
+
+  const updateHandler = (e) => {
+    e.preventDefault();
+    const fd = {
+      name: name,
+      cityId: cityId
+    }
+
+    updateApi({
+      url: `api/v1/admin/area/get/updateArea/${id}`,
+      payload: fd,
+      setLoading,
+      successMsg: "Updated",
+      additionalFunctions,
+    });
+    resetForm();
+  };
+
+
+  const fetchHandler = () => {
+    const maxLimit = 36; // Set this to the total number of states you want to fetch
+    getApi({
+      url: `api/v1/admin/states/getAllStates?limit=${maxLimit}`,
+      setLoading,
+      setResponse: setResponse,
+    });
+  };
+
+
+  const fetchHandler1 = () => {
+    getApi({
+      url: `api/v1/admin/getCitiesByStateCode/${stateId}`,
+      setLoading,
+      setResponse: setResponse1,
+    });
+  };
+
+
+
+  useEffect(() => {
+    fetchHandler1();
+  }, [stateId]);
+
+  useEffect(() => {
+    fetchHandler();
+  }, []);
+
+
+  return (
+    <Modal show={show} onHide={handleClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          {edit ? "Edit Area" : "Add Area"}
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={edit ? updateHandler : createHandler}>
+          <Form.Group className="mb-3">
+            <Form.Label>Area Name</Form.Label>
+            <Form.Control type="text" value={name} onChange={(e) => setName(e.target.value)} />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>State</Form.Label>
+            <Form.Select
+              value={stateName}
+              onChange={(e) => {
+                const selectedState = response?.data?.find(state => state?.name === e.target.value);
+                setStateId(selectedState?.isoCode);
+                setStateName(e.target.value);
+              }}
+            >
+              <option>Select State</option>
+              {response?.data?.map(state => (
+                <option key={state?._id} value={state?.name}>{state?.name}</option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>City</Form.Label>
+            <Form.Select
+              value={cityName}
+              onChange={(e) => {
+                const selectedCity = response1?.cities?.find(city => city?.name === e.target.value);
+                setCityId(selectedCity?._id);
+                setCityName(e.target.value);
+              }}
+            >
+              <option>Select City</option>
+              {response1?.cities?.map(city => (
+                <option key={city?._id} value={city?.name}>{city?.name}</option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+          <button className="submitBtn" type="submit" disabled={loading}>
+            {loading ? <ClipLoader color="#fff" /> : "Submit"}
+          </button>
+        </Form>
+      </Modal.Body>
+    </Modal>
+  );
+};
+
 
 export {
   CreateBanner,
@@ -3173,5 +3348,6 @@ export {
   CreateTermsConditions,
   CreateProduct,
   CreateSubscriptionDiscount,
-  ProductStatus
+  ProductStatus,
+  CreateArea,
 };

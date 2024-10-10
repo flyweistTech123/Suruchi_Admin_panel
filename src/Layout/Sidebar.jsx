@@ -98,6 +98,11 @@ const Sidebar = ({ hamb, setHamb }) => {
       name: "All City",
     },
     {
+      icon: <MdLocationOn className="text-xl mr-3 rounded-full " />,
+      link: "/allarea",
+      name: "All Area",
+    },
+    {
       icon: <i className="fa-solid fa-blog text-xl mr-3 rounded-full"></i>,
       link: "/blogs",
       name: "Blogs",

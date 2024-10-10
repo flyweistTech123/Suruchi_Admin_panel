@@ -16,13 +16,15 @@ const AdminProduct = () => {
   const [show, setShow] = useState(false);
   const [edit, setEdit] = useState(false);
   const [response, setResponse] = useState(null);
+  const [response1, setResponse1] = useState(null);
   const [loading, setLoading] = useState(false);
   const [id, setId] = useState("");
   const [selected, setSelected] = useState(null);
 
+
   const fetchHandler = () => {
     getApi({
-      url: `api/v1/admin/Product/getProductsByAdminId/666d89663ca1fdd9ce0319b4`,
+      url: `api/v1/admin/Product/getProductsByAdminId`,
       setResponse,
       setLoading,
     });
@@ -31,6 +33,9 @@ const AdminProduct = () => {
   useEffect(() => {
     fetchHandler();
   }, [id]);
+
+
+
 
 
   const deleteHandler = (id) => {

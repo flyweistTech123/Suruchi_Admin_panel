@@ -28,7 +28,7 @@ const Product = () => {
 
   const fetchHandler = useCallback(() => {
     getApi({
-      url: `api/v1/admin/Product/list?page=${page}&limit=${limit}&search=${search}&toDate=null&fromDate=null`,
+      url: `api/v1/admin/Product/list?page=${page}&limit=${limit}&search=${search}`,
       setLoading,
       setResponse,
     });
@@ -64,7 +64,7 @@ const Product = () => {
     "",
   ];
 
-  const tbody = response?.data?.docs?.map((i, index) => [
+  const tbody = response?.data?.map((i, index) => [
     `#${index + 1}`,
     i?.ID,
     <img src={i?.productImage[0]?.img} alt="" style={{ maxWidth: "80px" }} />,
@@ -153,7 +153,7 @@ const Product = () => {
             setLimit={setLimit}
             page={page}
             setPage={setPage}
-            totalPages={response?.data?.totalPages}
+            totalPages={response?.pagination?.totalPages}
           />
         )}
       </section>

@@ -5,6 +5,7 @@ import { Table } from "react-bootstrap";
 import { Loader, NotFound } from "./HelpingComponents";
 
 const TableLayout = ({ thead, tbody, className, loading }) => {
+
   return loading ? (
     <Loader />
   ) : (

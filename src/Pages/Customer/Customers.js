@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import HOC from "../../Layout/HOC";
 import { Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
@@ -8,21 +8,30 @@ import { getApi, removeApi, updateApi } from "../../Repository/Repository";
 import TableLayout from "../../Component/TableLayout";
 import axios from "axios";
 
+import { debouncedSetQuery } from "../../utils/utils";
+import Pagination from "../../Component/Pagination";
+
+
 const Customers = () => {
   const [users, setUsers] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [response, setResponse] = useState({ data: [] });
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [search, setSearch] = useState("");
 
-  const fetchHandler = () => {
+  const fetchHandler = useCallback(() => {
     getApi({
-      url: "api/v1/admin/getAllUser",
+      url: `api/v1/admin/getAllUser?page=${page}&limit=${limit}&search=${search}`,
+      setResponse,
       setLoading,
       setResponse: setUsers,
     });
-  };
+  }, [limit, search, page]);
 
   useEffect(() => {
     fetchHandler();
-  }, []);
+  }, [fetchHandler]);
 
   const blockHandler = (id, currentStatus) => {
     const isBlocked = currentStatus === "Block";
@@ -121,7 +130,31 @@ const Customers = () => {
           </button>
         </div>
 
+        <div className="filterBox">
+          <img
+            src="https://t4.ftcdn.net/jpg/01/41/97/61/360_F_141976137_kQrdYIvfn3e0RT1EWbZOmQciOKLMgCwG.jpg"
+            alt=""
+          />
+          <input
+            type="search"
+            placeholder=""
+            onChange={(e) =>
+              debouncedSetQuery({ term: e.target.value, setSearch })
+            }
+          />
+        </div>
+
         <TableLayout thead={thead} tbody={tbody} loading={loading} />
+        {(!response || response !== null) && (
+          <Pagination
+            hasNextPage={response?.data?.hasNextPage}
+            limit={limit}
+            setLimit={setLimit}
+            page={page}
+            setPage={setPage}
+            totalPages={response?.pagination?.totalPages}
+          />
+        )}
       </section>
     </>
   );
