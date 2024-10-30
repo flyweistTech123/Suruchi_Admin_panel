@@ -40,7 +40,7 @@ const ECategory = () => {
     });
   };
 
-  const thead = ["Sno.", "Image", "Title", "Type", "status", "Approval Status", ""];
+  const thead = ["Sno.", "Image", "Title", "Type", "Status", "Approval Status", ""];
   const tbody = response?.data?.docs?.map((i, index) => [
     `#${index + 1}`,
     <img src={i.image} alt="" style={{ maxWidth: "80px" }} />,
@@ -85,7 +85,7 @@ const ECategory = () => {
             className="tracking-widest text-slate-900 font-semibold"
             style={{ fontSize: "1.5rem" }}
           >
-            All Category's ({response?.data?.totalDocs} )
+            All Categories ({response?.data?.totalDocs} )
           </span>
           <button
             onClick={() => {
@@ -105,7 +105,7 @@ const ECategory = () => {
           />
           <input
             type="search"
-            placeholder=""
+            placeholder="Search..."
             onChange={(e) =>
               debouncedSetQuery({ term: e.target.value, setSearch })
             }

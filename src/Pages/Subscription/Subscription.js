@@ -44,7 +44,7 @@ const Subscription = () => {
     const additionalFunctions = [fetchHandler];
     removeApi({
       url: `api/v1/admin/Plans/delete/${id}`,
-      successMsg: "Removed !",
+      successMsg: "Removed!",
       additionalFunctions,
     });
   };
@@ -59,7 +59,7 @@ const Subscription = () => {
     i.halfYearly,
     i.yearly,
     <span className="flexCont">
-      <Link to={`/subsciptiondetails/${i?._id}`}>
+      <Link to={`/subscriptiondetails/${i?._id}`}>
         <i className="fa-solid fa-eye" />
       </Link>
       <i
@@ -96,7 +96,7 @@ const Subscription = () => {
           className="tracking-widest text-slate-900 font-semibold"
           style={{ fontSize: "1.5rem" }}
         >
-          All Subscription's ({response?.data?.length})
+          All Subscriptions ({response?.data?.length})
         </span>
         <div className="flex gap-1">
           <button className="submitBtn"

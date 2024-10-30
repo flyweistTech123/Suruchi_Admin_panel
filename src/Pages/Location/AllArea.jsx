@@ -90,7 +90,7 @@ const AllArea = () => {
                         className="tracking-widest text-slate-900 font-semibold"
                         style={{ fontSize: "1.5rem" }}
                     >
-                        All Area's ({response?.totalCount} )
+                        All Areas ({response?.totalCount} )
                     </span>
                     <button
                         className="submitBtn"
@@ -110,7 +110,7 @@ const AllArea = () => {
                     />
                     <input
                         type="search"
-                        placeholder=""
+                        placeholder="Search..."
                         onChange={(e) =>
                             debouncedSetQuery({ term: e.target.value, setSearch })
                         }

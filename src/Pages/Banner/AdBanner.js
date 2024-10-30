@@ -5,9 +5,8 @@ import HOC from "../../Layout/HOC";
 import TableLayout from "../../Component/TableLayout";
 import { getApi, removeApi } from "../../Repository/Repository";
 import { CreateBanner } from "../../Component/Modals/Modals";
-import { data } from "autoprefixer";
 
-const thead = ["Sno.", "Image", "Type", "Description", ""];
+const thead = ["Sno.", "Image", "Type", "Description", "Action"];
 
 const AdBanner = () => {
   const [show, setShow] = useState(false);
@@ -34,7 +33,7 @@ const AdBanner = () => {
     const additionalFunctions = [fetchHandler];
     removeApi({
       url: `api/v1/Banner/${id}`,
-      successMsg: "Removed !",
+      successMsg: "Removed!",
       additionalFunctions,
     });
   };
@@ -79,7 +78,7 @@ const AdBanner = () => {
             className="tracking-widest text-slate-900 font-semibold "
             style={{ fontSize: "1.5rem" }}
           >
-            All Banner({response?.data?.length || 0})
+            All Banners({response?.data?.length || 0})
           </span>
 
           <button

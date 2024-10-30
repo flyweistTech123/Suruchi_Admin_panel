@@ -3,7 +3,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import HOC from "../../Layout/HOC";
 import { Link, useNavigate } from "react-router-dom";
-import data from "../../Constant/constant.json";
 import TableLayout from "../../Component/TableLayout";
 import { getApi, removeApi } from "../../Repository/Repository";
 import Pagination from "../../Component/Pagination";
@@ -57,11 +56,11 @@ const Product = () => {
     "Subcategory Name",
     "Stock",
     "Stock Status",
-    "Product View",
+    "Product Views",
     "In Demand",
     "New Arrival",
     "Created at",
-    "",
+    "Action",
   ];
 
   const tbody = response?.data?.map((i, index) => [
@@ -120,7 +119,7 @@ const Product = () => {
             className="tracking-widest text-slate-900 font-semibold"
             style={{ fontSize: "1.5rem" }}
           >
-            All Product/Service's ({response?.pagination?.totalProducts})
+            All Products/Services ({response?.pagination?.totalProducts})
           </span>
 
           <button
@@ -138,7 +137,7 @@ const Product = () => {
           />
           <input
             type="search"
-            placeholder="Start typing to search for products"
+            placeholder="Start typing to search for products or services"
             onChange={(e) =>
               debouncedSetQuery({ term: e.target.value, setSearch })
             }

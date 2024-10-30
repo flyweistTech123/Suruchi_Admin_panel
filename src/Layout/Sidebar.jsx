@@ -62,17 +62,17 @@ const Sidebar = ({ hamb, setHamb }) => {
     {
       icon: <i className="fa-solid fa-store  text-xl mr-3 rounded-full"></i>,
       link: "/admin-stores",
-      name: " Admin Store",
+      name: "Admin Store",
     },
     {
       icon: <i className="fa-solid fa-store  text-xl mr-3 rounded-full"></i>,
       link: "/vendors",
-      name: " Vendors",
+      name: "Vendors",
     },
     {
       icon: <i className="fa-solid fa-user  text-xl mr-3 rounded-full"></i>,
       link: "/user",
-      name: "Customer",
+      name: "Customers",
     },
 
     {
@@ -85,7 +85,7 @@ const Sidebar = ({ hamb, setHamb }) => {
     {
       icon: <i className="fa-solid fa-bell  text-xl mr-3 rounded-full"></i>,
       link: "/notification",
-      name: "Notification",
+      name: "Notifications",
     },
     {
       icon: <MdLocationOn className="text-xl mr-3 rounded-full " />,
@@ -110,12 +110,12 @@ const Sidebar = ({ hamb, setHamb }) => {
     {
       icon: <i className="fa-solid fa-calendar-check text-xl mr-3 rounded-full"></i>,
       link: "/event",
-      name: "Event",
+      name: "Events",
     },
     {
       icon: <i className="fa-solid fa-trophy text-xl mr-3 rounded-full"></i>,
-      link: "/contes",
-      name: "Contest",
+      link: "/contests",
+      name: "Contests",
     },
     {
       icon: <FaInfoCircle className="text-xl mr-3 rounded-full " />,
@@ -135,7 +135,7 @@ const Sidebar = ({ hamb, setHamb }) => {
     {
       icon: <i className="fa-solid fa-question text-xl mr-3 rounded-full" />,
       link: "/faq",
-      name: "FAQ",
+      name: "FAQs",
     },
 
     {

@@ -48,7 +48,7 @@ const routes = [
   { path: "/edit-admin-stores/:id", element: <CreateAdminStore /> },
   { path: "/Category", element: <ECategory /> },
   { path: "/vendors", element: <Vendors /> },
-  { path: "/blokedvendors", element: <BlockedVendor /> },
+  { path: "/blockedvendors", element: <BlockedVendor /> },
   { path: "/view-vendor/:ids", element: <CreateVendor /> },
   { path: "/view-vendor-store/:ids", element: <VendorStoreDetail /> },
   { path: "/Product", element: <Product /> },
@@ -68,7 +68,7 @@ const routes = [
   { path: "/subscription", element: <Subscription /> },
   { path: "/blogs", element: <Blog /> },
   { path: "/event", element: <Event /> },
-  { path: "/contes", element: <Contes /> },
+  { path: "/contests", element: <Contes /> },
   { path: "/about", element: <Aboutus /> },
   { path: "/topseller", element: <Brands /> },
   { path: "/categorytype", element: <CategoryType /> },
@@ -76,7 +76,7 @@ const routes = [
   { path: "/allcity", element: <AllCity /> },
   { path: "/termsconditions", element: <TermsConditions /> },
   { path: "/contactus", element: <ContactUs /> },
-  { path: "/subsciptiondetails/:id", element: <SubscriptionDetails /> },
+  { path: "/subscriptiondetails/:id", element: <SubscriptionDetails /> },
   { path: "/allarea", element: <AllArea /> },
 ];
 

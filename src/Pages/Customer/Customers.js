@@ -47,7 +47,7 @@ const Customers = () => {
     const additionalFunctions = [fetchHandler];
     removeApi({
       url: `api/v1/admin/${id}`,
-      successMsg: "Removed !",
+      successMsg: "Removed!",
       additionalFunctions,
     });
   };
@@ -56,13 +56,12 @@ const Customers = () => {
     "Sno.",
     "Profile",
     "Username",
-    "Email address",
+    "Email",
     "Mobile Number",
     "Status",
     "Location",
     "Last Login",
     "Action",
-    "",
   ];
 
   const tbody = users?.data?.map((i, index) => [
@@ -120,7 +119,7 @@ const Customers = () => {
             className="tracking-widest text-slate-900 font-semibold"
             style={{ fontSize: "1.5rem" }}
           >
-            Customer's List ({response?.pagination?.totalUsers})
+           All Customers ({users?.pagination?.totalUsers})
           </span>
           <button
             className="submitBtn"
@@ -137,7 +136,7 @@ const Customers = () => {
           />
           <input
             type="search"
-            placeholder=""
+            placeholder="Search customers..."
             onChange={(e) =>
               debouncedSetQuery({ term: e.target.value, setSearch })
             }

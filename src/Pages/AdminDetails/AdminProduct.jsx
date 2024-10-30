@@ -16,7 +16,6 @@ const AdminProduct = () => {
   const [show, setShow] = useState(false);
   const [edit, setEdit] = useState(false);
   const [response, setResponse] = useState(null);
-  const [response1, setResponse1] = useState(null);
   const [loading, setLoading] = useState(false);
   const [id, setId] = useState("");
   const [selected, setSelected] = useState(null);
@@ -56,8 +55,11 @@ const AdminProduct = () => {
     "Subcategory Name",
     "Stock",
     "Stock Status",
+    "Product Views",
+    "In Demand",
+    "New Arrival",
     "Created at",
-    "",
+    "Action",
   ];
 
   const tbody = response?.data?.map((i, index) => [
@@ -69,6 +71,9 @@ const AdminProduct = () => {
     i?.subcategoryId?.name,
     i?.stock,
     i?.stockStatus,
+    i?.productView,
+    i?.productShowInIndemand ? "Yes" : "",
+    i?.productShowInNewArrival ? "Yes" : "",
     i?.createdAt?.slice(0, 10),
     <span className="flexCont">
       <Link to={`/product/${i?._id}`}>
@@ -107,7 +112,7 @@ const AdminProduct = () => {
             className="tracking-widest text-slate-900 font-semibold"
             style={{ fontSize: "1.5rem" }}
           >
-            All Admin Product's ({response?.data?.length})
+            All Admin Products ({response?.data?.length})
           </span>
 
           <button

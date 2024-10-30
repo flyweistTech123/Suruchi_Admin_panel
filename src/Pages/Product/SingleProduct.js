@@ -80,12 +80,35 @@ const SingleProduct = () => {
         data={selected}
       />
       <section className="sectionCont">
+        <div className="imageshow">
+          <div>
+            <Form.Label>Product Images</Form.Label>
+            <div className="img-cont" >
+              {response?.data?.productImage?.map((img, index) => (
+                <img key={index} src={img.img} alt={`Product ${index + 1}`} className="centerImage" />
+              ))}
+            </div>
+          </div>
+          <div>
+            <Form.Label>Product Videos</Form.Label>
+            <div className="img-cont">
+              {response?.data?.productVideo?.map((video, index) => (
+                <video
+                  key={index}
+                  src={video.video}
+                  className="centerImage"
+                  controls
+                  aria-label={`Product video ${index + 1}`}
+                  title={`Product video ${index + 1}`}
+                />
+              ))}
+            </div>
 
-        <div className="img-cont" >
-          {response?.data?.productImage?.map((img, index) => (
-            <img key={index} src={img.img} alt={`Product ${index + 1}`} className="centerImage" />
-          ))}
+          </div>
         </div>
+
+
+
 
         <Form className="mt-3">
           <Row>
@@ -116,7 +139,7 @@ const SingleProduct = () => {
             </Col>
             <Col xs={12} md={3}>
               <Form.Group className="mb-3">
-                <Form.Label>Discounted Active</Form.Label>
+                <Form.Label>Discount Active</Form.Label>
                 <Form.Control type="text" value={response?.data?.discountActive ? "Active" : "Deactive"} />
               </Form.Group>
             </Col>
@@ -158,7 +181,7 @@ const SingleProduct = () => {
             </Col>
             <Col xs={12} md={3}>
               <Form.Group className="mb-3">
-                <Form.Label>Sub-category</Form.Label>
+                <Form.Label>Sub-Category</Form.Label>
                 <Form.Control type="text" value={response?.data?.subcategoryId?.name} />
               </Form.Group>
             </Col>
@@ -202,7 +225,7 @@ const SingleProduct = () => {
               className="tracking-widest text-slate-900 font-semibold"
               style={{ fontSize: "1.5rem" }}
             >
-              All Review/Rating's ({response?.data?.totalRating || 0})
+              All Reviews/Ratings ({response?.data?.totalRating || 0})
             </span>
           </div>
           <TableLayout thead={thead} tbody={tbody} loading={loading} />

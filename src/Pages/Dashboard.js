@@ -135,14 +135,14 @@ const Dashboard = () => {
 
   const card = [
     {
-      title: "Total Customer",
+      title: "Total Customers",
       number: response?.data?.userCount,
       icon: <i className="fa-solid fa-user text-2xl text-[#03AED2]"></i>,
       bg: "#03AED2",
       link: "/user",
     },
     {
-      title: "Total New Customer",
+      title: "Total New Customers",
       number: response?.data?.newCustomersCount,
       icon: <i className="fa-solid fa-user text-2xl text-[#03AED2]"></i>,
       bg: "#2C4E80",
@@ -156,7 +156,7 @@ const Dashboard = () => {
       link: "/vendors",
     },
     {
-      title: "Bloacked Vendor",
+      title: "Blocked Vendors",
       number: response?.data?.blockedVendorsCount,
       icon: <i className="fa-solid fa-ban text-2xl text-[#4D869C]"></i>,
       bg: "#4D869C",
@@ -164,7 +164,7 @@ const Dashboard = () => {
     },
 
     {
-      title: "Total Product",
+      title: "Total Products",
       number: response?.data?.productCount,
       icon: <i className="fa-solid fa-box text-2xl text-[#2C4E80]"></i>,
       bg: "#2C4E80",

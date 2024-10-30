@@ -5,7 +5,6 @@ import { CreateSubCategory } from "../Component/Modals/Modals";
 import TableLayout from "../Component/TableLayout";
 import HOC from "../Layout/HOC";
 import { getApi, removeApi } from "../Repository/Repository";
-import { Link } from "react-router-dom";
 import Pagination from "../Component/Pagination";
 import { debouncedSetQuery } from "../utils/utils";
 
@@ -37,12 +36,12 @@ const SubCategory = () => {
     const additionalFunctions = [fetchHandler];
     removeApi({
       url: `api/v1/SubCategory/deleteSubcategory/${id}`,
-      successMsg: "Removed !",
+      successMsg: "Removed!",
       additionalFunctions,
     });
   };
 
-  const thead = ["Sno.", "Images", "Title", "Category", "Category Type", "status", ""];
+  const thead = ["Sno.", "Images", "Title", "Category", "Category Type", "Status", "Action"];
 
 
   const tbody = response?.data?.docs?.map((i, index) => [
@@ -87,7 +86,7 @@ const SubCategory = () => {
             className="tracking-widest text-slate-900 font-semibold"
             style={{ fontSize: "1.5rem" }}
           >
-            Sub Cateogries ({response?.data?.totalDocs})
+            All Sub Categories ({response?.data?.totalDocs})
           </span>
 
           <button
@@ -108,7 +107,7 @@ const SubCategory = () => {
           />
           <input
             type="search"
-            placeholder=""
+            placeholder="Search..."
             onChange={(e) =>
               debouncedSetQuery({ term: e.target.value, setSearch })
             }

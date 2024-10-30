@@ -11,7 +11,7 @@ const Payment = () => {
             className="tracking-widest text-slate-900 font-semibold"
             style={{ fontSize: "1.5rem" }}
           >
-            Manage Transactions (Total : 1)
+           Manage Transactions (Total : 1)
           </span>
         </div>
         <div className="filterBox">

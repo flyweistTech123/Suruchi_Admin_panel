@@ -81,7 +81,7 @@ const Contes = () => {
             className="tracking-widest text-slate-900 font-semibold "
             style={{ fontSize: "1.5rem" }}
           >
-            All Contest({response?.data?.length || 0})
+            All Contests({response?.data?.length || 0})
           </span>
 
           <button

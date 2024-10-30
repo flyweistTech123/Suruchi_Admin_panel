@@ -1,13 +1,10 @@
 /** @format */
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import HOC from "../../Layout/HOC";
 import { Link, useNavigate } from "react-router-dom";
-import data from "../../Constant/constant.json";
 import TableLayout from "../../Component/TableLayout";
 import { getApi, removeApi } from "../../Repository/Repository";
-import Pagination from "../../Component/Pagination";
-import { debouncedSetQuery } from "../../utils/utils";
 import { CreateAdminStore } from '../../Component/Modals/Modals'
 
 
@@ -16,10 +13,6 @@ const AdminStore = () => {
     const [modalShow, setModalShow] = useState(false);
     const [response, setResponse] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(10);
-    const [search, setSearch] = useState("");
-    const [id, setId] = useState("");
 
 
     const fetchHandler = () => {
@@ -39,7 +32,7 @@ const AdminStore = () => {
         const additionalFunctions = [fetchHandler];
         removeApi({
             url: `api/v1/admin/stores/deleteStore/${id}`,
-            successMsg: "Removed !",
+            successMsg: "Removed!",
             additionalFunctions,
         });
     };
@@ -50,7 +43,7 @@ const AdminStore = () => {
         "Store Name",
         "Mobile",
         "Email",
-        "",
+        "Action",
     ];
 
     const tbody = response?.data?.map((i, index) => [
@@ -82,7 +75,7 @@ const AdminStore = () => {
                         className="tracking-widest text-slate-900 font-semibold"
                         style={{ fontSize: "1.5rem" }}
                     >
-                        All Admin Store's  ({response?.data?.length})
+                         All Admin Stores  ({response?.data?.length})
                     </span>
 
                     <button

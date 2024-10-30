@@ -81,7 +81,7 @@ const Event = () => {
             className="tracking-widest text-slate-900 font-semibold "
             style={{ fontSize: "1.5rem" }}
           >
-            All Event({response?.data?.length || 0})
+            All Events({response?.data?.length || 0})
           </span>
 
           <button

@@ -52,11 +52,10 @@ const Vendors = () => {
     "Profile",
     "Name",
     "Number",
+    "Location",
     "Category",
-    "Products/Services",
+    "Products/ Services",
     "Plan",
-    "Plan Type",
-    "Plan Expiration",
     "Vendor Acceptance",
     "Status",
     "Action",
@@ -87,15 +86,25 @@ const Vendors = () => {
 
   const tbody = response?.data?.map((i, index) => [
     `#${index + 1}`,
-    <img className="profile-pic" src={i?.image} alt="" />,
+    <img className="Vendor Profile" src={i?.image} alt="" />,
     i?.fullName,
     i?.phone,
-    i?.categoryId?.name,
+    i?.city,
+    <ul>
+      {i?.categoryId?.map((category) => (
+        <li key={category._id}>{category.name}</li>
+      ))}
+    </ul>,
     <Link to={`/vendor-products/${i._id}`}>View</Link>,
-    i?.planBuyId?.planName,
-    i?.planBuyId?.planType,
-    // i?.planBuyId?.amount,
-    i?.planExpiration?.slice(0, 10),
+
+    // Combine plan details into a single cell
+    <ul>
+      <li>{i?.planBuyId?.planName}</li>
+      <li>{i?.planBuyId?.planType}</li>
+      <li>{i?.planBuyId?.amount}</li>
+      <li>{i?.planStatus}</li>
+      <li>{i?.planExpiration?.slice(0, 10)}</li>
+    </ul>,
     i?.kycStatus,
     i?.status,
     <span className="flexCont">
@@ -109,14 +118,22 @@ const Vendors = () => {
           setOpen(true);
         }}
       />
-      <i className="fa-sharp fa-solid fa-trash" onClick={() => deleteHandler(i._id)}></i>
       <i
-        className={i?.status === 'Block' ? "fas fa-ban text-danger" : "fas fa-ban text-success"}
+        className="fa-sharp fa-solid fa-trash"
+        onClick={() => deleteHandler(i._id)}
+      ></i>
+      <i
+        className={
+          i?.status === 'Block'
+            ? 'fas fa-ban text-danger'
+            : 'fas fa-ban text-success'
+        }
         onClick={() => blockHandler(i._id, i.status)}
         style={{ cursor: 'pointer', fontSize: '18px' }}
       ></i>
     </span>
   ]);
+
 
   const handleExport = () => {
     const exportUrl = `https://suruchi-backend.vercel.app/api/v1/admin/download-vendor-excel`;
@@ -171,7 +188,7 @@ const Vendors = () => {
           >
             All Vendors ({response?.pagination?.total})
           </span>
-          <button className="submitBtn" onClick={() => navigate('/blokedvendors')}>
+          <button className="submitBtn" onClick={() => navigate('/blockedvendors')}>
             Blocked Vendors
           </button>
           <div className="toggle-container">

@@ -6,7 +6,26 @@ import { ClipLoader } from "react-spinners";
 import { createApi, getApi, removeApi, updateApi } from "../../Repository/Repository";
 import { IoCloseSharp } from "react-icons/io5";
 import { MdEdit } from "react-icons/md";
+import { Store } from "react-notifications-component";
 
+
+
+
+const showNotification = ({ message, type = "success" }) => {
+  Store.addNotification({
+    title: "",
+    message,
+    type,
+    insert: "top",
+    container: "top-right",
+    animationIn: ["animate__animated", "animate__fadeIn"],
+    animationOut: ["animate__animated", "animate__fadeOut"],
+    dismiss: {
+      duration: 3000,
+      onScreen: true,
+    },
+  });
+};
 
 const CreateBanner = ({ show, handleClose, edit, id, fetchApi, data }) => {
   const [type, setType] = useState(data?.type || '');
@@ -14,6 +33,8 @@ const CreateBanner = ({ show, handleClose, edit, id, fetchApi, data }) => {
   const [image, setImage] = useState(data?.image || '');
   // const [imagePreview, setImagePreview] = useState(data?.image || '');
   const [loading, setLoading] = useState(false);
+
+
 
 
   useEffect(() => {
@@ -56,6 +77,11 @@ const CreateBanner = ({ show, handleClose, edit, id, fetchApi, data }) => {
       successMsg: "Created",
       additionalFunctions,
     });
+    if (image && image.size > 1048576) {
+      showNotification({ message: "Profile picture size should be less than 1 MB.", type: "danger" });
+      handleClose()
+      return;
+    }
     resetForm();
   };
 
@@ -87,7 +113,11 @@ const CreateBanner = ({ show, handleClose, edit, id, fetchApi, data }) => {
       successMsg: "Updated",
       additionalFunctions,
     });
-
+    if (image && image.size > 1048576) {
+      showNotification({ message: "Profile picture size should be less than 1 MB.", type: "danger" });
+      handleClose()
+      return;
+    }
     resetForm();
   };
 
@@ -124,6 +154,7 @@ const CreateBanner = ({ show, handleClose, edit, id, fetchApi, data }) => {
               <option value="Top">Top</option>
               <option value="Bottom">Bottom</option>
               <option value="LOGIN">Login</option>
+              <option value="BACKGROUNDIMAGE">Background Image</option>
             </Form.Select>
           </Form.Group>
           <Form.Group className="mb-3">
@@ -1092,7 +1123,7 @@ const CreateFaq = ({ show, handleClose, edit, id, fetchApi, data }) => {
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
           {" "}
-          {edit ? "Edit FAQs" : " Add New FAQs"}
+          {edit ? "Edit FAQs" : "Add New FAQs"}
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -1659,7 +1690,7 @@ const CreateEvent = ({ show, handleClose, edit, id, fetchApi, data }) => {
       name: name,
       desc: desc,
       locationOfEvent: location,
-      areaName:area
+      areaName: area
     }
 
     updateApi({
@@ -2034,7 +2065,7 @@ const CreateContes = ({ show, handleClose, edit, id, fetchApi, data }) => {
       name: name,
       desc: desc,
       locationOfContest: location,
-      areaName:area
+      areaName: area
     }
 
     updateApi({
@@ -3113,8 +3144,8 @@ const UpdateProductImage = ({ show, handleClose, id, imgid, fetchApi, handleClos
 
 
 const ProductStatus = ({ show, handleClose, id, fetchApi }) => {
-  const [status1, setStatus1] = useState("");
-  const [status2, setStatus2] = useState("");
+  const [status1, setStatus1] = useState(false);
+  const [status2, setStatus2] = useState(false);
   const [loading, setLoading] = useState(false);
 
 

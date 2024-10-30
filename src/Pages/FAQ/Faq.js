@@ -75,7 +75,7 @@ const Faq = () => {
             className="tracking-widest text-slate-900 font-semibold"
             style={{ fontSize: "1.5rem" }}
           >
-            All FAQs's ({response?.data?.length})
+            All FAQs ({response?.data?.length})
           </span>
           <button
             onClick={() => {

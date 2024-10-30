@@ -78,7 +78,7 @@ const CategoryType = () => {
             className="tracking-widest text-slate-900 font-semibold "
             style={{ fontSize: "1.5rem" }}
           >
-            All Category Type({response?.data?.length || 0})
+            All Category Types({response?.data?.length || 0})
           </span>
 
           <button

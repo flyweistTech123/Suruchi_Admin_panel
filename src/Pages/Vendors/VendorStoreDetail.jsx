@@ -286,7 +286,7 @@ const VendorStoreDetail = () => {
                 </div>
             </section>
 
-            <section className="sectionCont mt-3">
+            {/* <section className="sectionCont mt-3">
                 <h4>Subscription Plan</h4>
                 <hr />
                 <Row>
@@ -304,7 +304,7 @@ const VendorStoreDetail = () => {
                     </Col>
 
                 </Row>
-            </section>
+            </section> */}
         </>
     );
 };

@@ -62,7 +62,7 @@ const AllCity = () => {
                         className="tracking-widest text-slate-900 font-semibold"
                         style={{ fontSize: "1.5rem" }}
                     >
-                        All City's ({response?.totalCities} )
+                        All Cities ({response?.totalCities} )
                     </span>
                 </div>
 
@@ -73,7 +73,7 @@ const AllCity = () => {
                     />
                     <input
                         type="search"
-                        placeholder=""
+                        placeholder="Search Cities..."
                         onChange={(e) =>
                             debouncedSetQuery({ term: e.target.value, setSearch })
                         }

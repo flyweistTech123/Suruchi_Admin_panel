@@ -93,7 +93,7 @@ const AllState = () => {
                         className="tracking-widest text-slate-900 font-semibold"
                         style={{ fontSize: "1.5rem" }}
                     >
-                        All State's ({response?.totalStates} )
+                        All States ({response?.totalStates} )
                     </span>
                 </div>
 
@@ -104,7 +104,7 @@ const AllState = () => {
                     />
                     <input
                         type="search"
-                        placeholder=""
+                        placeholder="Search States..."
                         onChange={(e) =>
                             debouncedSetQuery({ term: e.target.value, setSearch })
                         }

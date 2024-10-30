@@ -80,7 +80,7 @@ const Blog = () => {
             className="tracking-widest text-slate-900 font-semibold "
             style={{ fontSize: "1.5rem" }}
           >
-            All Blog({response?.data?.length || 0})
+            All Blogs({response?.data?.length || 0})
           </span>
 
           <button
