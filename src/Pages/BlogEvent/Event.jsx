@@ -41,7 +41,7 @@ const Event = () => {
 
   const tbody = response.data.map((i, index) => [
     `#${index + 1}`,
-    <img src={i.eventImage[0].img} alt="" className="adBannerImg" />,
+    <img src={i?.eventImage[0]?.img} alt="" className="adBannerImg" />,
     i?.name,
     i?.desc,
     i?.locationOfEvent,

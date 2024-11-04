@@ -38,6 +38,7 @@ import TermsConditions from "../Pages/BlogEvent/TermsConditions";
 import ContactUs from "../Pages/BlogEvent/ContactUs";
 import SubscriptionDetails from "../Pages/Subscription/SubscriptionDetails";
 import AllArea from "../Pages/Location/AllArea";
+import SubCategoryType from "../Pages/SubCategoryType/SubCategoryType";
 
 const routes = [
   { path: "/", element: <Login /> },
@@ -57,9 +58,10 @@ const routes = [
   { path: "/product/:id", element: <SingleProduct /> },
   { path: "/product-review/:id", element: <ProductReviews /> },
   { path: "/vendor-products/:id", element: <VendorProducts /> },
-  { path: "/user", element: <Customers /> },
+  { path: "/users", element: <Customers /> },
   { path: "/user-data/:id", element: <UserData /> },
   { path: "/sub-category", element: <SubCategory /> },
+  { path: "/sub-category-types", element: <SubCategoryType /> },
   { path: "/notification", element: <Notification /> },
   // { path: "/brands", element: <DeliveryCharges /> },
   { path: "/faq", element: <Faq /> },

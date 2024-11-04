@@ -4,11 +4,11 @@ import React, { useEffect, useState } from "react";
 import HOC from "../../Layout/HOC";
 import TableLayout from "../../Component/TableLayout";
 import { getApi, removeApi } from "../../Repository/Repository";
-import { CreateBanner } from "../../Component/Modals/Modals";
+import { CreateSubType, CreateType } from "../../Component/Modals/Modals";
 
-const thead = ["Sno.", "Image", "Type", "Description", "Action"];
+const thead = ["Sno.", "Type Name", "Description", "Action"];
 
-const AdBanner = () => {
+const SubCategoryType = () => {
   const [show, setShow] = useState(false);
   const [edit, setEdit] = useState(false);
   const [response, setResponse] = useState({ data: [] });
@@ -19,7 +19,7 @@ const AdBanner = () => {
 
   const fetchHandler = () => {
     getApi({
-      url: "api/v1/Banner/getBanner",
+      url: "getAllSubCategoryTypes",
       setResponse,
       setLoading,
     });
@@ -32,7 +32,7 @@ const AdBanner = () => {
   const deleteHandler = (id) => {
     const additionalFunctions = [fetchHandler];
     removeApi({
-      url: `api/v1/Banner/${id}`,
+      url: `deleteSubCategoryType/${id}`,
       successMsg: "Removed!",
       additionalFunctions,
     });
@@ -41,11 +41,6 @@ const AdBanner = () => {
 
   const tbody = response?.data?.map((i, index) => [
     `#${index + 1}`,
-    i.bannerVideo && typeof i.bannerVideo === 'string' && i.bannerVideo.endsWith(".mp4") ? (
-      <video src={i.bannerVideo} className="adBannerImg"   />
-    ) : (
-      <img src={i.image} alt="" className="adBannerImg" />
-    ),
     i.type,
     i.desc,
     <span className="flexCont">
@@ -68,7 +63,7 @@ const AdBanner = () => {
 
   return (
     <>
-      <CreateBanner
+      <CreateSubType
         show={show}
         handleClose={() => setShow(false)}
         edit={edit}
@@ -82,7 +77,7 @@ const AdBanner = () => {
             className="tracking-widest text-slate-900 font-semibold "
             style={{ fontSize: "1.5rem" }}
           >
-            All Banners({response?.data?.length || 0})
+            All Sub Category Types({response?.data?.length || 0})
           </span>
 
           <button
@@ -96,10 +91,10 @@ const AdBanner = () => {
           </button>
         </div>
 
-        <TableLayout thead={thead} tbody={tbody} loading={loading} />
+        <TableLayout thead={thead} tbody={tbody} loading={loading}/>
       </section>
     </>
   );
 };
 
-export default HOC(AdBanner);
+export default HOC(SubCategoryType);

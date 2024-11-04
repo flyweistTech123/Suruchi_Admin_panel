@@ -41,7 +41,7 @@ const Contes = () => {
 
   const tbody = response.data.map((i, index) => [
     `#${index + 1}`,
-    <img src={i.contestImage[0].img} alt="" className="adBannerImg" />,
+    <img src={i?.contestImage[0]?.img} alt="" className="adBannerImg" />,
     i.name,
     i.desc,
     i.locationOfContest,

@@ -39,6 +39,11 @@ const Sidebar = ({ hamb, setHamb }) => {
       name: "Top Seller",
     },
     {
+      icon: <i className="fa-solid fa-list  text-xl mr-3 rounded-full"></i>,
+      link: "/sub-category-types",
+      name: "Sub Category Types",
+    },
+    {
       icon: (
         <i className="fa-solid fa-table-list  text-xl mr-3 rounded-full"></i>
       ),
@@ -71,7 +76,7 @@ const Sidebar = ({ hamb, setHamb }) => {
     },
     {
       icon: <i className="fa-solid fa-user  text-xl mr-3 rounded-full"></i>,
-      link: "/user",
+      link: "/users",
       name: "Customers",
     },
 

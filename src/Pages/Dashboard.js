@@ -139,14 +139,14 @@ const Dashboard = () => {
       number: response?.data?.userCount,
       icon: <i className="fa-solid fa-user text-2xl text-[#03AED2]"></i>,
       bg: "#03AED2",
-      link: "/user",
+      link: "/users",
     },
     {
       title: "Total New Customers",
       number: response?.data?.newCustomersCount,
       icon: <i className="fa-solid fa-user text-2xl text-[#03AED2]"></i>,
       bg: "#2C4E80",
-      link: "/Product",
+      link: "/users",
     },
     {
       title: "Total Vendors",
@@ -160,7 +160,7 @@ const Dashboard = () => {
       number: response?.data?.blockedVendorsCount,
       icon: <i className="fa-solid fa-ban text-2xl text-[#4D869C]"></i>,
       bg: "#4D869C",
-      link: "/blokedvendors",
+      link: "/blockedvendors",
     },
 
     {
