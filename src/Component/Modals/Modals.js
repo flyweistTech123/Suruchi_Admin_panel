@@ -650,16 +650,23 @@ const CreateSubCategory = ({ show, handleClose, edit, id, fetchApi, data }) => {
     // setImagePreview("");
   };
 
-  const fd = new FormData();
-  fd.append("name", name);
-  fd.append("image", image);
-  fd.append("categoryId", categoryid);
-  fd.append("type", type);
+
 
   const additionalFunctions = [handleClose, fetchApi];
 
   const createHandler = (e) => {
     e.preventDefault();
+    const fd = new FormData();
+    fd.append("name", name);
+    if (image) {
+      if (image.size > 1048576) {
+        showNotification({ message: "File size should be less than 1 MB.", type: "danger" });
+        return; // Prevent form submission
+      }
+      fd.append("image", image);
+    }
+    fd.append("categoryId", categoryid);
+    fd.append("type", type);
     createApi({
       url: "api/v1/SubCategory/addSubcategory",
       payload: fd,
@@ -672,6 +679,17 @@ const CreateSubCategory = ({ show, handleClose, edit, id, fetchApi, data }) => {
 
   const updateHandler = (e) => {
     e.preventDefault();
+    const fd = new FormData();
+    fd.append("name", name);
+    if (image) {
+      if (image.size > 1048576) {
+        showNotification({ message: "File size should be less than 1 MB.", type: "danger" });
+        return; // Prevent form submission
+      }
+      fd.append("image", image);
+    }
+    fd.append("categoryId", categoryid);
+    fd.append("type", type);
     updateApi({
       url: `api/v1/SubCategory/updateSubcategory/${id}`,
       payload: fd,
