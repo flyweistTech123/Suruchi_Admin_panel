@@ -108,7 +108,7 @@ const Subscription = () => {
           </button>
         </div>
       </div>
-      <TableLayout thead={thead} tbody={tbody} />
+      <TableLayout thead={thead} tbody={tbody} loading={loading}/>
     </section>
   );
 };

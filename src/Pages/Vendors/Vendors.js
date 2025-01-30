@@ -86,10 +86,15 @@ const Vendors = () => {
 
   const tbody = response?.data?.map((i, index) => [
     `#${index + 1}`,
-    <img className="Vendor Profile" src={i?.image} alt="" />,
-    i?.fullName,
+    <img className="Vendor Profile" src={i?.stores?.[0]?.storeLogo} alt="" />,
+    i?.stores?.[0]?.StoreName,
     i?.phone,
-    i?.city,
+    i.allIndiaCity ? "All India" :
+      <ul>
+        {i?.cities?.map((city) => (
+          <li key={city._id}>{city?.name}</li>
+        ))}
+      </ul>,
     <ul>
       {i?.categoryId?.map((category) => (
         <li key={category._id}>{category.name}</li>

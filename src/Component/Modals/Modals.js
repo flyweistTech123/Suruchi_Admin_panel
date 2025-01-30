@@ -894,15 +894,35 @@ const CreateSubscription = ({ show, handleClose, edit, id, name, fetchApi, data 
   const [newFeature, setNewFeature] = useState({ features: "", count: 0 });
   const [loading, setLoading] = useState(false);
 
+  const resetForm = () => {
+    setSubscriptionData({
+      name: data?.name || '',
+      monthly: data?.monthly || '',
+      quarterly: data?.quarterly || '',
+      halfYearly: data?.halfYearly || '',
+      yearly: data?.yearly || '',
+      isShowHomeScreen: data?.isShowHomeScreen || false,
+      isShowSalesScreen: data?.isShowSalesScreen || false,
+      isShowOrderScreen: data?.isShowOrderScreen || false,
+      features: {
+        monthlyData: data?.monthlyData || [],
+        quarterlyData: data?.quarterlyData || [],
+        halfYearlyData: data?.halfYearlyData || [],
+        yearlyData: data?.yearlyData || []
+      }
+    });
+
+    setNewFeature({ features: "", count: 0 });
+  };
+
   useEffect(() => {
     if (edit && data) {
       setSubscriptionData({
-        ...subscriptionData,
-        name: data.name || '',
-        monthly: data.monthly || '',
-        quarterly: data.quarterly || '',
-        halfYearly: data.halfYearly || '',
-        yearly: data.yearly || '',
+        name: data?.name || '',
+        monthly: data?.monthly || '',
+        quarterly: data?.quarterly || '',
+        halfYearly: data?.halfYearly || '',
+        yearly: data?.yearly || '',
         isShowHomeScreen: data?.isShowHomeScreen || false,
         isShowSalesScreen: data?.isShowSalesScreen || false,
         isShowOrderScreen: data?.isShowOrderScreen || false,
@@ -913,8 +933,26 @@ const CreateSubscription = ({ show, handleClose, edit, id, name, fetchApi, data 
           yearlyData: data?.yearlyData || []
         }
       });
+    } else {
+      setSubscriptionData({
+        name: '',
+        monthly: '',
+        quarterly: '',
+        halfYearly: '',
+        yearly: '',
+        isShowHomeScreen: false,
+        isShowSalesScreen: false,
+        isShowOrderScreen: false,
+        features: {
+          monthlyData: [],
+          quarterlyData: [],
+          halfYearlyData: [],
+          yearlyData: []
+        }
+      });
     }
   }, [edit, data]);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -1007,12 +1045,30 @@ const CreateSubscription = ({ show, handleClose, edit, id, name, fetchApi, data 
         additionalFunctions: [handleClose, fetchApi]
       });
     }
+    resetForm()
   };
+
+  const featureOptions = [
+    'Products',
+    'Images/ Product',
+    'Video clips/ Product',
+    'Homescreen Flash',
+    'Invoice creation',
+    'Inventory management',
+    'Reports',
+  ];
+
+
+  const closemodal = () => {
+    handleClose()
+    resetForm()
+  }
+
 
 
 
   return (
-    <Modal show={show} onHide={handleClose} centered>
+    <Modal show={show} onHide={closemodal} centered>
       <Modal.Header closeButton>
         <Modal.Title>{edit ? "Edit Subscription" : "Create New Subscription"}</Modal.Title>
       </Modal.Header>
@@ -1109,13 +1165,16 @@ const CreateSubscription = ({ show, handleClose, edit, id, name, fetchApi, data 
               <Form.Group className="mb-3">
                 <Form.Label>Add New Feature</Form.Label>
                 {/* Handle new feature name input */}
-                <Form.Control
-                  type="text"
+                <Form.Select
                   name="features"
                   value={newFeature[period]?.features || ''}
                   onChange={(e) => handleFeatureChange(e, period)}
-                  placeholder="Enter feature name"
-                />
+                >
+                  <option value="" disabled>Select feature</option>
+                  {featureOptions.map((option, idx) => (
+                    <option key={idx} value={option}>{option}</option>
+                  ))}
+                </Form.Select>
                 {/* Handle new feature count input */}
                 <Form.Control
                   type="number"

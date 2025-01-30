@@ -48,13 +48,13 @@ const VendorProducts = () => {
   const tbody = response?.data?.map((i, index) => [
     `#${index + 1}`,
     i?.ID,
-    <img src={i.productImage} alt="" style={{ maxWidth: "80px" }} />,
+    <img src={i?.productImage[0]?.img} alt="" style={{ maxWidth: "80px" }} />,
     i.productName,
     i.categoryId.name,
     i.subcategoryId.name,
     i.createdAt?.slice(0, 10),
     <span className="flexCont">
-      <Link to={`/product/${i.title}`}>
+      <Link to={`/product/${i._id}`}>
         <i className="fa-solid fa-eye" />
       </Link>
       <i className="fa-sharp fa-solid fa-trash"></i>
