@@ -44,7 +44,6 @@ const CreateAdminProduct = () => {
     setReturnPolicy('');
   };
 
-  // Handle new images by appending them to the existing state
   const handleImageChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
     setProductImage([...productImage, ...selectedFiles]);
@@ -54,7 +53,6 @@ const CreateAdminProduct = () => {
   productImage.forEach((img) => {
     fd.append("productImage", img instanceof File ? img : img.img);
   });
-  // fd.append("image", productImage);
   fd.append("categoryId", categoryid);
   fd.append("subCategoryId", subcategoryid);
   fd.append("brandName", brandName);
