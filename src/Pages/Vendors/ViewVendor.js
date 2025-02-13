@@ -65,7 +65,7 @@ const ViewVendor = () => {
           <hr />
           <div className="vendor-profile-div">
             <img
-              src={response?.data?.image}
+              src={response?.data?.stores?.[0]?.storeLogo}
               alt=""
               className="profile-img"
             />
@@ -75,7 +75,7 @@ const ViewVendor = () => {
             <Col xs={12} md={3}>
               <Form.Group className="mb-3">
                 <Form.Label>Vendor Name</Form.Label>
-                <Form.Control type="text" value={response?.data?.fullName} />
+                <Form.Control type="text" value={response?.data?.stores?.[0]?.StoreName} />
               </Form.Group>
             </Col>
             <Col xs={12} md={3}>
@@ -107,9 +107,18 @@ const ViewVendor = () => {
             <Col xs={12} md={3}>
               <Form.Group className="mb-3">
                 <Form.Label>City</Form.Label>
-                <Form.Control type="text" value={response?.data?.city} />
+                {response?.data?.allIndiaCity ? (
+                  <p>All India</p>
+                ) : (
+                  <ul>
+                    {response?.data?.cities?.map((city) => (
+                      <li key={city._id}>{city?.name}</li>
+                    ))}
+                  </ul>
+                )}
               </Form.Group>
             </Col>
+
             <Col xs={12} md={3}>
               <Form.Group className="mb-3">
                 <Form.Label>Plan Name</Form.Label>
